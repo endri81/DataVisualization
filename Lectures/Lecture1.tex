@@ -134,7 +134,7 @@
 \title{Lecture 1}
 \subtitle{Understanding Data Visualization}
 \author{Endri Raco}
-\date{05 February, 2025}
+\date{06 February, 2025}
 
 \begin{document}
 \frame{\titlepage}
@@ -2444,6 +2444,396 @@ the different types of dashes.
 \begin{frame}{Correct Answer}
 \phantomsection\label{correct-answer-3}
 \includegraphics{../images/im74.png}
+\end{frame}
+
+\begin{frame}{Using color}
+\phantomsection\label{using-color}
+\begin{itemize}
+\item
+  You just saw that the most powerful tool you have for distinguishing
+  data values is often color.
+\item
+  Now you'll see how to choose the best colors for your plots.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Colorspaces: Red-Green-Blue}
+\phantomsection\label{colorspaces-red-green-blue}
+\includegraphics{../images/im75.png} How you define colors has an impact
+on which colors you want to choose.
+\end{frame}
+
+\begin{frame}{Colorspaces: Red-Green-Blue}
+\phantomsection\label{colorspaces-red-green-blue-1}
+\begin{itemize}
+\item
+  Many programming languages define colors by how much red, green and
+  blue the colors contain, so the software knows how bright to make the
+  red, green, and blue pixels onscreen.
+\item
+  We call this the red-green-blue colorspace.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Colorspaces: Cyan-Magenta-Yellow-blacK}
+\phantomsection\label{colorspaces-cyan-magenta-yellow-black}
+\begin{itemize}
+\tightlist
+\item
+  Graphic designers often define colors by the amount cyan, magenta,
+  yellow, and black they contain because color printers have these four
+  ink cartridges.
+\end{itemize}
+
+\includegraphics{../images/im76.png}
+
+\begin{itemize}
+\tightlist
+\item
+  Using this colorspace gives them the highest fidelity between what is
+  onscreen and what is printed.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Choosing a plotting palette}
+\phantomsection\label{choosing-a-plotting-palette}
+Here's the plot of Los Angeles house prices.
+
+\includegraphics{../images/im77.png}
+\end{frame}
+
+\begin{frame}{Choosing a plotting palette}
+\phantomsection\label{choosing-a-plotting-palette-1}
+There are some problems with the choice of colors.
+
+\begin{itemize}
+\item
+  Firstly, yellow points are harder to see than reds, meaning viewers
+  might spend less time looking at the yellows, and miss important
+  insights.
+\item
+  Secondly, the colors blue and purple are perceptually quite close,
+  that is, they appear to be quite similar.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Choosing a plotting palette}
+\phantomsection\label{choosing-a-plotting-palette-2}
+\begin{itemize}
+\tightlist
+\item
+  By contrast, yellow appears very different to the other colors.
+\end{itemize}
+
+\includegraphics{../images/im78.png}
+
+\begin{itemize}
+\tightlist
+\item
+  This could lead viewers of the plot to think, possibly subconsciously,
+  that the yellow points are different to the others.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Colorspaces: Hue-Chroma-Luminance}
+\phantomsection\label{colorspaces-hue-chroma-luminance}
+\begin{itemize}
+\tightlist
+\item
+  The colorspace designed for data visualization is called
+  hue-chroma-luminance, or HCL.
+\end{itemize}
+
+\includegraphics{../images/im79.png}
+
+It's designed to deal with issues of color perception.
+\end{frame}
+
+\begin{frame}{Colorspaces: Hue-Chroma-Luminance}
+\phantomsection\label{colorspaces-hue-chroma-luminance-1}
+Hue is like the color of the rainbow, from red, through orange, green
+and blue, to purple and back to red.
+
+\includegraphics{../images/im80.png}
+
+Chroma is the intensity of the color, from grey to a bright color.
+\end{frame}
+
+\begin{frame}{Colorspaces: Hue-Chroma-Luminance}
+\phantomsection\label{colorspaces-hue-chroma-luminance-2}
+You can go from grey to bright green, or grey to bright magenta, or grey
+to any other hue.
+
+\includegraphics{../images/im80.png}
+\end{frame}
+
+\begin{frame}{Colorspaces: Hue-Chroma-Luminance}
+\phantomsection\label{colorspaces-hue-chroma-luminance-3}
+Luminance is the brightness of the color, from black to white.
+
+\includegraphics{../images/im80.png}
+
+For example, you can go from black through cyan to white, or black
+through red to white.
+\end{frame}
+
+\begin{frame}{Three types of color scale: qualitative}
+\phantomsection\label{three-types-of-color-scale-qualitative}
+When choosing the colors for your plot, you can pick one of three types
+of color scale.
+
+\includegraphics{../images/im81.png}
+
+Qualitative color scales are used to distinguish unordered categories,
+and usually involve changing the hue, while keeping chroma and luminance
+fixed.
+\end{frame}
+
+\begin{frame}{Qualitative palette example}
+\phantomsection\label{qualitative-palette-example}
+Here's the technology adoption line plot.
+
+\includegraphics{../images/im82.png} \#\# Qualitative palette example
+
+\begin{itemize}
+\item
+  The technologies are unordered, since it isn't useful to think of
+  refrigerators as greater than stoves.
+\item
+  Each line has a different hue, but constant chroma and luminance.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Three types of color scale: sequential}
+\phantomsection\label{three-types-of-color-scale-sequential}
+\begin{itemize}
+\item
+  To emphasize ordering in your data, that is, to show that values are
+  greater than or less than each other, you need a sequential color
+  scale.
+\item
+  Most sequential scales change either chroma or luminance, while
+  keeping hue fixed.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Sequential palette example}
+\phantomsection\label{sequential-palette-example}
+Here's the fruit and vegetable consumption bar plot.
+
+\includegraphics{../images/im83.png}
+
+The categories are ordered from zero to greater than five, so a
+sequential color scale makes most sense.
+\end{frame}
+
+\begin{frame}{Another sequential palette example}
+\phantomsection\label{another-sequential-palette-example}
+\begin{itemize}
+\tightlist
+\item
+  You can also use sequential scales with continuous variables.
+\end{itemize}
+
+\includegraphics{../images/im84.png}
+
+\begin{itemize}
+\tightlist
+\item
+  Here's the scatter plot of life expectancy.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Another sequential palette example}
+\phantomsection\label{another-sequential-palette-example-1}
+\begin{itemize}
+\item
+  This is slightly cheating because it uses a sequential scale that
+  changes the hue.
+\item
+  The color scale is called viridis, and it's designed to be easily
+  viewable by color blind people, and to print well in black and white.
+\end{itemize}
+
+This color scale had a lot of science used in its development; if you
+make your own sequential scale it's better to stick to changing only
+chroma or luminance.
+\end{frame}
+
+\begin{frame}{Three types of color scale: diverging}
+\phantomsection\label{three-types-of-color-scale-diverging}
+\begin{itemize}
+\tightlist
+\item
+  To emphasize whether values are greater than or less than some middle
+  value, use a diverging scale.
+\end{itemize}
+
+\includegraphics{../images/im85.png}\\
+These are similar to sequential scales, but have a neutral color like
+white or gray in the middle, and have increasingly bold colors with
+different hues on either edge.
+\end{frame}
+
+\begin{frame}{Green Tech in Malaysia survey dataset}
+\phantomsection\label{green-tech-in-malaysia-survey-dataset}
+Here's another survey dataset, on green technology and recycling in
+Malaysia.
+
+\includegraphics{../images/im86.png}
+\end{frame}
+
+\begin{frame}{Green Tech in Malaysia survey dataset}
+\phantomsection\label{green-tech-in-malaysia-survey-dataset-1}
+\begin{itemize}
+\item
+  Each question has a choice of five responses, from ``Strongly
+  Disagree'' to ``Strongly Agree''.
+\item
+  ``Neutral'' responses form a midpoint, making a diverging scale
+  useful.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Diverging palette example}
+\phantomsection\label{diverging-palette-example}
+Here you can see each question on its own row, and the colors get bolder
+as the opinions get stronger.
+
+\includegraphics{../images/im87.png}
+\end{frame}
+
+\begin{frame}{Practice: Eye-catching colors}
+\phantomsection\label{practice-eye-catching-colors}
+\begin{itemize}
+\item
+  Not all colors are as eye-catching as others.
+\item
+  This can cause a problem for data visualization, because having some
+  data point more obvious than others can bias the way you interpret a
+  plot.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Practice: Eye-catching colors}
+\phantomsection\label{practice-eye-catching-colors-1}
+\begin{itemize}
+\tightlist
+\item
+  Unless you specifically want to highlight some points, each data point
+  should be as easy to look at as all the others.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Practice: Eye-catching colors}
+\phantomsection\label{practice-eye-catching-colors-2}
+\begin{itemize}
+\tightlist
+\item
+  Here you can see the dataset from the camera trap in Panama.
+\end{itemize}
+
+\includegraphics{../images/im88.jpg}
+
+\begin{itemize}
+\tightlist
+\item
+  This time, the speed of the animal as they passed the camera is
+  plotted against the time of day that they were caught on camera, and
+  the agouti have been joined by another rodent, the paca.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Practice: Eye-catching colors}
+\phantomsection\label{practice-eye-catching-colors-3}
+\begin{itemize}
+\item
+  Each version of the plot contains purple and yellow points, but in one
+  version, the purple points are easier to perceive than the yellow
+  points.
+\item
+  Which statement is true?
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Question 1}
+\phantomsection\label{question-1}
+\textbf{To ensure that all data points are equally perceivable, they
+should all have the same color.}
+\end{frame}
+
+\begin{frame}{Answer 1}
+\phantomsection\label{answer-1}
+\begin{itemize}
+\tightlist
+\item
+  \textbf{False}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Question 2}
+\phantomsection\label{question-2}
+\textbf{To ensure that all data points are equally perceivable, they
+should all have the same chroma.}
+\end{frame}
+
+\begin{frame}{Answer 2}
+\phantomsection\label{answer-2}
+\begin{itemize}
+\tightlist
+\item
+  \textbf{False}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Question 3}
+\phantomsection\label{question-3}
+\textbf{To ensure that all data points are equally perceivable, they
+should all have the same luminance.}
+\end{frame}
+
+\begin{frame}{Answer 3}
+\phantomsection\label{answer-3}
+\begin{itemize}
+\tightlist
+\item
+  \textbf{False}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Question 4}
+\phantomsection\label{question-4}
+\textbf{To ensure that all data points are equally perceivable, choose a
+qualitative, sequential, or diverging scale in hue-chroma-luminance
+colorspace.}
+\end{frame}
+
+\begin{frame}{Answer 4}
+\phantomsection\label{answer-4}
+\begin{itemize}
+\tightlist
+\item
+  \textbf{True}
+\end{itemize}
+
+The colors you choose for your plots will affect how the plot is
+interpreted. Using a qualitative, sequential, or diverging scale in
+hue-chroma-luminance colorspace is almost always the best option.
+\end{frame}
+
+\begin{frame}{Question 5}
+\phantomsection\label{question-5}
+\textbf{To ensure that all data points are equally perceivable, they
+should all have the same hue.}
+\end{frame}
+
+\begin{frame}{Answer 5}
+\phantomsection\label{answer-5}
+\begin{itemize}
+\tightlist
+\item
+  \textbf{False}
+\end{itemize}
 \end{frame}
 
 \end{document}

@@ -1679,3 +1679,245 @@ Unfortunately, even with just four lines, it's difficult to distinguish the diff
 ## Correct Answer
 
 ![](../images/im74.png) 
+
+
+
+## Using color
+
+  - You just saw that the most powerful tool you have for distinguishing data values is often         color. 
+  
+  - Now you'll see how to choose the best colors for your plots.
+
+## Colorspaces: Red-Green-Blue
+
+![](../images/im75.png) 
+How you define colors has an impact on which colors you want to choose. 
+
+
+## Colorspaces: Red-Green-Blue
+
+
+  - Many programming languages define colors by how much red, green and blue the colors contain,      so the software knows how bright to make the red, green, and blue pixels onscreen. 
+  
+  - We call this the red-green-blue colorspace.
+
+## Colorspaces: Cyan-Magenta-Yellow-blacK
+
+  - Graphic designers often define colors by the amount cyan, magenta, yellow, and black they         contain because color printers have these four ink cartridges. 
+
+![](../images/im76.png) 
+
+  - Using this colorspace gives them the highest fidelity between what is onscreen and what is printed.
+
+## Choosing a plotting palette
+
+Here's the plot of Los Angeles house prices. 
+  
+![](../images/im77.png)   
+
+## Choosing a plotting palette
+
+There are some problems with the choice of colors. 
+
+  - Firstly, yellow points are harder to see than reds, meaning viewers might spend less time         looking at the yellows, and miss important insights. 
+  
+  - Secondly, the colors blue and purple are perceptually quite close, that is, they appear to be     quite similar. 
+  
+## Choosing a plotting palette
+
+  - By contrast, yellow appears very different to the other colors. 
+  
+![](../images/im78.png)    
+  
+  - This could lead viewers of the plot to think, possibly subconsciously, that the yellow points     are different to the others.
+
+## Colorspaces: Hue-Chroma-Luminance
+
+  - The colorspace designed for data visualization is called hue-chroma-luminance, or HCL. 
+  
+![](../images/im79.png)    
+  
+It's designed to deal with issues of color perception. 
+  
+## Colorspaces: Hue-Chroma-Luminance
+
+Hue is like the color of the rainbow, from red, through orange, green and blue, to purple and back to red.
+
+![](../images/im80.png) 
+
+Chroma is the intensity of the color, from grey to a bright color. 
+
+## Colorspaces: Hue-Chroma-Luminance
+
+You can go from grey to bright green, or grey to bright magenta, or grey to any other hue.
+
+![](../images/im80.png) 
+
+
+## Colorspaces: Hue-Chroma-Luminance
+
+Luminance is the brightness of the color, from black to white. 
+
+![](../images/im80.png) 
+
+For example, you can go from black through cyan to white, or black through red to white.
+
+## Three types of color scale: qualitative
+
+When choosing the colors for your plot, you can pick one of three types of color scale. 
+
+![](../images/im81.png) 
+
+Qualitative color scales are used to distinguish unordered categories, and usually involve changing the hue, while keeping chroma and luminance fixed.
+
+## Qualitative palette example
+
+Here's the technology adoption line plot. 
+
+![](../images/im82.png) 
+## Qualitative palette example
+
+  - The technologies are unordered, since it isn't useful to think of refrigerators as greater than stoves. 
+
+  - Each line has a different hue, but constant chroma and luminance.
+
+## Three types of color scale: sequential
+
+  - To emphasize ordering in your data, that is, to show that values are greater than or less than each other, you need a sequential color scale. 
+
+  - Most sequential scales change either chroma or luminance, while keeping hue fixed.
+
+## Sequential palette example
+
+Here's the fruit and vegetable consumption bar plot. 
+
+![](../images/im83.png) 
+
+The categories are ordered from zero to greater than five, so a sequential color scale makes most sense.
+
+## Another sequential palette example
+
+  - You can also use sequential scales with continuous variables.
+  
+![](../images/im84.png)   
+
+  - Here's the scatter plot of life expectancy. 
+  
+  
+## Another sequential palette example  
+  
+  - This is slightly cheating because it uses a sequential scale that changes the hue. 
+  
+  - The color scale is called viridis, and it's designed to be easily viewable by color blind people, and to print well in black and white. 
+  
+This color scale had a lot of science used in its development; if you make your own sequential scale it's better to stick to changing only chroma or luminance.
+
+## Three types of color scale: diverging
+
+  - To emphasize whether values are greater than or less than some middle value, use a diverging scale. 
+  
+![](../images/im85.png)  
+These are similar to sequential scales, but have a neutral color like white or gray in the middle, and have increasingly bold colors with different hues on either edge.
+
+## Green Tech in Malaysia survey dataset
+
+Here's another survey dataset, on green technology and recycling in Malaysia. 
+
+![](../images/im86.png) 
+
+## Green Tech in Malaysia survey dataset
+
+  - Each question has a choice of five responses, from "Strongly Disagree" to "Strongly Agree". 
+  
+  - "Neutral" responses form a midpoint, making a diverging scale useful.
+
+
+## Diverging palette example
+
+Here you can see each question on its own row, and the colors get bolder as the opinions get stronger.
+
+![](../images/im87.png) 
+
+## Practice: Eye-catching colors
+
+  - Not all colors are as eye-catching as others. 
+  
+  - This can cause a problem for data visualization, because having some data point more obvious than others can bias the way you interpret a plot. 
+  
+## Practice: Eye-catching colors
+
+  - Unless you specifically want to highlight some points, each data point should be as easy to look at as all the others.
+
+## Practice: Eye-catching colors
+
+  - Here you can see the dataset from the camera trap in Panama. 
+
+![](../images/im88.jpg) 
+
+  - This time, the speed of the animal as they passed the camera is plotted against the time of day that they were caught on camera, and the agouti have been joined by another rodent, the paca.
+
+
+## Practice: Eye-catching colors
+
+  - Each version of the plot contains purple and yellow points, but in one version, the purple        points are easier to perceive than the yellow points.
+
+  - Which statement is true?
+
+
+
+## Question 1
+
+**To ensure that all data points are equally perceivable, they should all have the same color.**
+
+## Answer 1
+
+- **False**
+
+## Question 2
+
+**To ensure that all data points are equally perceivable, they should all have the same chroma.**
+
+## Answer 2
+
+- **False**
+
+## Question 3
+
+**To ensure that all data points are equally perceivable, they should all have the same luminance.**
+
+## Answer 3
+
+- **False**
+
+## Question 4
+
+**To ensure that all data points are equally perceivable, choose a qualitative, sequential, or diverging scale in hue-chroma-luminance colorspace.**
+
+## Answer 4
+
+- **True**
+
+The colors you choose for your plots will affect how the plot is interpreted. Using a qualitative, sequential, or diverging scale in hue-chroma-luminance colorspace is almost always the best option.
+
+## Question 5
+
+**To ensure that all data points are equally perceivable, they should all have the same hue.**
+
+
+## Answer 5
+
+- **False**
+
+
+
+
+
+
+
+
+
+
+
+
+
+
