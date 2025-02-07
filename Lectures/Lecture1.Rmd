@@ -1909,15 +1909,670 @@ The colors you choose for your plots will affect how the plot is interpreted. Us
 - **False**
 
 
+## Plotting many variables at once
+
+- To visualize many variables, you'll need to use more advanced plot types. 
+
+- Here we'll look at pair plots, correlation heatmaps, and parallel coordinates plots.
+
+## When should you use a pair plot?
+
+Pair plots work with up to about ten variables at once, and they show you the distribution of each variable, and the relationship between each pair of variables.
+
+## pair plot all
+
+Here is a pair plot of LA home prices. 
+
+![](../images/im89.png) 
+
+There are four variables in the dataset, giving four rows of panels and four columns. Let's explore this piece by piece.
+
+## pair diag disc
+
+- Panels on the diagonal show distributions of variables. 
+
+![](../images/im90.png) 
+
+- City is a categorical variable, so its distribution is represented as a bar plot of counts for each city.
+
+## pair diag cts
+
+  - The other three variables - number of beds, price, and area - are continuous, so their distributions are represented by histograms.
+
+  ![](../images/im91.png) 
+
+## pair cts
+
+Panels off the diagonal show relationships between pairs of variables. 
+
+![](../images/im92.png) 
+
+When both variables are continuous, you see scatter plots of each pair of variables, and their correlation. 
+
+
+## pair cts
+
+- For example, in the second column, fourth row, you see a scatter plot of number of beds versus area. 
+
+![](../images/im93.png) 
+
+- In the fourth column, second row, you see that number of beds and area have a positive correlation of zero-point-seven-eight-two.
+
+## pair combo
+
+- When comparing a categorical variable to a continuous variable you get a box plot and a histogram of the continuous variable split by the categorical variable. 
+
+- For example, in the third column, first row, you see a box plot of prices for each city. 
+
+- n the first column, third row, you see a histogram of the same thing. 
+
+- The histogram is vertical so the positions match those in the city panel on the diagonal.
+
+## pair plot all again
+
+Pair plots can be tremendously helpful for quickly exploring a new dataset. 
+
+![](../images/im94.png)
+
+For the special case where you have many continuous variables, a close relative of the pair plot called a correlation heatmap is simpler, and scales to visualizing even more variables at once.
+
+## pair corr
+
+The idea is that you draw a pair plot, only including the panels for correlations, but instead of showing numbers, you show a color.
+
+![](../images/im95.png)
+
+## When should you use a correlation heatmap?
+
+- Correlation heatmaps are designed to show relationships between pairs of continuous variables. 
+
+- They are compact, so you can easily compare tens of variables at once.
+
+## corr heat
+
+Here's a correlation heatmap of a customer satisfaction survey for a Yellow Pages advertising product.
+
+![](../images/im96.png)
+
+ Customers rated the importance of product features on a scale from 1 to 10. 
+ 
+## corr heat
+ 
+ - Where two features consistently received similar scores by customers, they are positively correlated, and colored in a more vibrant red. 
+
+ ![](../images/im96.png)
+ 
+ - Those bright reds in the bottom left show that the price related product aspects all strongly correlate with each other.
+
+
+## The United Nations dataset again
+
+Here's a plot of the United Nations country data again. 
+
+ ![](../images/im97.png)
+
+
+It showed that you can use color on a scatter plot to display three variables at once. 
+
+
+## The United Nations dataset again
+
+However, with four or more variables scatter plots can quickly become complicated to interpret.
+
+##  When should you use a parallel coordinates plot?
+
+- When you have lots of continuous variables
+
+- You want to find patterns across these variables
+
+- You want to visualise clusters of observations
+
+ ## A parallel coordinates plot
+
+Here's a parallel coordinates plot of the three variables you saw before, plus the human development index score. 
+
+ ![](../images/im98.png)
+
+Each line represents one country, and each continuous variable appears on the x-axis, just like a bar plot. 
+
+
+ ## A parallel coordinates plot
+
+
+- To make each variable comparable, the y-axis simply ranges from the lowest value in the dataset for that variable to the highest value. 
+
+- Unfortunately, this plot is a mess because the world is complicated. Let's try splitting the dataset by continent.
+
+## para coord by continent
+
+Now some patterns emerge. 
+
+ ![](../images/im99.png)
+
+## para coord by continent
+
+- The South American countries are quite consistent. 
+
+- Their GNIs are low, and their human development index, life expectancy and schooling values are mostly between the median and the 75th percentile. 
+
+## para coord by continent
+
+- In Europe, you see a wide range of GNIs, but the other metrics are all high. 
+
+- In Africa, the GNIs are all low, but the other metrics show a wide range. 
+
+## para coord by continent
+
+- The wonderful thing about this plot is that more metrics can just be added to the x-axis. 
+
+- You can easily compare ten or twenty variables at once.
+
+## Practice: Interpreting Pair Plots
+
+To get a quick overview of a dataset, it’s helpful to draw a plot of the distribution of each variable and the relationship between each pair of variables. 
+
+A **pair plot** displays all these plots together in a matrix of panels. It shows a lot of information at once, so to interpret it, try looking at one panel at a time.
+
+## Pair Plot Visualization
+
+Here, we have the Panamanian camera trap data for five species:
+
+![](../images/im100.png)
+
+ 
+## Question 1
+
+### Most animals were traveling at less than 1 m/s when caught on camera.
+
+- True
+- False
+
+## Feedback for Question 1
+
+**Answer:** True  
+Most animals had speeds below 1 m/s based on the speed distribution in the pair plot.
+
+## Question 2
+
+### There are more than 250 sightings of peccary in the dataset.
+
+- True
+- False
+
+## Feedback for Question 2
+
+**Answer:** True  
+The bar chart in the pair plot shows the peccary count exceeds 250.
+
+## Question 3
+
+### Paca is the only nocturnal animal in the dataset.
+
+- True
+- False
+
+## Feedback for Question 3
+
+**Answer:** False  
+Other species were also observed during the night. Review the data description or time distribution for nocturnal activity.
+
+## Question 4
+
+### The animal with the fastest 75th percentile speed on camera was an agouti.
+
+- True
+- False
+
+## Feedback for Question 4
+
+**Answer:** False  
+The pair plot indicates another species had a faster 75th percentile speed.
+
+## Question 5
+
+### All species were caught on camera most often around dawn (6 AM) and dusk (6 PM).
+
+- True
+- False
+
+## Feedback for Question 5
+
+**Answer:** False  
+The time distribution shows variation in sightings across different times for each species.
+
+## Question 6
+
+### There is a strong negative correlation between the time of sighting and the speed of the animal.
+
+- True
+- False
+
+## Feedback for Question 6
+
+**Answer:** False  
+The pair plot shows a weak correlation (close to 0) between time of sighting and speed.
+
+
+# 99 problems but a plot ain't one of them
+
+## Polar coordinates
+
+You've seen a lot of plot types so far, but one type has been conspicuously absent.
+
+## Pie plots
+
+That's the pie plot. 
+
+![](../images/im101.png)
+
+It's a wildly popular plot type, but we've been avoiding it for a good reason.
+
+## ESPN famous athletes, by sport
+
+Here's the bar plot of famous athletes by sport.
+
+![](../images/im102.png)
+
+
+## Bar plot + polar coords = pie plot
+
+If you convert the coordinate system for the plot from Cartesian coordinates, that is, standard x and y axes, to polar coordinates, you get a pie plot. 
+
+![](../images/im103.png)
+
+A pie plot is just a bar plot where the bar lengths are converted to angles. 
+  
+## Bar plot + polar coords = pie plot
+  
+- Unfortunately, this plot is much harder to interpret than the bar plot. 
+
+- For example, it's really hard to answer questions that were easy with the bar plot, like "How many cricketers were on the list?". 
+
+## Bar plot + polar coords = pie plot
+
+Data visualization research suggests that bar plots are almost always easier to interpret than pie plots.
+
+## When should you use polar coordinates?
+
+- So the answer to the question of when should you use polar coordinates is that they are almost never a good idea. 
+
+- There is one exception, though it is fairly niche. 
+
+- If you have data that has some natural circularity to it, like the time of day or a direction, then polar coordinates can be acceptable.
+
+## Histogram of animal activity
+
+Here's a histogram of animal activity from the Panama camera trap dataset. 
+
+![](../images/im104.png)
+
+## Histogram of animal activity
+
+It's a great plot with one problem: the activity from the nocturnal paca appears to be split in two, because the plot doesn't recognize that midnight on the left of the x-axis is the same as the midnight on the right of the x-axis.
+
+## Histogram + polar coords = rose plot
+
+- One possible fix is to convert the histograms to polar coordinates, forming a rose plot. 
+
+- This is slightly different to the pie plot because it's the x-axis that is converted to angles, and the bar heights still remain as lengths. 
+
+## Histogram + polar coords = rose plot
+
+Now if you look at the paca's activity distribution, it's clearer that it is one burst of activity lasting all night, rather than two separate bursts.
+
+![](../images/im105.png)
+
+
+## Practice: Pie Plot Visualization
+
+**Pie plots** (sometimes called pie charts) are extremely popular but often difficult to interpret. 
+
+They are just bar plots converted into polar coordinates, and humans are generally worse at perceiving angles compared to lengths.
+
+## Practice: Pie Plot Visualization
+
+
+Following on from the scotch whisky dataset in the last chapter, here’s another dataset from the Health Survey for England. 
+
+![](../images/im106.png)
+
+
+## Practice: Pie Plot Visualization
+
+- This time, it shows alcohol consumption for English men aged 16 or more. 
+
+- Each pie segment and bar height represents percentages of respondents.
+
+## Pie Plot Visualization
+
+Look at the pie plots and bar plots below and determine which statement is true.
+
+![](../images/im106.png)
+
+##  Question
+
+### Which of the following statements is true?
+
+1. Only the 75+ age group had more non-drinkers than people drinking 14 to 35 units per week.
+2. Three age groups had more than 30% of people drinking 14 to 35 units per week.
+3. All age groups had less than 20% non-drinkers.
+4. All age groups had at least 50% of people drinking up to 14 units per week.
+
+## Feedback for Question
+
+**Answer:**
+- Option 1 is correct.
+
+**Explanation:**
+- Based on the pie plots, the 75+ age group had more non-drinkers compared to those drinking 14–35 units per week, while other age groups showed different patterns.
+
+##  Key Takeaway
+
+Pie plots can be visually appealing but challenging to interpret. Use bar plots when possible for easier comparisons.
 
 
 
+##  Axes of evil
+
+Let's take a look at problems with axes in plots.
+
+## Nonsense bar lengths
+
+One thing that is fundamental to bar plots is that the length of each bar is proportional to whatever value it represents. 
+
+
+## Nonsense bar lengths
+
+
+In this infographic found on the wonderful subreddit, "dataisugly", the 22-point-5 percent scored by Yang in the poll appears to be much larger than the 21 percent scored by Sanders, or "Bernie", as he is affectionately referred to here. 
+
+![](../images/im107.png)
 
 
 
+## Nonsense bar lengths
+
+- If we draw the bar plot correctly, you can see that the difference between the two poll scores is fairly small. 
+
+- I don't want to single out Yang specifically, but I would like to warn you to be cautious when interpreting plots on political posters.
+
+## The same applies to stacked bar plots
+
+It isn't just politicians who play fast and loose with the rules of data visualization. 
 
 
+## The same applies to stacked bar plots
+
+This time we have a stacked bar plot from dataisugly, about market share of phone operating systems. 
+
+![](../images/im108.png)
 
 
+## The same applies to stacked bar plots
+
+- The problem with this is more subtle. 
+
+-Rather than making up bar lengths to look good on a poster, the values do match a real scale. 
+
+## The same applies to stacked bar plots
+
+- The mistake is that the y-axis, containing market share, begins at seventy-five percent instead of zero. 
+
+- This makes it look like Android and iOS have similar market shares. 
+
+- If we draw the stacked bar plot correctly, we see that Android has a much larger share.
 
 
+## Dual axes are misleading
+
+Another common bad idea for plots is to use two y-axes. 
+
+## Dual axes are misleading
+
+This is typically done when you want to plot two things on the y-axis with very different scales. 
+
+![](../images/im109.png)
+
+## Dual axes are misleading
+
+-Here you can see the United Nations dataset, with length of schooling on the x-axis. 
+
+![](../images/im109.png)
+
+
+## Dual axes are misleading
+
+- The red points are related to life expectancy and link to the y-axis on the left. 
+
+- The blue points link to the human development index for the country and link to the y-axis on the right. 
+
+
+## Dual axes are misleading
+
+- The two axes are needed here because the life expectancies are all between fifty and ninety, but the human development index is on a scale from zero to one. 
+
+- The problem is that by changing the right-hand y-axis, the interpretation of the plot completely changes. On the left, it looks there is a strong correlation between life expectancy and human development index, but on the right it looks like there is no correlation. 
+
+- You have to stare hard at the numbers on the axis to see what is going on.
+
+## Better to use multiple panels
+
+A much better solution is to admit that you are trying to plot two different things, and keep them in separate panels, so it's clear to your audience that they are different metrics.
+
+![](../images/im110.png)
+
+
+## Practice Bar Plot Visualization
+
+- When we look at a bar plot, we use the relative lengths of each bar to interpret what is happening. 
+
+- If you don’t include zero on the axis used for bar lengths, then the relative lengths of bars are distorted, and it’s easy to be misled.
+
+## Practice Bar Plot Visualization
+
+Here is a bar plot from the Health Survey for England, showing asthma prevalence.  
+
+![](../images/im111.png)
+
+
+## Practice Bar Plot Visualization
+
+- "Not asthmatic" means no asthma symptoms were reported, and no medication was taken for asthma in the previous 12 months.
+
+Compare versions of the plot with each y-axis and determine which statement is true.
+
+
+## Question
+
+### Which of the following statements is true?
+
+1. The percentage of asthmatics is less than 15% for every age group.
+2. 16–24-year-olds have more than twice the percentage of non-asthmatics than 45–54-year-olds.
+3. The majority of people aged 35–74 are asthmatic.
+4. The percentage of asthmatics ranges from about 40% to about 80%, depending on the age group.
+
+## Feedback for Question
+
+**Answer:**  
+- The correct answer is: "The percentage of asthmatics is less than 15% for every age group."
+
+**Explanation:**  
+- Based on the bar plot, the percentage of asthmatics in all age groups does not exceed 15%. The y-axis confirms the maximum percentages.
+
+## Key Takeaway
+
+When using bar plots, always ensure the y-axis starts at zero to avoid distortion. Interpret bar lengths cautiously and compare them with the axis to validate proportions.
+
+
+## Sensory overload
+
+There are two basic measures of how good your data visualization is.
+
+## Measures of a good visualization
+
+- The first measure is how many insights can the reader get from your plot. 
+
+- For far too many plots, the answer is zero. 
+
+## Measures of a good visualization
+
+- The second measure is how quickly the reader will get those insights. 
+
+- If your plot is being presented in a meeting, you might reasonably expect your audience to concentrate on your plot for twenty seconds. 
+
+- Often, you need to get your message across quickly.
+
+## Chartjunk
+
+- Chartjunk refers to anything in the plot that makes it harder for the reader to get insight into the data. 
+
+- We'll look at some common problems in the following slides. 
+
+## Chartjunk
+
+- One term that's less well known is **skeuomorphism**. 
+
+- That means adding things that happen in the real world to virtual objects. For example you could add shadows to bars in a bar plot.
+
+## Pictures
+
+Here's an example from the BBC TV network, found on the Junk Charts blog. 
+
+![](../images/im112.png)
+
+
+## Pictures
+
+This probably ought to be a bar plot, but since the y-axis doesn't begin at zero, it suggests that maybe the BBC was aiming for a dot plot. 
+
+
+![](../images/im113.png)
+
+In which case, is the height represented by the top of the head of the center of the head? Using a picture of a man instead of a bar makes things harder to understand, not easier.
+
+
+## Skeuomorphism
+
+This example was created by the Fox News TV channel, and found by Media Matters for America. 
+
+![](../images/im114.png)
+
+
+## Skeuomorphism
+
+- You can see some familiar problems with the bar plot, like the y-axis not including zero, distorting the relative heights of the bars. 
+
+- Also notice that the time periods have been arbitrarily limited to October to April, omitting what happened between May and September each year. 
+
+## Skeuomorphism
+
+Let's focus on the skeuomorphic elements of the plot. 
+
+![](../images/im114.png)
+
+There's a shadow across the panel of the plot, which adds no value, but since it travels upwards and to the right, it gives a subconscious signal that numbers are increasing. 
+
+## Skeuomorphism
+
+The bars have also been given a slight depth to them. 
+
+![](../images/im114.png)
+
+The 3D aspect makes it harder to accurately judge where they lie against the y-axis, so the bar heights have to be written in text to compensate. By stripping away all the junk, the data is easier to see.
+
+
+## Extra dimensions
+
+This plot was found on the dataisugly subreddit, and has many problems. 
+
+![](../images/im115.png)
+
+Try counting the issues you can find. 
+
+
+## Extra dimensions
+
+Let's concentrate on the unnecessary use of 3D perspective. 
+
+![](../images/im116.png)
+
+Bar plots are inherently two dimensional.
+
+
+## Extra dimensions
+
+- You have categories on one axis, and a continuous variable on the other axis. 
+
+- By making bars three-dimensional, you don't provide additional information, but simply make it harder to judge the lengths of bars. 
+
+- A 2D bar plot is easier to read, although one category label is missing, and the percentages don't add up to one hundred, so it's unclear what the y-axis represents.
+
+
+## Ostentatious colors and lines
+
+Here's another plot from dataisugly, showing seats in the German Federal Council. 
+
+![](../images/im117.png)
+
+There are sixteen states and seven political parties.
+
+## Ostentatious colors and lines
+
+- Parties typically have to enter into a power-sharing coalition to get seats in each state. 
+
+![](../images/im117.png)
+
+- Each political party has a color associated with their brand: CDU is black, SPD is red, Grüne is green, and so on. 
+
+
+## Ostentatious colors and lines
+
+- Each state on the map or slice of pie plot has the color of the party which won the most votes and stripes colored by the other parties sharing power. 
+
+![](../images/im117.png)
+
+- The problem is that the plot is just too ugly to look at, so no-one can get any insights from it. 
+
+
+## Ostentatious colors and lines
+
+- In general, stripes or other forms of hatching should be avoided in plots because they're just plain difficult to stare at. 
+
+![](../images/im118.png)
+
+- One reddit user tried to improve the plot, as shown on the right. By removing the hatching, it's much nicer to look at the plot.
+
+
+## Practice: Chartjunk
+
+Chartjunk is anything in a plot that distracts from gaining insight. That is, removing it would make the plot easier to understand.
+
+## Practice: Chartjunk
+
+Here’s the scatter plot of the greatest hip-hop songs, this time with added bling.
+
+![](../images/im119.png)
+
+## Question
+
+Which element of the plot is **not** chartjunk?
+
+1. Bold, italic text  
+2. Chunky grid lines  
+3. Dollar signs for points  
+4. Golden panel background  
+5. Axis labels  
+
+
+## Feedback
+
+**Correct Answer:**  
+- **Axis labels** are not chartjunk. They provide essential information about the data represented in the plot.
+
+**Explanation:**  
+- Chartjunk elements like chunky grid lines, dollar signs, and the golden background add visual noise, detracting from the readability of the plot. However, axis labels are crucial for understanding the scale and meaning of the data.
+
+
+## Key Takeaway
+
+When designing plots, focus on clarity and remove unnecessary elements. This improves the interpretability and impact of your visualizations.

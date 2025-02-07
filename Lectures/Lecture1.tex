@@ -134,7 +134,7 @@
 \title{Lecture 1}
 \subtitle{Understanding Data Visualization}
 \author{Endri Raco}
-\date{06 February, 2025}
+\date{07 February, 2025}
 
 \begin{document}
 \frame{\titlepage}
@@ -2834,6 +2834,1065 @@ should all have the same hue.}
 \item
   \textbf{False}
 \end{itemize}
+\end{frame}
+
+\begin{frame}{Plotting many variables at once}
+\phantomsection\label{plotting-many-variables-at-once}
+\begin{itemize}
+\item
+  To visualize many variables, you'll need to use more advanced plot
+  types.
+\item
+  Here we'll look at pair plots, correlation heatmaps, and parallel
+  coordinates plots.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{When should you use a pair plot?}
+\phantomsection\label{when-should-you-use-a-pair-plot}
+Pair plots work with up to about ten variables at once, and they show
+you the distribution of each variable, and the relationship between each
+pair of variables.
+\end{frame}
+
+\begin{frame}{pair plot all}
+\phantomsection\label{pair-plot-all}
+Here is a pair plot of LA home prices.
+
+\includegraphics{../images/im89.png}
+
+There are four variables in the dataset, giving four rows of panels and
+four columns. Let's explore this piece by piece.
+\end{frame}
+
+\begin{frame}{pair diag disc}
+\phantomsection\label{pair-diag-disc}
+\begin{itemize}
+\tightlist
+\item
+  Panels on the diagonal show distributions of variables.
+\end{itemize}
+
+\includegraphics{../images/im90.png}
+
+\begin{itemize}
+\tightlist
+\item
+  City is a categorical variable, so its distribution is represented as
+  a bar plot of counts for each city.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{pair diag cts}
+\phantomsection\label{pair-diag-cts}
+\begin{itemize}
+\tightlist
+\item
+  The other three variables - number of beds, price, and area - are
+  continuous, so their distributions are represented by histograms.
+\end{itemize}
+
+\includegraphics{../images/im91.png}
+\end{frame}
+
+\begin{frame}{pair cts}
+\phantomsection\label{pair-cts}
+Panels off the diagonal show relationships between pairs of variables.
+
+\includegraphics{../images/im92.png}
+
+When both variables are continuous, you see scatter plots of each pair
+of variables, and their correlation.
+\end{frame}
+
+\begin{frame}{pair cts}
+\phantomsection\label{pair-cts-1}
+\begin{itemize}
+\tightlist
+\item
+  For example, in the second column, fourth row, you see a scatter plot
+  of number of beds versus area.
+\end{itemize}
+
+\includegraphics{../images/im93.png}
+
+\begin{itemize}
+\tightlist
+\item
+  In the fourth column, second row, you see that number of beds and area
+  have a positive correlation of zero-point-seven-eight-two.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{pair combo}
+\phantomsection\label{pair-combo}
+\begin{itemize}
+\item
+  When comparing a categorical variable to a continuous variable you get
+  a box plot and a histogram of the continuous variable split by the
+  categorical variable.
+\item
+  For example, in the third column, first row, you see a box plot of
+  prices for each city.
+\item
+  n the first column, third row, you see a histogram of the same thing.
+\item
+  The histogram is vertical so the positions match those in the city
+  panel on the diagonal.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{pair plot all again}
+\phantomsection\label{pair-plot-all-again}
+Pair plots can be tremendously helpful for quickly exploring a new
+dataset.
+
+\includegraphics{../images/im94.png}
+
+For the special case where you have many continuous variables, a close
+relative of the pair plot called a correlation heatmap is simpler, and
+scales to visualizing even more variables at once.
+\end{frame}
+
+\begin{frame}{pair corr}
+\phantomsection\label{pair-corr}
+The idea is that you draw a pair plot, only including the panels for
+correlations, but instead of showing numbers, you show a color.
+
+\includegraphics{../images/im95.png}
+\end{frame}
+
+\begin{frame}{When should you use a correlation heatmap?}
+\phantomsection\label{when-should-you-use-a-correlation-heatmap}
+\begin{itemize}
+\item
+  Correlation heatmaps are designed to show relationships between pairs
+  of continuous variables.
+\item
+  They are compact, so you can easily compare tens of variables at once.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{corr heat}
+\phantomsection\label{corr-heat}
+Here's a correlation heatmap of a customer satisfaction survey for a
+Yellow Pages advertising product.
+
+\includegraphics{../images/im96.png}
+
+Customers rated the importance of product features on a scale from 1 to
+10.
+\end{frame}
+
+\begin{frame}{corr heat}
+\phantomsection\label{corr-heat-1}
+\begin{itemize}
+\tightlist
+\item
+  Where two features consistently received similar scores by customers,
+  they are positively correlated, and colored in a more vibrant red.
+\end{itemize}
+
+\includegraphics{../images/im96.png}
+
+\begin{itemize}
+\tightlist
+\item
+  Those bright reds in the bottom left show that the price related
+  product aspects all strongly correlate with each other.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The United Nations dataset again}
+\phantomsection\label{the-united-nations-dataset-again}
+Here's a plot of the United Nations country data again.
+
+\includegraphics{../images/im97.png}
+
+It showed that you can use color on a scatter plot to display three
+variables at once.
+\end{frame}
+
+\begin{frame}{The United Nations dataset again}
+\phantomsection\label{the-united-nations-dataset-again-1}
+However, with four or more variables scatter plots can quickly become
+complicated to interpret.
+\end{frame}
+
+\begin{frame}{When should you use a parallel coordinates plot?}
+\phantomsection\label{when-should-you-use-a-parallel-coordinates-plot}
+\begin{itemize}
+\item
+  When you have lots of continuous variables
+\item
+  You want to find patterns across these variables
+\item
+  You want to visualise clusters of observations
+\end{itemize}
+
+\#\# A parallel coordinates plot
+
+Here's a parallel coordinates plot of the three variables you saw
+before, plus the human development index score.
+
+\includegraphics{../images/im98.png}
+
+Each line represents one country, and each continuous variable appears
+on the x-axis, just like a bar plot.
+
+\#\# A parallel coordinates plot
+
+\begin{itemize}
+\item
+  To make each variable comparable, the y-axis simply ranges from the
+  lowest value in the dataset for that variable to the highest value.
+\item
+  Unfortunately, this plot is a mess because the world is complicated.
+  Let's try splitting the dataset by continent.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{para coord by continent}
+\phantomsection\label{para-coord-by-continent}
+Now some patterns emerge.
+
+\includegraphics{../images/im99.png}
+\end{frame}
+
+\begin{frame}{para coord by continent}
+\phantomsection\label{para-coord-by-continent-1}
+\begin{itemize}
+\item
+  The South American countries are quite consistent.
+\item
+  Their GNIs are low, and their human development index, life expectancy
+  and schooling values are mostly between the median and the 75th
+  percentile.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{para coord by continent}
+\phantomsection\label{para-coord-by-continent-2}
+\begin{itemize}
+\item
+  In Europe, you see a wide range of GNIs, but the other metrics are all
+  high.
+\item
+  In Africa, the GNIs are all low, but the other metrics show a wide
+  range.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{para coord by continent}
+\phantomsection\label{para-coord-by-continent-3}
+\begin{itemize}
+\item
+  The wonderful thing about this plot is that more metrics can just be
+  added to the x-axis.
+\item
+  You can easily compare ten or twenty variables at once.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Practice: Interpreting Pair Plots}
+\phantomsection\label{practice-interpreting-pair-plots}
+To get a quick overview of a dataset, it's helpful to draw a plot of the
+distribution of each variable and the relationship between each pair of
+variables.
+
+A \textbf{pair plot} displays all these plots together in a matrix of
+panels. It shows a lot of information at once, so to interpret it, try
+looking at one panel at a time.
+\end{frame}
+
+\begin{frame}{Pair Plot Visualization}
+\phantomsection\label{pair-plot-visualization}
+Here, we have the Panamanian camera trap data for five species:
+
+\includegraphics{../images/im100.png}
+\end{frame}
+
+\begin{frame}{Question 1}
+\phantomsection\label{question-1-1}
+\begin{block}{Most animals were traveling at less than 1 m/s when caught
+on camera.}
+\phantomsection\label{most-animals-were-traveling-at-less-than-1-ms-when-caught-on-camera.}
+\begin{itemize}
+\tightlist
+\item
+  True
+\item
+  False
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Feedback for Question 1}
+\phantomsection\label{feedback-for-question-1}
+\textbf{Answer:} True\\
+Most animals had speeds below 1 m/s based on the speed distribution in
+the pair plot.
+\end{frame}
+
+\begin{frame}{Question 2}
+\phantomsection\label{question-2-1}
+\begin{block}{There are more than 250 sightings of peccary in the
+dataset.}
+\phantomsection\label{there-are-more-than-250-sightings-of-peccary-in-the-dataset.}
+\begin{itemize}
+\tightlist
+\item
+  True
+\item
+  False
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Feedback for Question 2}
+\phantomsection\label{feedback-for-question-2}
+\textbf{Answer:} True\\
+The bar chart in the pair plot shows the peccary count exceeds 250.
+\end{frame}
+
+\begin{frame}{Question 3}
+\phantomsection\label{question-3-1}
+\begin{block}{Paca is the only nocturnal animal in the dataset.}
+\phantomsection\label{paca-is-the-only-nocturnal-animal-in-the-dataset.}
+\begin{itemize}
+\tightlist
+\item
+  True
+\item
+  False
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Feedback for Question 3}
+\phantomsection\label{feedback-for-question-3}
+\textbf{Answer:} False\\
+Other species were also observed during the night. Review the data
+description or time distribution for nocturnal activity.
+\end{frame}
+
+\begin{frame}{Question 4}
+\phantomsection\label{question-4-1}
+\begin{block}{The animal with the fastest 75th percentile speed on
+camera was an agouti.}
+\phantomsection\label{the-animal-with-the-fastest-75th-percentile-speed-on-camera-was-an-agouti.}
+\begin{itemize}
+\tightlist
+\item
+  True
+\item
+  False
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Feedback for Question 4}
+\phantomsection\label{feedback-for-question-4}
+\textbf{Answer:} False\\
+The pair plot indicates another species had a faster 75th percentile
+speed.
+\end{frame}
+
+\begin{frame}{Question 5}
+\phantomsection\label{question-5-1}
+\begin{block}{All species were caught on camera most often around dawn
+(6 AM) and dusk (6 PM).}
+\phantomsection\label{all-species-were-caught-on-camera-most-often-around-dawn-6-am-and-dusk-6-pm.}
+\begin{itemize}
+\tightlist
+\item
+  True
+\item
+  False
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Feedback for Question 5}
+\phantomsection\label{feedback-for-question-5}
+\textbf{Answer:} False\\
+The time distribution shows variation in sightings across different
+times for each species.
+\end{frame}
+
+\begin{frame}{Question 6}
+\phantomsection\label{question-6}
+\begin{block}{There is a strong negative correlation between the time of
+sighting and the speed of the animal.}
+\phantomsection\label{there-is-a-strong-negative-correlation-between-the-time-of-sighting-and-the-speed-of-the-animal.}
+\begin{itemize}
+\tightlist
+\item
+  True
+\item
+  False
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Feedback for Question 6}
+\phantomsection\label{feedback-for-question-6}
+\textbf{Answer:} False\\
+The pair plot shows a weak correlation (close to 0) between time of
+sighting and speed.
+\end{frame}
+
+\section{99 problems but a plot ain't one of
+them}\label{problems-but-a-plot-aint-one-of-them}
+
+\begin{frame}{Polar coordinates}
+\phantomsection\label{polar-coordinates}
+You've seen a lot of plot types so far, but one type has been
+conspicuously absent.
+\end{frame}
+
+\begin{frame}{Pie plots}
+\phantomsection\label{pie-plots}
+That's the pie plot.
+
+\includegraphics{../images/im101.png}
+
+It's a wildly popular plot type, but we've been avoiding it for a good
+reason.
+\end{frame}
+
+\begin{frame}{ESPN famous athletes, by sport}
+\phantomsection\label{espn-famous-athletes-by-sport}
+Here's the bar plot of famous athletes by sport.
+
+\includegraphics{../images/im102.png}
+\end{frame}
+
+\begin{frame}{Bar plot + polar coords = pie plot}
+\phantomsection\label{bar-plot-polar-coords-pie-plot}
+If you convert the coordinate system for the plot from Cartesian
+coordinates, that is, standard x and y axes, to polar coordinates, you
+get a pie plot.
+
+\includegraphics{../images/im103.png}
+
+A pie plot is just a bar plot where the bar lengths are converted to
+angles.
+\end{frame}
+
+\begin{frame}{Bar plot + polar coords = pie plot}
+\phantomsection\label{bar-plot-polar-coords-pie-plot-1}
+\begin{itemize}
+\item
+  Unfortunately, this plot is much harder to interpret than the bar
+  plot.
+\item
+  For example, it's really hard to answer questions that were easy with
+  the bar plot, like ``How many cricketers were on the list?''.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Bar plot + polar coords = pie plot}
+\phantomsection\label{bar-plot-polar-coords-pie-plot-2}
+Data visualization research suggests that bar plots are almost always
+easier to interpret than pie plots.
+\end{frame}
+
+\begin{frame}{When should you use polar coordinates?}
+\phantomsection\label{when-should-you-use-polar-coordinates}
+\begin{itemize}
+\item
+  So the answer to the question of when should you use polar coordinates
+  is that they are almost never a good idea.
+\item
+  There is one exception, though it is fairly niche.
+\item
+  If you have data that has some natural circularity to it, like the
+  time of day or a direction, then polar coordinates can be acceptable.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Histogram of animal activity}
+\phantomsection\label{histogram-of-animal-activity}
+Here's a histogram of animal activity from the Panama camera trap
+dataset.
+
+\includegraphics{../images/im104.png}
+\end{frame}
+
+\begin{frame}{Histogram of animal activity}
+\phantomsection\label{histogram-of-animal-activity-1}
+It's a great plot with one problem: the activity from the nocturnal paca
+appears to be split in two, because the plot doesn't recognize that
+midnight on the left of the x-axis is the same as the midnight on the
+right of the x-axis.
+\end{frame}
+
+\begin{frame}{Histogram + polar coords = rose plot}
+\phantomsection\label{histogram-polar-coords-rose-plot}
+\begin{itemize}
+\item
+  One possible fix is to convert the histograms to polar coordinates,
+  forming a rose plot.
+\item
+  This is slightly different to the pie plot because it's the x-axis
+  that is converted to angles, and the bar heights still remain as
+  lengths.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Histogram + polar coords = rose plot}
+\phantomsection\label{histogram-polar-coords-rose-plot-1}
+Now if you look at the paca's activity distribution, it's clearer that
+it is one burst of activity lasting all night, rather than two separate
+bursts.
+
+\includegraphics{../images/im105.png}
+\end{frame}
+
+\begin{frame}{Practice: Pie Plot Visualization}
+\phantomsection\label{practice-pie-plot-visualization}
+\textbf{Pie plots} (sometimes called pie charts) are extremely popular
+but often difficult to interpret.
+
+They are just bar plots converted into polar coordinates, and humans are
+generally worse at perceiving angles compared to lengths.
+\end{frame}
+
+\begin{frame}{Practice: Pie Plot Visualization}
+\phantomsection\label{practice-pie-plot-visualization-1}
+Following on from the scotch whisky dataset in the last chapter, here's
+another dataset from the Health Survey for England.
+
+\includegraphics{../images/im106.png}
+\end{frame}
+
+\begin{frame}{Practice: Pie Plot Visualization}
+\phantomsection\label{practice-pie-plot-visualization-2}
+\begin{itemize}
+\item
+  This time, it shows alcohol consumption for English men aged 16 or
+  more.
+\item
+  Each pie segment and bar height represents percentages of respondents.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Pie Plot Visualization}
+\phantomsection\label{pie-plot-visualization}
+Look at the pie plots and bar plots below and determine which statement
+is true.
+
+\includegraphics{../images/im106.png}
+\end{frame}
+
+\begin{frame}{Question}
+\phantomsection\label{question-7}
+\begin{block}{Which of the following statements is true?}
+\phantomsection\label{which-of-the-following-statements-is-true}
+\begin{enumerate}
+\tightlist
+\item
+  Only the 75+ age group had more non-drinkers than people drinking 14
+  to 35 units per week.
+\item
+  Three age groups had more than 30\% of people drinking 14 to 35 units
+  per week.
+\item
+  All age groups had less than 20\% non-drinkers.
+\item
+  All age groups had at least 50\% of people drinking up to 14 units per
+  week.
+\end{enumerate}
+\end{block}
+\end{frame}
+
+\begin{frame}{Feedback for Question}
+\phantomsection\label{feedback-for-question}
+\textbf{Answer:} - Option 1 is correct.
+
+\textbf{Explanation:} - Based on the pie plots, the 75+ age group had
+more non-drinkers compared to those drinking 14--35 units per week,
+while other age groups showed different patterns.
+\end{frame}
+
+\begin{frame}{Key Takeaway}
+\phantomsection\label{key-takeaway}
+Pie plots can be visually appealing but challenging to interpret. Use
+bar plots when possible for easier comparisons.
+\end{frame}
+
+\begin{frame}{Axes of evil}
+\phantomsection\label{axes-of-evil}
+Let's take a look at problems with axes in plots.
+\end{frame}
+
+\begin{frame}{Nonsense bar lengths}
+\phantomsection\label{nonsense-bar-lengths}
+One thing that is fundamental to bar plots is that the length of each
+bar is proportional to whatever value it represents.
+\end{frame}
+
+\begin{frame}{Nonsense bar lengths}
+\phantomsection\label{nonsense-bar-lengths-1}
+In this infographic found on the wonderful subreddit, ``dataisugly'',
+the 22-point-5 percent scored by Yang in the poll appears to be much
+larger than the 21 percent scored by Sanders, or ``Bernie'', as he is
+affectionately referred to here.
+
+\includegraphics{../images/im107.png}
+\end{frame}
+
+\begin{frame}{Nonsense bar lengths}
+\phantomsection\label{nonsense-bar-lengths-2}
+\begin{itemize}
+\item
+  If we draw the bar plot correctly, you can see that the difference
+  between the two poll scores is fairly small.
+\item
+  I don't want to single out Yang specifically, but I would like to warn
+  you to be cautious when interpreting plots on political posters.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The same applies to stacked bar plots}
+\phantomsection\label{the-same-applies-to-stacked-bar-plots}
+It isn't just politicians who play fast and loose with the rules of data
+visualization.
+\end{frame}
+
+\begin{frame}{The same applies to stacked bar plots}
+\phantomsection\label{the-same-applies-to-stacked-bar-plots-1}
+This time we have a stacked bar plot from dataisugly, about market share
+of phone operating systems.
+
+\includegraphics{../images/im108.png}
+\end{frame}
+
+\begin{frame}{The same applies to stacked bar plots}
+\phantomsection\label{the-same-applies-to-stacked-bar-plots-2}
+\begin{itemize}
+\tightlist
+\item
+  The problem with this is more subtle.
+\end{itemize}
+
+-Rather than making up bar lengths to look good on a poster, the values
+do match a real scale.
+\end{frame}
+
+\begin{frame}{The same applies to stacked bar plots}
+\phantomsection\label{the-same-applies-to-stacked-bar-plots-3}
+\begin{itemize}
+\item
+  The mistake is that the y-axis, containing market share, begins at
+  seventy-five percent instead of zero.
+\item
+  This makes it look like Android and iOS have similar market shares.
+\item
+  If we draw the stacked bar plot correctly, we see that Android has a
+  much larger share.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Dual axes are misleading}
+\phantomsection\label{dual-axes-are-misleading}
+Another common bad idea for plots is to use two y-axes.
+\end{frame}
+
+\begin{frame}{Dual axes are misleading}
+\phantomsection\label{dual-axes-are-misleading-1}
+This is typically done when you want to plot two things on the y-axis
+with very different scales.
+
+\includegraphics{../images/im109.png}
+\end{frame}
+
+\begin{frame}{Dual axes are misleading}
+\phantomsection\label{dual-axes-are-misleading-2}
+-Here you can see the United Nations dataset, with length of schooling
+on the x-axis.
+
+\includegraphics{../images/im109.png}
+\end{frame}
+
+\begin{frame}{Dual axes are misleading}
+\phantomsection\label{dual-axes-are-misleading-3}
+\begin{itemize}
+\item
+  The red points are related to life expectancy and link to the y-axis
+  on the left.
+\item
+  The blue points link to the human development index for the country
+  and link to the y-axis on the right.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Dual axes are misleading}
+\phantomsection\label{dual-axes-are-misleading-4}
+\begin{itemize}
+\item
+  The two axes are needed here because the life expectancies are all
+  between fifty and ninety, but the human development index is on a
+  scale from zero to one.
+\item
+  The problem is that by changing the right-hand y-axis, the
+  interpretation of the plot completely changes. On the left, it looks
+  there is a strong correlation between life expectancy and human
+  development index, but on the right it looks like there is no
+  correlation.
+\item
+  You have to stare hard at the numbers on the axis to see what is going
+  on.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Better to use multiple panels}
+\phantomsection\label{better-to-use-multiple-panels}
+A much better solution is to admit that you are trying to plot two
+different things, and keep them in separate panels, so it's clear to
+your audience that they are different metrics.
+
+\includegraphics{../images/im110.png}
+\end{frame}
+
+\begin{frame}{Practice Bar Plot Visualization}
+\phantomsection\label{practice-bar-plot-visualization}
+\begin{itemize}
+\item
+  When we look at a bar plot, we use the relative lengths of each bar to
+  interpret what is happening.
+\item
+  If you don't include zero on the axis used for bar lengths, then the
+  relative lengths of bars are distorted, and it's easy to be misled.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Practice Bar Plot Visualization}
+\phantomsection\label{practice-bar-plot-visualization-1}
+Here is a bar plot from the Health Survey for England, showing asthma
+prevalence.
+
+\includegraphics{../images/im111.png}
+\end{frame}
+
+\begin{frame}{Practice Bar Plot Visualization}
+\phantomsection\label{practice-bar-plot-visualization-2}
+\begin{itemize}
+\tightlist
+\item
+  ``Not asthmatic'' means no asthma symptoms were reported, and no
+  medication was taken for asthma in the previous 12 months.
+\end{itemize}
+
+Compare versions of the plot with each y-axis and determine which
+statement is true.
+\end{frame}
+
+\begin{frame}{Question}
+\phantomsection\label{question-8}
+\begin{block}{Which of the following statements is true?}
+\phantomsection\label{which-of-the-following-statements-is-true-1}
+\begin{enumerate}
+\tightlist
+\item
+  The percentage of asthmatics is less than 15\% for every age group.
+\item
+  16--24-year-olds have more than twice the percentage of non-asthmatics
+  than 45--54-year-olds.
+\item
+  The majority of people aged 35--74 are asthmatic.
+\item
+  The percentage of asthmatics ranges from about 40\% to about 80\%,
+  depending on the age group.
+\end{enumerate}
+\end{block}
+\end{frame}
+
+\begin{frame}{Feedback for Question}
+\phantomsection\label{feedback-for-question-7}
+\textbf{Answer:}\\
+- The correct answer is: ``The percentage of asthmatics is less than
+15\% for every age group.''
+
+\textbf{Explanation:}\\
+- Based on the bar plot, the percentage of asthmatics in all age groups
+does not exceed 15\%. The y-axis confirms the maximum percentages.
+\end{frame}
+
+\begin{frame}{Key Takeaway}
+\phantomsection\label{key-takeaway-1}
+When using bar plots, always ensure the y-axis starts at zero to avoid
+distortion. Interpret bar lengths cautiously and compare them with the
+axis to validate proportions.
+\end{frame}
+
+\begin{frame}{Sensory overload}
+\phantomsection\label{sensory-overload}
+There are two basic measures of how good your data visualization is.
+\end{frame}
+
+\begin{frame}{Measures of a good visualization}
+\phantomsection\label{measures-of-a-good-visualization}
+\begin{itemize}
+\item
+  The first measure is how many insights can the reader get from your
+  plot.
+\item
+  For far too many plots, the answer is zero.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Measures of a good visualization}
+\phantomsection\label{measures-of-a-good-visualization-1}
+\begin{itemize}
+\item
+  The second measure is how quickly the reader will get those insights.
+\item
+  If your plot is being presented in a meeting, you might reasonably
+  expect your audience to concentrate on your plot for twenty seconds.
+\item
+  Often, you need to get your message across quickly.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Chartjunk}
+\phantomsection\label{chartjunk}
+\begin{itemize}
+\item
+  Chartjunk refers to anything in the plot that makes it harder for the
+  reader to get insight into the data.
+\item
+  We'll look at some common problems in the following slides.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Chartjunk}
+\phantomsection\label{chartjunk-1}
+\begin{itemize}
+\item
+  One term that's less well known is \textbf{skeuomorphism}.
+\item
+  That means adding things that happen in the real world to virtual
+  objects. For example you could add shadows to bars in a bar plot.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Pictures}
+\phantomsection\label{pictures}
+Here's an example from the BBC TV network, found on the Junk Charts
+blog.
+
+\includegraphics{../images/im112.png}
+\end{frame}
+
+\begin{frame}{Pictures}
+\phantomsection\label{pictures-1}
+This probably ought to be a bar plot, but since the y-axis doesn't begin
+at zero, it suggests that maybe the BBC was aiming for a dot plot.
+
+\includegraphics{../images/im113.png}
+
+In which case, is the height represented by the top of the head of the
+center of the head? Using a picture of a man instead of a bar makes
+things harder to understand, not easier.
+\end{frame}
+
+\begin{frame}{Skeuomorphism}
+\phantomsection\label{skeuomorphism}
+This example was created by the Fox News TV channel, and found by Media
+Matters for America.
+
+\includegraphics{../images/im114.png}
+\end{frame}
+
+\begin{frame}{Skeuomorphism}
+\phantomsection\label{skeuomorphism-1}
+\begin{itemize}
+\item
+  You can see some familiar problems with the bar plot, like the y-axis
+  not including zero, distorting the relative heights of the bars.
+\item
+  Also notice that the time periods have been arbitrarily limited to
+  October to April, omitting what happened between May and September
+  each year.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Skeuomorphism}
+\phantomsection\label{skeuomorphism-2}
+Let's focus on the skeuomorphic elements of the plot.
+
+\includegraphics{../images/im114.png}
+
+There's a shadow across the panel of the plot, which adds no value, but
+since it travels upwards and to the right, it gives a subconscious
+signal that numbers are increasing.
+\end{frame}
+
+\begin{frame}{Skeuomorphism}
+\phantomsection\label{skeuomorphism-3}
+The bars have also been given a slight depth to them.
+
+\includegraphics{../images/im114.png}
+
+The 3D aspect makes it harder to accurately judge where they lie against
+the y-axis, so the bar heights have to be written in text to compensate.
+By stripping away all the junk, the data is easier to see.
+\end{frame}
+
+\begin{frame}{Extra dimensions}
+\phantomsection\label{extra-dimensions}
+This plot was found on the dataisugly subreddit, and has many problems.
+
+\includegraphics{../images/im115.png}
+
+Try counting the issues you can find.
+\end{frame}
+
+\begin{frame}{Extra dimensions}
+\phantomsection\label{extra-dimensions-1}
+Let's concentrate on the unnecessary use of 3D perspective.
+
+\includegraphics{../images/im116.png}
+
+Bar plots are inherently two dimensional.
+\end{frame}
+
+\begin{frame}{Extra dimensions}
+\phantomsection\label{extra-dimensions-2}
+\begin{itemize}
+\item
+  You have categories on one axis, and a continuous variable on the
+  other axis.
+\item
+  By making bars three-dimensional, you don't provide additional
+  information, but simply make it harder to judge the lengths of bars.
+\item
+  A 2D bar plot is easier to read, although one category label is
+  missing, and the percentages don't add up to one hundred, so it's
+  unclear what the y-axis represents.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Ostentatious colors and lines}
+\phantomsection\label{ostentatious-colors-and-lines}
+Here's another plot from dataisugly, showing seats in the German Federal
+Council.
+
+\includegraphics{../images/im117.png}
+
+There are sixteen states and seven political parties.
+\end{frame}
+
+\begin{frame}{Ostentatious colors and lines}
+\phantomsection\label{ostentatious-colors-and-lines-1}
+\begin{itemize}
+\tightlist
+\item
+  Parties typically have to enter into a power-sharing coalition to get
+  seats in each state.
+\end{itemize}
+
+\includegraphics{../images/im117.png}
+
+\begin{itemize}
+\tightlist
+\item
+  Each political party has a color associated with their brand: CDU is
+  black, SPD is red, Grüne is green, and so on.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Ostentatious colors and lines}
+\phantomsection\label{ostentatious-colors-and-lines-2}
+\begin{itemize}
+\tightlist
+\item
+  Each state on the map or slice of pie plot has the color of the party
+  which won the most votes and stripes colored by the other parties
+  sharing power.
+\end{itemize}
+
+\includegraphics{../images/im117.png}
+
+\begin{itemize}
+\tightlist
+\item
+  The problem is that the plot is just too ugly to look at, so no-one
+  can get any insights from it.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Ostentatious colors and lines}
+\phantomsection\label{ostentatious-colors-and-lines-3}
+\begin{itemize}
+\tightlist
+\item
+  In general, stripes or other forms of hatching should be avoided in
+  plots because they're just plain difficult to stare at.
+\end{itemize}
+
+\includegraphics{../images/im118.png}
+
+\begin{itemize}
+\tightlist
+\item
+  One reddit user tried to improve the plot, as shown on the right. By
+  removing the hatching, it's much nicer to look at the plot.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Practice: Chartjunk}
+\phantomsection\label{practice-chartjunk}
+Chartjunk is anything in a plot that distracts from gaining insight.
+That is, removing it would make the plot easier to understand.
+\end{frame}
+
+\begin{frame}{Practice: Chartjunk}
+\phantomsection\label{practice-chartjunk-1}
+Here's the scatter plot of the greatest hip-hop songs, this time with
+added bling.
+
+\includegraphics{../images/im119.png}
+\end{frame}
+
+\begin{frame}{Question}
+\phantomsection\label{question-9}
+Which element of the plot is \textbf{not} chartjunk?
+
+\begin{enumerate}
+\tightlist
+\item
+  Bold, italic text\\
+\item
+  Chunky grid lines\\
+\item
+  Dollar signs for points\\
+\item
+  Golden panel background\\
+\item
+  Axis labels
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Feedback}
+\phantomsection\label{feedback}
+\textbf{Correct Answer:}\\
+- \textbf{Axis labels} are not chartjunk. They provide essential
+information about the data represented in the plot.
+
+\textbf{Explanation:}\\
+- Chartjunk elements like chunky grid lines, dollar signs, and the
+golden background add visual noise, detracting from the readability of
+the plot. However, axis labels are crucial for understanding the scale
+and meaning of the data.
+\end{frame}
+
+\begin{frame}{Key Takeaway}
+\phantomsection\label{key-takeaway-2}
+When designing plots, focus on clarity and remove unnecessary elements.
+This improves the interpretability and impact of your visualizations.
 \end{frame}
 
 \end{document}
