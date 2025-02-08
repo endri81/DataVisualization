@@ -1,0 +1,144 @@
+---
+title: "Lecture 2"
+subtitle: "Data Visualization with ggplot2"
+author: "Endri Raco"
+output:
+  beamer_presentation:
+    includes:
+      in_header: mystyle.tex
+    keep_tex: yes
+    theme: Madrid
+    toc: yes
+    highlight: tango
+date: "`r format(Sys.Date(), '%d %B, %Y')`"  
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(tidyverse)
+library(formatR)
+library(kableExtra)
+library(corrplot)
+library(GGally)
+
+knitr::opts_chunk$set(
+  fig.width=2,   # Set width (in inches)
+  fig.height=2,  # Set height (in inches)
+  out.width="50%",  # Scale output width
+  comment=NA,
+  error=FALSE, 
+  warning=FALSE,
+  tidy=TRUE, 
+  fig.align = 'center',
+  message=FALSE, 
+  tidy.opts=list(width.cutoff=60),
+  fig.path='Figs/')
+```
+
+
+# Introduction
+
+## The grammar of graphics
+
+The first step in thinking creatively about data visualization is to appreciate that graphics are built upon an underlying grammar.
+
+## The quick brown fox jumps over the lazy dog
+
+    - To begin, let's consider one of the most well-known sentences in English. 
+    
+    - The quick brown fox jumps over the lazy dog.
+
+## The quick brown fox jumps over the lazy dog
+
+    - Every word in the sentence has a clear grammatical definition and when we write text, we take great care to choose the grammatical elements so that we communicate a very specific message. 
+
+
+  ![](../images/im120.png)  
+    
+
+## Grammar of graphics
+
+    - If we changed any of the grammatical elements of this sentence it would change the meaning, sometimes subtly, sometimes dramatically.
+
+    - The same concept holds true for data visualization - graphics are built on an underlying grammar. 
+
+## Grammar of graphics    
+
+    - The grammar of graphics is a plotting framework developed by Leland Wilkinson and published in his 1999 book, *The Grammar of Graphics*. 
+    
+   ![](../images/im121.png) 
+
+
+## Grammar of graphics
+
+There are two key things to note about the grammar of graphics. 
+    
+    - First, graphics are made up of distinct layers of grammatical elements, 
+    
+    - Second, meaningful plots are built around appropriate aesthetic mappings. 
+    
+## Grammar of graphics
+
+- To continue our analogy to written grammar, the layers are like the adjectives and nouns and the aesthetic mappings are like the grammatical rules for how to assemble that vocabulary.
+
+## The three essential grammatical elements
+
+Let's explore grammatical elements first. 
+
+
+## The three essential grammatical elements
+
+There are three essential grammatical elements: data, aesthetics, and geometries. 
+
+   ![](../images/im122.png) 
+
+
+
+## The three essential grammatical elements
+
+- The data is obviously the data which we want to plot. 
+
+  ![](../images/im123.png) 
+
+
+ ## The three essential grammatical elements
+
+- The aesthetics layer refers to the scales onto which we will map our data, and the geom layer refers to the actual shape the data will take in the plot.
+
+ ![](../images/im123.png) 
+
+
+ 
+ ## The three essential grammatical elements
+
+- The geom layer refers to the actual shape the data will take in the plot.
+
+ ![](../images/im123.png) 
+
+## Core competency
+
+The rest are optional layers. 
+
+![](../images/im123.png) 
+
+This includes the theme layer, which controls all the non-data ink. In this lecture, we'll cover these first four layers which will comprise your core competency.
+
+## The seven grammatical elements
+
+In the next lecture we'll explore the remaining grammatical elements: the statistics, coordinates and facets layers.
+
+![](../images/im124.png) 
+
+
+## Jargon for each element
+
+This diagram gives an example of some of the terms we'll encounter in each element. 
+
+![](../images/im125.png)
+
+## Jargon for each element
+
+    - Whenever we make a plot we are choosing among these options and many others not displayed. 
+    
+    - By the end of this lecture you'll be able to generate meaningful and publication-quality exploratory plots using the first four layers.
+
