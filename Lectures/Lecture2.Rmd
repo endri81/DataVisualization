@@ -140,5 +140,1582 @@ This diagram gives an example of some of the terms we'll encounter in each eleme
 
     - Whenever we make a plot we are choosing among these options and many others not displayed. 
     
-    - By the end of this lecture you'll be able to generate meaningful and publication-quality exploratory plots using the first four layers.
+    - By the end of this lecture you'll be able to generate meaningful and publication-quality exploratory plots using       the first four layers.
+    
+
+## ggplot2 layers
+
+Now that we have some idea about the different grammatical elements of graphics, let's see how this works in practice.
+
+## ggplot2 package
+
+  - The grammar of graphic is implemented in R using the ggplot2 package. 
+  
+  - There are two key functions that ggplot2 serves. 
+
+## ggplot2 package
+
+  - First, we construct plots by layering grammatical elements on top of each other. 
+  
+  - Second, we use aesthetic mappings to bridge the link between data and it's visual interpretation. 
+  
+## ggplot2 package  
+  
+  - We are going to go through each grammatical element in depth in this and the next lecture. 
+  
+  - Here I'll introduce a data set which will be used throughout the videos and we'll go over some simple examples.
+
+## Data
+
+The bottom layer is the data element. 
+
+![](../images/im126.png)
+
+
+## Data
+
+  - Obviously we need some data to plot. 
+  
+  - I'm going to use several different data sets in the course videos,
+
+## Iris dataset
+
+One of which is the classic iris data set collected by Edgar Anderson in the 1930s and thereafter popularized by Ronald Fisher. 
+
+![](../images/im127.png)
+
+## Iris dataset
+
+  - The data set contains information on three iris species, setosa, versicolor, and virginica. 
+  
+  - Four measurements were taken from each plant - the petal length and width and the sepal length and width. 
+  
+  
+## Iris dataset
+
+  - You're probably familiar with petals, they're the colorful part of a flower. 
+  
+  - Sepals are the outer leaves of the flower, they are typically green, but in this case they're also colorful. 
+  
+  - There are 50 specimens of each species.
+
+
+## Iris dataset
+
+The data is stored in an object called **iris**, there are five variables: the species and one for each of the properties which were measured.
+
+![](../images/im128.png)
+
+
+## Aesthetics
+
+The next layer we'll add is the aesthetics element, which tells us which scales we should map our data onto. 
+
+![](../images/im129.png)
+
+## Aesthetics
+
+  - This is where the second main component of the grammar of graphics comes into play. 
+
+  - On top of layering the grammatical elements, it's here that we establish our aesthetic mappings.
+
+## Iris aesthetics
+
+In this case we are going to make a scatter plot so we're going to map Sepal-dot-Length onto the X aesthetic and Sepal-dot-Width onto the Y aesthetic.
+
+![](../images/im130.png)
+
+## Geometries
+
+The next element is the geometry element. 
+
+
+![](../images/im131.png)
+
+This allows us to choose how the plot will look.
+
+## Iris geometries
+
+After we've established our three essential layers, we have enough instructions to make a basic scatter plot. 
+
+![](../images/im132.png)
+
+It's pretty rough, so to get a more meaningful and cleaner visualization, we'll have to use the other layers.
+
+## Themes
+
+The next layer we'll look at is the themes element. 
+
+![](../images/im133.png)
+
+## Themes
+It controls all the non-data ink on our plot.
+
+## Iris themes
+
+Which allows us to get a nice looking, meaningful and publication-quality plot directly in R.
+
+![](../images/im134.png)
+
+## Practice: Introduction to Geometries in ggplot2
+
+- In this exercise, we'll work with the **diamonds** dataset.
+- The goal is to explore and plot the data using ggplot2.
+
+
+
+## Practice: The diamonds dataset
+
+- The **diamonds** dataset contains information on 1,000 diamonds.
+- Some key variables include:
+  - `carat`: A measurement of the diamond's size.
+  - `price`: The price of the diamond in dollars.
+
+---
+
+## Step 1: Explore the dataset
+
+Use the `str()` function to inspect the structure of the **diamonds** dataset.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+# Load ggplot2 package
+library(ggplot2)
+
+# Explore the structure of the diamonds dataset
+str(diamonds)
+```
+
+
+## Step 2: Create a basic plot
+
+Use ggplot() to create a basic plot of carat (x-axis) vs. price (y-axis).
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+# Basic ggplot setup
+ggplot(data = diamonds, aes(x = carat, y = price))
+```
+
+
+## Step 3: Add points to the plot
+
+Use the geom_point() function to add a scatter plot layer.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+# Add points to the plot
+ggplot(data = diamonds, aes(x = carat, y = price)) +
+  geom_point()
+```
+
+
+## Step 4: Add a smooth trend line
+
+Use the geom_smooth() function to add a smooth trend curve to the plot.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+# Add points and a smooth trend line
+ggplot(data = diamonds, aes(x = carat, y = price)) +
+  geom_point() +
+  geom_smooth()
+```
+
+
+## Customizing ggplot2 Geometries
+
+- Learn how to customize **ggplot2** geometries.
+- Modify aesthetics such as `color` and `alpha`.
+
+
+
+## Practice 2: Map `color` to `clarity`
+
+- **Objective**: Map the `color` aesthetic to the `clarity` variable.
+- This will create a color-coded scatter plot based on diamond clarity.
+
+
+
+## Practice 2: Map `color` to `clarity`
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+# Create a plot with color mapped to clarity
+ggplot(data = diamonds, aes(x = carat, y = price, color = clarity)) +
+  geom_point() +
+  geom_smooth()
+```
+
+
+
+## Practice 2: Adjust Transparency with alpha
+
+  - **Objective**: Make points partially transparent.
+  - Use the alpha argument in geom_point() to set transparency.
+
+
+## Practice 2: Adjust Transparency with alpha
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+# Add transparency to points
+ggplot(data = diamonds, aes(x = carat, y = price, color = clarity)) +
+  geom_point(alpha = 0.4) +
+  geom_smooth()
+```    
+    
+    
+## Practice 3:  Saving Plots as Variables in ggplot2
+
+- In ggplot2, plots can be saved as variables.
+- This allows reusing a base plot and adding layers incrementally.
+
+
+
+## Practice 3: Create and Save a Basic Plot
+
+- Plot `price` (y-axis) vs. `carat` (x-axis) using the diamonds dataset.
+- Save the plot to a variable named `plt_price_vs_carat`.
+
+
+## Practice 3: Create and Save a Basic Plot
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+# Load ggplot2
+library(ggplot2)
+
+# Save a basic ggplot as a variable
+plt_price_vs_carat <- ggplot(
+  data = diamonds,
+  aes(x = carat, y = price)
+)
+```
+
+
+## Practice 3: Add Layers to the Saved Plot
+
+Add a point layer to the plot using geom_point().
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+# Add points to the saved plot
+plt_price_vs_carat <- plt_price_vs_carat + geom_point()
+```
+
+
+## Practice 3: Add Layers to the Saved Plot
+
+Display the updated plot stored in plt_price_vs_carat.
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+# Display the updated plot
+plt_price_vs_carat
+```    
+
+
+## Visible aesthetics
+
+In this section we'll explore aesthetics, and understand how they are distinct from attributes.
+
+## Mapping onto the X and Y axes
+
+  - In ggplot2, the mapping of aesthetics elements is a key concept to master. 
+
+  - So what do we mean by mapping? 
+  
+## Mapping onto the X and Y axes
+
+  This becomes clear when we understand that our beloved X and Y axes on a straightforward scatter plot are aesthetics. 
+  
+![](../images/im135.png)
+
+
+
+
+## Mapping onto the X and Y axes
+
+  - They define the position of dots on a common scale, like this example we saw in the previous part. 
+  
+  - The sepal length is mapped onto the X axis and the sepal width is mapped onto the Y axis. 
+  
+## Mapping onto the X and Y axes  
+  
+Here, we'll focus on the most common visual aesthetics and but we'll encounter more throughout the courses.
+
+![](../images/im136.png)  
+
+When making multivariate plots we'll use aesthetics appropriately to maximize the number of variables we can add to a plot.
+
+
+## Mapping onto color
+
+For example, the variable Species can be mapped onto the color aesthetic, which colors the points according to the species from which they came.
+
+![](../images/im136.png)
+
+
+
+## Mapping onto the color aesthetic
+
+That is, we map a variable from our dataframe onto one of the visible aesthetics. 
+
+![](../images/im137.png)
+We call a column in our dataframe to be mapped onto a visible aesthetic. 
+
+
+## Mapping onto the color aesthetic
+
+That's why we made such a big deal about data structure earlier.
+
+
+![](../images/im137.png)
+
+Each mapped variable is its own column variable in the data frame.
+
+## Mapping onto the color aesthetic in geom
+
+Importantly, we call aesthetics in the aes function. We could have also called aesthetics in the geom layer as shown here, and get the same result. 
+
+
+![](../images/im138.png)
+## Mapping onto the color aesthetic in geom
+
+  - This is typically only done if we don't want all layers to inherit the same aesthetics or we're mixing different data sources. 
+
+  - In general, try to keep your data and aesthetics layer in the same ggplot function definition.
+
+## Typical visible aesthetics
+
+In addition to the X and Y axes and color, typical visible aesthetics include
+
+![](../images/im139.png)
+
+## Typical visible aesthetics
+
+fill, which is distinct from
+
+![](../images/im140.png)
+
+
+## Typical visible aesthetics
+
+color in that color usually, but not always, refers to the outline of a shape.
+
+![](../images/im141.png)
+
+## Typical visible aesthetics
+
+Size adjusts the area or radius of points, the thickness of lines and the font size of text.
+
+![](../images/im142.png)
+
+## Typical visible aesthetics
+
+alpha refers to alpha-blending, which adjusts the transparency of a shape.
+
+![](../images/im143.png)
+
+## Typical visible aesthetics
+
+line type refers to the dash pattern of a line and
+
+![](../images/im144.png)
+
+
+## Typical visible aesthetics
+
+labels are direct labels of an item, directly on the plot. Like printing an item's name on a scatter plot instead of just drawing a point. 
+
+![](../images/im145.png)
+
+## Typical visible aesthetics
+
+Direct labeling of points is an extension of axis labels for categorical data in that they are unambiguous, and
+
+## Typical visible aesthetics
+
+Shape refers to the shape of a point. 
+
+![](../images/im146.png)
+
+
+## Typical visible aesthetics
+
+Many of these aesthetics function as both aesthetic mappings as well as attributes, and one of the most common mistakes beginners make is confusing the two or overwriting aesthetic mappings with fixed attributes. 
+
+## Typical visible aesthetics
+
+Our goal here is to not only show you how to use them correctly but appropriately for the plot's type and purpose.
+
+## Typical visible aesthetics
+
+Just like our two main variable types, there are visible aesthetics for continuous and categorical data which we'll explore in the next video,
+
+
+## Practice 1: Introduction to Aesthetics in ggplot2
+
+- Aesthetics are visual properties that can be mapped to data variables.
+- Examples include `x`, `y`, `color`, `size`, and `shape`.
+
+
+## Practice 1: Map Variables to Aesthetics
+
+- **Objective**: Map `mpg` to the x-axis and `cyl` to the y-axis.
+- Use `aes()` to define mappings.
+
+## Practice 1:
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+# Load ggplot2 package
+library(ggplot2)
+# Map mpg to x and cyl to y
+ggplot(mtcars, aes(x = mpg, y = cyl)) +
+  geom_point()
+```
+
+
+## Practice 1: Swap Aesthetic Mappings
+
+Objective: Map cyl to the x-axis and mpg to the y-axis.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+# Swap x and y aesthetics
+ggplot(mtcars, aes(x = cyl, y = mpg)) +
+  geom_point()
+```
+
+
+## Practice 1: Add More Aesthetics
+
+Objective: Map wt to x, mpg to y, and cyl to color.
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+# Add more aesthetics: color
+ggplot(mtcars, aes(x = wt, y = mpg, color = cyl)) +
+  geom_point()
+```
+
+
+## Practice 1: Customize Shape and Size
+
+Objective: Modify the plot by changing shape to 1 and increasing size to 4.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+# Customize shape and size
+ggplot(mtcars, aes(x = wt, y = mpg, color = cyl)) +
+  geom_point(shape = 1, size = 4)
+```
+
+
+
+
+## Understanding Color and Fill in ggplot2
+
+- The `color` aesthetic changes the **outline** of a geometry.
+- The `fill` aesthetic changes the **inside** of a geometry.
+- Certain shapes allow both `color` and `fill` to be mapped.
+
+
+
+## Practice 2: Map `cyl` to `fill`
+
+- **Objective**: Map `wt` to the x-axis, `mpg` to the y-axis, and `cyl` to the `fill` aesthetic.
+
+
+## Practice 2: Map `cyl` to `fill`
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+# Load ggplot2 package
+library(ggplot2)
+
+# Map cyl to fill
+ggplot(mtcars, aes(x = wt, y = mpg, fill = cyl)) +
+  geom_point(shape = 21, size = 4)
+```
+
+
+## Practice 2:  Customize Shape and Transparency
+
+  - Objective: Use shape = 21 to allow both fill and color mapping.
+
+  - Add alpha = 0.6 for partial transparency.
+
+## Practice 2: Customize Shape and Transparency
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+
+```{r} 
+# Customize shape and transparency
+ggplot(mtcars, aes(x = wt, y = mpg, fill = cyl)) +
+  geom_point(shape = 21, size = 4, alpha = 0.6)
+```
+
+
+## Practice 3: Map gear to color
+
+Objective: Add gear as a color aesthetic for outlines.
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+# Map gear to color
+ggplot(mtcars, aes(x = wt, y = mpg, fill = cyl, color = gear)) +
+  geom_point(shape = 21, size = 4, alpha = 0.6)
+```
+
+
+
+## Practice 4: Comparing Aesthetics in ggplot2
+
+- ggplot2 aesthetics control visual elements like size, shape, alpha, and labels.
+- Care must be taken to avoid overriding aesthetics unintentionally.
+
+## Practice 4: Base Plot with Size Mapping
+
+- **Objective**: Create a base plot and map `cyl` to the `size` aesthetic.
+
+
+```{r, cache=TRUE}
+# Establish the base layer
+plt_mpg_vs_wt <- ggplot(mtcars, aes(x = wt, y = mpg))
+
+# Map cyl to size
+plt_mpg_vs_wt +
+  geom_point(aes(size = cyl))
+```
+
+
+## Practice 4:  Map cyl to Alpha
+
+
+Objective: Map the cyl variable to the alpha aesthetic.
+
+```{r, cache=TRUE}
+# Map cyl to alpha
+plt_mpg_vs_wt +
+  geom_point(aes(alpha = cyl))
+```
+
+
+## Practice 4: Map cyl to Shape
+
+Objective: Map cyl to the shape aesthetic.
+
+
+```{r, cache=TRUE}
+# Map cyl to shape
+plt_mpg_vs_wt +
+  geom_point(aes(shape = factor(cyl)))
+```
+
+
+## Practice 4:  Map cyl to Label
+
+Objective: Map cyl to the label aesthetic and switch to geom_text().
+
+```{r, cache=TRUE}
+# Map cyl to label and use geom_text
+plt_mpg_vs_wt +
+  geom_text(aes(label = cyl))
+```
+
+## Using attributes
+
+  - In the last exercises you learned a fundamental concept of ggplot2: aesthetic mappings. 
+  
+  - Colloquially, when we say aesthetics we're describing how something looks, but now you know that in ggplot2, we're talking about aesthetic mappings.
+  
+## Using attributes  
+  
+  - If we talk about how something looks, we refer to its attributes. 
+  
+  - One of the most confusing parts of ggplot2 is that all our visible aesthetics also exist as attributes.
+
+## Aesthetics? Attributes!
+
+  so it's easy to mix up the two! Attributes are always called in the geom layer (which we'll discuss in more detail in the next part). 
+  
+![](../images/im147.png)
+
+  For example, to change the color of these points to red, we'd just set the plot's attribute using the color argument in the geom layer.
+
+## Aesthetics? Attributes!
+
+For example, it's color attribute is set by the color argument, its size by the size argument
+
+![](../images/im149.png)
+
+## Aesthetics? Attributes!
+
+and its shape by the shape argument. 
+
+
+![](../images/im150.png)
+
+The distinction between aesthetics and attributes is subtle but important. Mixing the two is a very common mistake.
+
+
+
+
+## Practice 1: Set Color and Alpha
+
+- Use fixed values for the point `color` and `alpha`.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+# Define a hexadecimal color
+my_blue <- "#4ABEFF"
+
+# Create a plot with fixed color and transparency
+ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point(color = my_blue, alpha = 0.6)
+```
+
+
+## Practice 1: Conflicts Between Attributes and Aesthetics
+
+Transparency can be controlled using alpha.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+# Add a point layer with alpha transparency
+ggplot(mtcars, aes(x = wt, y = mpg, color = cyl)) +
+  geom_point(alpha = 0.5)
+```
+
+
+## Practice 1: Add Labels to Points
+
+Use geom_text() to label points with the row names.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+
+```{r} 
+# Add text labels
+ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_text(aes(label = rownames(mtcars)), color = "red")
+```
+
+## Practice 1:  Customize Shape and Color
+
+Change the shape and color of points.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+# Customize points with shape and color
+ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point(shape = 24, color = "yellow")
+```
+
+## Practice 1: Complex Aesthetic Mapping
+
+Map qsec to the y-axis, mpg to the x-axis, and cyl to color.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+# Map multiple aesthetics
+ggplot(mtcars, aes(x = mpg, y = qsec, color = cyl)) +
+  geom_point()
+```
+
+
+## Practice 1: Add More Aesthetics
+
+Map gear (factor version of am) to shape.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+
+```{r} 
+# Add shape mapping
+ggplot(mtcars, aes(x = mpg, y = qsec, color = cyl, shape = factor(gear))) +
+  geom_point()
+```
+
+## Practice 1: Map to Size
+
+Map hp divided by wt to size.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+
+```{r} 
+# Add size mapping
+ggplot(mtcars, aes(x = mpg, y = qsec, color = cyl, shape = factor(gear), size = hp / wt)) +
+  geom_point()
+```
+
+
+## Modifying Aesthetics
+
+Now that we know what aesthetics are and have some idea about choosing them appropriately, let's explore how to modify them.
+
+##  Positions
+
+A common adjustment is the position. 
+
+![](../images/im152.png)
+
+##  Positions
+
+  - Position specifies how ggplot will adjust for overlapping bars or points on a single layer. 
+  
+  - For example, we have identity, dodge, stack, fill, jitter, jitterdodge, and nudge. Let's take a look.
+
+## position = "identity" (default)
+
+The most straightforward position is identity, which we've actually already seen. 
+
+![](../images/im153.png)
+
+
+It's the default position for our scatter plots. 
+
+## position = "identity" (default)
+
+"Identity" means that the value in the data frame is exactly where the value will be positioned in the plot. 
+
+![](../images/im153.png)
+
+This basically means, don't do anything, just put the information where the data says to put the information.
+
+## position = "identity" (default)
+
+We could have written it explicitly, but it's not necessary. 
+
+![](../images/im154.png)
+
+There is an issue with the precision in this data set. 
+
+
+## position = "identity" (default)
+
+Our sepals were measured to the nearest millimeter. So although we only have 150 points, there is too much overplotting to distinguish them. 
+
+To solve this, we need to add some random noise on both the x and y axes to see regions of high density - which is referred to as "jittering".
+
+## position = "jitter"
+
+"jitter" can be used as an argument, but each position type can also be accessed as a function. For example,
+
+
+![](../images/im155.png)
+
+
+
+## position_jitter()
+
+position jitter can be defined in a function before we call our plot, as shown here. 
+
+![](../images/im156.png)
+
+
+This has two advantages.
+
+## position_jitter()
+
+Now we can set specific arguments for the position, such as the width, which defines how much random noise should be added, and it allows us to use this parameter throughout our plotting functions so that we can maintain consistency across plots. 
+
+![](../images/im157.png)
+
+This is available for all position attributes. We'll explore the other positions in the exercises.
+
+## Scale functions
+
+  - Recall that each of the aesthetics is a scale which we mapped data onto, so color is just a scale, like x and y are scales. 
+  
+![](../images/im158.png)  
+  
+## Scale functions
+
+  Appropriately enough, we can access all the scales with the scale underscore functions. 
+  
+![](../images/im159.png)    
+  The second part of the function defines which scale we want to modify. 
+  
+  
+## Scale functions
+
+  All the aesthetics we saw earlier have an associated scale function. 
+  
+  
+![](../images/im159.png)  
+  
+  The third part must match the type of data we are using. Here discrete means we are working with categorical data.
+
+## Scale functions
+
+That means we have to choose our axis dependent on the type of data we have. 
+
+![](../images/im159.png)  
+
+Here, we'll consider the continuous x aesthetic and the categorical color aesthetic. 
+
+
+## Scale functions
+
+
+Just as an aside, before we move on - don't let the naming conventions confuse you. 
+
+![](../images/im159.png) 
+
+Categorical variables are also called factors, discrete and qualitative depending on their context and who you're talking to.
+
+## scale_*_*()
+
+There are many arguments for the scale functions. 
+
+![](../images/im160.png) 
+
+The first argument is always the name of the scale, after that most common are limits, breaks, expand and labels.
+
+## The limits argument
+
+limits describe the scale's range.
+
+![](../images/im161.png) 
+
+
+## The breaks argument
+
+breaks control the tick mark positions.
+
+![](../images/im162.png) 
+
+
+## The expand argument
+
+expand is a numeric vector of length two, giving a multiplicative and additive constant used to expand the range of the scales so that there is a small gap between the data and the axes.
+
+![](../images/im163.png) 
+
+
+## The labels argument
+
+and labels adjust the category names.
+
+
+
+![](../images/im164.png) 
+
+## labs()
+
+Note that if we just want to quickly change the axis labels, we can do this with the labs function.
+
+![](../images/im165.png) 
+
+
+## Practice 1: Updating Aesthetic Labels
+
+## Step 1: Add Axis Labels
+
+- Use the `labs()` function to set x and y-axis labels.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+palette <- c(automatic = "#377EB8", manual = "#E41A1C")
+
+ggplot(mtcars, aes(x = cyl, fill = factor(gear))) +
+  geom_bar() +
+  labs(x = "Number of Cylinders", y = "Count", fill = "Gear")
+
+```
+
+
+## Step 2: Customize Fill Colors
+
+Use scale_fill_manual() to define custom colors and a legend title.
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+# Define custom colors for gear levels
+palette <- c("3" = "#377EB8", "4" = "#E41A1C", "5" = "#4DAF4A")
+
+ggplot(mtcars, aes(x = cyl, fill = factor(gear))) +
+  geom_bar() +
+  labs(x = "Number of Cylinders", y = "Count", fill = "Gear") +
+  scale_fill_manual(name = "Gear", values = palette)
+
+```
+
+## Step 3: Adjust Bar Position
+
+Set the bar position to dodge for a side-by-side comparison.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r}  
+# Define custom colors for gear levels
+palette <- c("3" = "#377EB8", "4" = "#E41A1C", "5" = "#4DAF4A")
+
+ggplot(mtcars, aes(x = cyl, fill = factor(gear))) +
+  geom_bar(position = "dodge") +
+  labs(x = "Number of Cylinders", y = "Count", fill = "Gear") +
+  scale_fill_manual(name = "Gear", values = palette)
+
+```
+
+
+
+
+## Step 1: Create a Scatter Plot with Jitter
+
+Map mpg to the x-axis and use a dummy y-axis (set to 0).
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+# Scatter plot with jitter
+ggplot(mtcars, aes(x = mpg, y = 0)) +
+  geom_point(position = "jitter")
+```
+
+
+## Step 2: Add y-axis Limits
+
+
+Restrict the y-axis using ylim() to improve focus.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+# Add y-axis limits
+ggplot(mtcars, aes(x = mpg, y = 0)) +
+  geom_point(position = "jitter") +
+  ylim(-2, 2)
+```
+
+## Aesthetics Best Practices
+
+Now that we know what visual aesthetics are, how do we choose the right one?
+
+## Which Aesthetics?
+
+There is some creativity involved, but there are some helpful guidelines.  
+
+This part is informed by the seminal work of cartographer Jacques Bertin, who published *The Semiology of Graphics* in 1967, and William Cleveland, whose research on perception was summarized in two books.
+
+## Form Follows Function
+
+The best data visualization serves a purpose – that is, form follows function. 
+
+![](../images/im166.png) 
+
+## Form Follows Function
+
+What is the function in data visualization?  
+
+It depends on your audience.  
+
+You may just want to confirm expectations and begin analyzing your data, or you may want to inform a specific reader and persuade them with your results.
+
+## Form Follows Function (continued)
+
+First and foremost, our function is the accurate and efficient representation of data.  
+
+![](../images/im167.png) 
+
+## Form Follows Function (continued)
+
+Beautiful is nice, but it's a secondary priority.  
+
+![](../images/im167.png) 
+
+If data is not accurately and efficiently presented, it's junk.  
+
+
+## Form Follows Function (continued)
+
+The function is never to misrepresent or obscure our data.  
+
+![](../images/im167.png) 
+
+We can avoid this by always considering the intended audience and purpose of our plots.
+
+## Calculating Statistics
+
+Let's look at a simple example.  
+
+![](../images/im168.png) 
+## Calculating Statistics
+
+In this dataset, I have two continuous variables, x & y, where y is a function of x.  
+
+There are two groups, A and B.
+
+## Calculating Statistics (continued)
+
+It's pretty difficult to obtain summary statistics just by looking at the data.
+
+![](../images/im169.png)
+
+## Extracting Information from Data
+
+![](../images/im170.png)
+
+## Extracting Information from Data
+
+We have two choices:
+
+- **Numeric summaries**: Precise but offer a poor overview.
+- **Data visualization**: Imprecise but great for overviews.
+
+## Encoding Numbers into Plots
+
+To make a plot, we encode data in numbers and text into a visual medium.  
+
+![](../images/im171.png)
+
+This is done using **aesthetic mappings**.
+
+## Various Aesthetic Mappings
+
+These plots differ in their aesthetic mappings and other values that we'll explore throughout the course.
+
+![](../images/im172.png)
+
+## Decoding to Data
+
+These visuals are then decoded to form an image of the original data.  
+
+![](../images/im173.png)
+
+This process is inherently imprecise – like translating between two languages.
+
+## The Best Choices for Aesthetics
+
+The best choices are those that are:
+
+- **Efficient**: Faster than numeric summaries.
+- **Accurate**: Minimize information loss.
+
+## Aesthetics - Continuous Variables
+
+The choice of aesthetic mapping depends on the type of variable.  
+
+![](../images/im174.png)
+
+The scatter plot is easy to understand because it maps data as **position on a common scale**.
+
+## Aesthetics - Continuous Variables (continued)
+
+Imagine if we switch the aesthetic mappings for x and color.  
+
+![](../images/im175.png)
+
+## Aesthetics - Continuous Variables (continued)
+
+- This is possible but **neither accurate nor efficient**.  
+- In the worst case, there is no way to see the relationship between the three variables.
+- In the best case, the reader may misinterpret the plot.
+
+## Efficiency of Decoding
+
+There are many choices for mapping continuous variables, such as:
+
+- **Position on unaligned scales**: Multiple plots with different scales but the same data type.
+
+
+![](../images/im176.png)
+
+## Three Iris Scatter Plots
+
+Example: Three plots from the *iris* dataset, one for each species.
+
+![](../images/im177.png)
+
+## Three Iris Scatter Plots (Unaligned Y-Axes)
+
+Using unaligned y-axes is **less efficient** and makes comparisons difficult.
+
+![](../images/im178.png)
+
+## Single Faceted Plot (Common Y-Axis)
+
+An **aligned scale** is better for comparisons.
+
+![](../images/im179.png)
+
+## Decoding Categorical Data
+
+There are also various choices for categorical data.
+
+![](../images/im180.png)
+
+## Aesthetics - Categorical Variables
+
+Color is often effective for categorical variables.  
+
+![](../images/im181.png)
+
+However, efficiency and accuracy depend on **aesthetic mappings**.
+
+## Aesthetics - Categorical Variables (continued)
+
+This plot suffers from **overplotting**, meaning not every point is visible.  
+
+![](../images/im182.png)
+
+Overplotting is a concern in scatter plots.
+
+## Handling Overplotting
+
+We can adjust:
+
+- **Position**: Add random noise.
+
+- **Attributes**: Adjust point size, transparency, or jittering.
+
+
+# Geometries
+
+## Scatter plots
+
+  - The third essential layer is the geometry layer. 
+
+  - This determines how the plot actually looks. We've already seen many geometries in action - so let's take a closer look.
+
+## 48 geometries
+
+  - At present there are almost 50 different geometries to choose from, although there are some redundancies. 
+  
+  ![](../images/im183.png)
+  
+They can all be accessed using its own geom_ function. As the domain specialist, it's your job to choose the best geom, but there are some useful guidelines.
+
+## Common plot types
+
+Let's begin with scatter plots.
+
+## Scatter plots
+
+Each geom is associated with specific aesthetic mappings, some of which are essential. To use geom_point, we need the x and y aesthetics.
+
+  ![](../images/im184.png)
+  
+## Scatter plots
+
+In addition to the essential aesthetics, we can also choose optional aesthetics, like alpha, color, fill, shape, size or stroke. 
+
+  ![](../images/im185.png)
+
+These are all also attribute settings, as we discussed earlier.
+
+## Geom-specific aesthetic mappings
+
+We can specify both geom-specific data and aesthetics.
+
+  ![](../images/im187.png)
+
+This allows us to control the information for each layer independently.
+
+## iris demo
+
+Imagine I have a data frame which contains summary statistics, such as the mean, for each of my variables. 
+
+  ![](../images/im188.png)
+
+In this case it's the average sepal width and length for each of the three iris species. 
+
+
+## iris demo
+
+ggplot2 can actually take care of the statistics for us, we don't need to calculate it ourselves beforehand, but let's see how to use it if we have. 
+
+  ![](../images/im188.png)
+
+To show all the individual points and have the mean of the x and y plotted on top, I could add another geom_point layer accessing this data set.
+
+## iris plot
+
+In this plot one geom_point layer inherits the data and aesthetics from the parent ggplot function, and in the other I specify a different data set. 
+
+  ![](../images/im189.png)
+
+## iris plot
+
+Note that the aesthetics are inherited, as per the first geom function. 
+
+![](../images/im190.png)
+
+I've changed the shape and the size attributes of the points so that they are distinguishable from the background points.
+
+## Shape attribute values
+
+The possible values are shown here. 15 is a solid square. 
+
+![](../images/im191.png)
+
+Numbers 21 - 25 are not simply repeats of earlier codes, these shapes have both fill and color, which can be controlled independently.
+
+## Example
+
+For example, I can have a black fill and use a stroke of 2 for a thick outline. 
+
+![](../images/im192.png)
+
+The color aesthetic is still inherited from the parental layer. Imagine I wanted to have crosshairs marking where each mean value appears on the plot.
+
+## On-the-fly stats by ggplot2
+
+It's not fair to plot the mean without some measure of spread, like the standard deviation. 
+
+![](../images/im193.png)
+
+We'll get into that in the next course when we discuss the stats layer.
+
+## position = "jitter"
+
+Recall that in the last chapter we used the position argument to change the position from identity to jitter.
+
+![](../images/im194.png)
+
+## geom_jitter()
+
+We could have also done this with the geom_jitter function directly. 
+
+
+![](../images/im195.png)
+
+geom_jitter is just a wrapper for geom_points with position set to jitter.
+
+## Don't forget to adjust alpha
+
+On top of jittering, we would also need to deal with overplotting of points by adjusting the alpha-blending, which works great as an attribute. 
+
+![](../images/im196.png)
+
+This helps us to see regions of high density.
+
+## Hollow circles also help
+
+Yet another way to deal with overplotting is to change the symbol to a hollow circle, which is shape 1. 
+
+![](../images/im197.png)
+
+Both of these options help with visual communication because they aid in perception. 
+
+
+## Hollow circles also help
+
+We can more accurately and quickly see what the data is actually showing, even if the jittering adds some random noise to both axes! 
+
+It's always recommended to optimize the shape, size and alpha blending of points in a scatter plot.
+
+
+
+
+## Practice 1: Overplotting with Large Datasets
+
+**Scatter plots** are intuitive and widely used, but they can suffer from overplotting.  
+Consider the `diamonds` dataset:  
+- Add transparency (`alpha`) to avoid clutter.
+- Use small points (`shape = "."`) for dense areas.
+
+
+## Practice 1: Overplotting with Large Datasets
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+
+```{r} 
+# Plot price vs. carat, colored by clarity
+ggplot(diamonds, aes(carat, price, color = clarity)) +
+  geom_point(alpha = 0.5, shape = ".")
+```
+
+
+
+## Practice 2: Overplotting with Aligned Values
+
+Aligned values on a single axis can lead to overlapping points.
+
+Consider the mtcars dataset:
+
+## Practice 2: Overplotting with Aligned Values
+
+Add jitter (position_jitter) to spread the points.
+
+Adjust jitter width and dodge position for clarity.
+
+
+## Practice 2: Overplotting with Aligned Values
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+# Base plot for aligned values
+ggplot(mtcars, aes(cyl, mpg, color = gear)) +
+  geom_point(position = position_jitter(width = 0.3))
+```
+
+
+
+## Practice 3:  Overplotting with Low-Precision Data
+
+Low-resolution measurements, such as in the iris dataset, can create overlapping points.
+
+Use geom_jitter() with a custom width.
+
+Add transparency (alpha) to reveal overlaps.
+
+## Practice 3:  Overplotting with Low-Precision Data
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+# Scatter plot with jitter for low-precision data
+ggplot(iris, aes(Sepal.Length, Sepal.Width, color = Species)) +
+  geom_jitter(alpha = 0.5, width = 0.1)
+```
+
+
+
+## Practice 4: Overplotting with Integer Data
+
+When dealing with integer data:
+
+Combine jitter and transparency to handle overlapping points.
+
+Try it with the Vocab dataset, visualizing vocabulary vs. education.
+
+
+## Practice 4: Overplotting with Integer Data
+
+Use the labs() function to set x and y-axis labels.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}   
+
+```{r} 
+library(carData)
+# Plot vocabulary vs. education
+ggplot(Vocab, aes(education, vocabulary)) +
+  geom_jitter(alpha = 0.2, width = 0.1)
+```
+
+
+## Histograms
+
+In this section we'll take a look at the typical uses of bar plots and their associated geoms.
+
+## Common plot types
+
+A histogram is a special type of bar plot that shows the binned distribution of a continuous variable.
+
+![](../images/im198.png)
+
+## Histograms
+
+Here, we only need a single aesthetic: X, a continuous variable. geom_histogram plots a a binned version of our data. 
+
+![](../images/im199.png)
+
+A message lets you know what happened. 
+
+
+## Histograms
+
+This geom is associated with a specific statistic, stat_bin. 
+
+![](../images/im199.png)
+
+The bin argument took the default value of 30.
+
+## Default of 30 even bins
+
+This is a good starting point, but we don't need to settle for defaults! 
+
+![](../images/im200.png)
+
+Let's change it and see what happens.
+
+## Intuitive and meaningful bin widths
+
+Changing the binwidth argument to 0-point-1 gives us a more intuitive impression of our data. 
+
+![](../images/im201.png)
+
+Note that there is no space between the bars. That emphasizes that this is a representation of an underlying continuous distribution.
+
+## Re-position tick marks
+
+That's also why the labels on the x axis shouldn't fall directly on the bars, but between the bars. 
+
+![](../images/im202.png)
+
+## Re-position tick marks
+
+They represent intervals and not actual values. 
+
+Setting the center argument to half that of the binwidth does the trick.
+
+## Different Species
+
+Remember that we have three species in our data set? 
+
+![](../images/im203.png)
+
+## Different Species
+
+We can fill the bars according to each species. 
+
+![](../images/im203.png)
+
+This makes it clear that we have three histograms in the same plotting space. 
+
+
+## Different Species
+
+
+There is a perceptual problem here, because it is not immediately clear if the bars are overlapping or if they are stacked on top of each other.
+
+## Default position is "stack"
+
+The default position is stack. 
+
+![](../images/im204.png)
+
+In some cases, this may not be clear, so don't risk confusing your viewer with stacked bars. We have some alternative positions we can use.
+
+## position = "dodge"
+
+We can "dodge" our bars, which is a data viz term that simply means to off-set set each data point in a given category. 
+
+![](../images/im205.png)
+
+That works but the number of categories really makes it difficult to see what's happening. 
+
+## position = "dodge"
+
+We'll encounter dodging again in several situations throughout these courses where it can be used to good effect.
+
+## position = "fill"
+
+The fill position normalizes each bin to represent the proportion of all observations in each bin. 
+
+![](../images/im206.png)
+
+The y axis label didn't change, but it should say proportion, not count.
+
+## Practice 1: Create a Basic Histogram
+
+- Plot the `mpg` variable as a histogram.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r}
+# Basic histogram of mpg
+ggplot(mtcars, aes(x = mpg)) +
+  geom_histogram()
+```
+
+
+## Practice 1: Adjust Binwidth
+
+Set the histogram binwidth to 1 for finer detail.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r}
+# Adjust histogram binwidth
+ggplot(mtcars, aes(x = mpg)) +
+  geom_histogram(binwidth = 1)
+```
+
+
+## Practice 1: Map y to Density
+
+Show frequency densities instead of counts using ..density...
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r}
+# Histogram with density on the y-axis
+ggplot(mtcars, aes(x = mpg, y = ..density..)) +
+  geom_histogram(binwidth = 1)
+```
+
+## Practice 1: Customize Fill Color
+
+Set the histogram bars' fill color to datacamp_light_blue.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r}
+# Define a custom color
+datacamp_light_blue <- "#1F77B4"
+
+# Customize histogram fill color
+ggplot(mtcars, aes(x = mpg)) +
+  geom_histogram(binwidth = 1, fill = datacamp_light_blue)
+```
+
+
+## Practice 2: Exploring Positions in Histograms
+
+Step 1: Map Fill to a Variable
+
+Map the fill aesthetic to gear (factor version of gear).
+
+## Practice 2: Exploring Positions in Histograms
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r}
+# Map fill to a variable
+ggplot(mtcars, aes(x = mpg, fill = factor(gear))) +
+  geom_histogram(binwidth = 1) +
+  labs(fill = "Gear")
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
