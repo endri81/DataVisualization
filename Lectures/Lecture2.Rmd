@@ -44,13 +44,13 @@ The first step in thinking creatively about data visualization is to appreciate 
 
 ## The quick brown fox jumps over the lazy dog
 
-    - To begin, let's consider one of the most well-known sentences in English. 
+  - To begin, let's consider one of the most well-known sentences in English. 
     
-    - The quick brown fox jumps over the lazy dog.
+  - The quick brown fox jumps over the lazy dog.
 
 ## The quick brown fox jumps over the lazy dog
 
-    - Every word in the sentence has a clear grammatical definition and when we write text, we take great care to choose the grammatical elements so that we communicate a very specific message. 
+  - Every word in the sentence has a clear grammatical definition and when we write text, we take great care to choose the grammatical elements so that we communicate a very specific message. 
 
 
   ![](../images/im120.png)  
@@ -58,13 +58,13 @@ The first step in thinking creatively about data visualization is to appreciate 
 
 ## Grammar of graphics
 
-    - If we changed any of the grammatical elements of this sentence it would change the meaning, sometimes subtly, sometimes dramatically.
+  - If we changed any of the grammatical elements of this sentence it would change the meaning, sometimes subtly, sometimes dramatically.
 
-    - The same concept holds true for data visualization - graphics are built on an underlying grammar. 
+  - The same concept holds true for data visualization - graphics are built on an underlying grammar. 
 
 ## Grammar of graphics    
 
-    - The grammar of graphics is a plotting framework developed by Leland Wilkinson and published in his 1999 book, *The Grammar of Graphics*. 
+  - The grammar of graphics is a plotting framework developed by Leland Wilkinson and published in his 1999 book, *The Grammar of Graphics*. 
     
    ![](../images/im121.png) 
 
@@ -73,13 +73,13 @@ The first step in thinking creatively about data visualization is to appreciate 
 
 There are two key things to note about the grammar of graphics. 
     
-    - First, graphics are made up of distinct layers of grammatical elements, 
+  - First, graphics are made up of distinct layers of grammatical elements, 
     
-    - Second, meaningful plots are built around appropriate aesthetic mappings. 
+  - Second, meaningful plots are built around appropriate aesthetic mappings. 
     
 ## Grammar of graphics
 
-- To continue our analogy to written grammar, the layers are like the adjectives and nouns and the aesthetic mappings are like the grammatical rules for how to assemble that vocabulary.
+  - To continue our analogy to written grammar, the layers are like the adjectives and nouns and the aesthetic mappings are like the grammatical rules for how to assemble that vocabulary.
 
 ## The three essential grammatical elements
 
@@ -96,22 +96,22 @@ There are three essential grammatical elements: data, aesthetics, and geometries
 
 ## The three essential grammatical elements
 
-- The data is obviously the data which we want to plot. 
+  - The data is obviously the data which we want to plot. 
 
   ![](../images/im123.png) 
 
 
- ## The three essential grammatical elements
+## The three essential grammatical elements
 
-- The aesthetics layer refers to the scales onto which we will map our data, and the geom layer refers to the actual shape the data will take in the plot.
+  - The aesthetics layer refers to the scales onto which we will map our data, and the geom layer refers to the actual shape the data will take in the plot.
 
  ![](../images/im123.png) 
 
 
  
- ## The three essential grammatical elements
+## The three essential grammatical elements
 
-- The geom layer refers to the actual shape the data will take in the plot.
+  - The geom layer refers to the actual shape the data will take in the plot.
 
  ![](../images/im123.png) 
 
@@ -138,9 +138,9 @@ This diagram gives an example of some of the terms we'll encounter in each eleme
 
 ## Jargon for each element
 
-    - Whenever we make a plot we are choosing among these options and many others not displayed. 
+  - Whenever we make a plot we are choosing among these options and many others not displayed. 
     
-    - By the end of this lecture you'll be able to generate meaningful and publication-quality exploratory plots using       the first four layers.
+  - By the end of this lecture you'll be able to generate meaningful and publication-quality exploratory plots using       the first four layers.
     
 
 ## ggplot2 layers
@@ -193,7 +193,7 @@ One of which is the classic iris data set collected by Edgar Anderson in the 193
   
 ## Iris dataset
 
-  - You're probably familiar with petals, they're the colorful part of a flower. 
+  - You're probably amiliar with petals, they're the colorful part of a flower. 
   
   - Sepals are the outer leaves of the flower, they are typically green, but in this case they're also colorful. 
   
@@ -279,7 +279,7 @@ Use the `str()` function to inspect the structure of the **diamonds** dataset.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 # Load ggplot2 package
 library(ggplot2)
 
@@ -294,7 +294,7 @@ Use ggplot() to create a basic plot of carat (x-axis) vs. price (y-axis).
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 # Basic ggplot setup
 ggplot(data = diamonds, aes(x = carat, y = price))
 ```
@@ -306,7 +306,7 @@ Use the geom_point() function to add a scatter plot layer.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 # Add points to the plot
 ggplot(data = diamonds, aes(x = carat, y = price)) +
   geom_point()
@@ -319,7 +319,7 @@ Use the geom_smooth() function to add a smooth trend curve to the plot.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 # Add points and a smooth trend line
 ggplot(data = diamonds, aes(x = carat, y = price)) +
   geom_point() +
@@ -345,7 +345,7 @@ ggplot(data = diamonds, aes(x = carat, y = price)) +
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 # Create a plot with color mapped to clarity
 ggplot(data = diamonds, aes(x = carat, y = price, color = clarity)) +
   geom_point() +
@@ -364,7 +364,7 @@ ggplot(data = diamonds, aes(x = carat, y = price, color = clarity)) +
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 # Add transparency to points
 ggplot(data = diamonds, aes(x = carat, y = price, color = clarity)) +
   geom_point(alpha = 0.4) +
@@ -389,7 +389,7 @@ ggplot(data = diamonds, aes(x = carat, y = price, color = clarity)) +
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 # Load ggplot2
 library(ggplot2)
 
@@ -408,7 +408,7 @@ Add a point layer to the plot using geom_point().
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 # Add points to the saved plot
 plt_price_vs_carat <- plt_price_vs_carat + geom_point()
 ```
@@ -421,11 +421,12 @@ Display the updated plot stored in plt_price_vs_carat.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 # Display the updated plot
 plt_price_vs_carat
 ```    
 
+# Aesthetics
 
 ## Visible aesthetics
 
@@ -492,6 +493,7 @@ Importantly, we call aesthetics in the aes function. We could have also called a
 
 
 ![](../images/im138.png)
+
 ## Mapping onto the color aesthetic in geom
 
   - This is typically only done if we don't want all layers to inherit the same aesthetics or we're mixing different data sources. 
@@ -581,7 +583,7 @@ Just like our two main variable types, there are visible aesthetics for continuo
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 # Load ggplot2 package
 library(ggplot2)
 # Map mpg to x and cyl to y
@@ -596,7 +598,7 @@ Objective: Map cyl to the x-axis and mpg to the y-axis.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 # Swap x and y aesthetics
 ggplot(mtcars, aes(x = cyl, y = mpg)) +
   geom_point()
@@ -610,7 +612,7 @@ Objective: Map wt to x, mpg to y, and cyl to color.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 # Add more aesthetics: color
 ggplot(mtcars, aes(x = wt, y = mpg, color = cyl)) +
   geom_point()
@@ -623,7 +625,7 @@ Objective: Modify the plot by changing shape to 1 and increasing size to 4.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 # Customize shape and size
 ggplot(mtcars, aes(x = wt, y = mpg, color = cyl)) +
   geom_point(shape = 1, size = 4)
@@ -649,7 +651,7 @@ ggplot(mtcars, aes(x = wt, y = mpg, color = cyl)) +
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 # Load ggplot2 package
 library(ggplot2)
 
@@ -671,7 +673,7 @@ ggplot(mtcars, aes(x = wt, y = mpg, fill = cyl)) +
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
 
-```{r} 
+```{r, cache = TRUE} 
 # Customize shape and transparency
 ggplot(mtcars, aes(x = wt, y = mpg, fill = cyl)) +
   geom_point(shape = 21, size = 4, alpha = 0.6)
@@ -685,7 +687,7 @@ Objective: Add gear as a color aesthetic for outlines.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 # Map gear to color
 ggplot(mtcars, aes(x = wt, y = mpg, fill = cyl, color = gear)) +
   geom_point(shape = 21, size = 4, alpha = 0.6)
@@ -791,7 +793,7 @@ The distinction between aesthetics and attributes is subtle but important. Mixin
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 # Define a hexadecimal color
 my_blue <- "#4ABEFF"
 
@@ -807,7 +809,7 @@ Transparency can be controlled using alpha.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 # Add a point layer with alpha transparency
 ggplot(mtcars, aes(x = wt, y = mpg, color = cyl)) +
   geom_point(alpha = 0.5)
@@ -821,7 +823,7 @@ Use geom_text() to label points with the row names.
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
 
-```{r} 
+```{r, cache = TRUE} 
 # Add text labels
 ggplot(mtcars, aes(x = wt, y = mpg)) +
   geom_text(aes(label = rownames(mtcars)), color = "red")
@@ -833,7 +835,7 @@ Change the shape and color of points.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 # Customize points with shape and color
 ggplot(mtcars, aes(x = wt, y = mpg)) +
   geom_point(shape = 24, color = "yellow")
@@ -845,7 +847,7 @@ Map qsec to the y-axis, mpg to the x-axis, and cyl to color.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 # Map multiple aesthetics
 ggplot(mtcars, aes(x = mpg, y = qsec, color = cyl)) +
   geom_point()
@@ -859,7 +861,7 @@ Map gear (factor version of am) to shape.
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
 
-```{r} 
+```{r, cache = TRUE} 
 # Add shape mapping
 ggplot(mtcars, aes(x = mpg, y = qsec, color = cyl, shape = factor(gear))) +
   geom_point()
@@ -872,7 +874,7 @@ Map hp divided by wt to size.
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
 
-```{r} 
+```{r, cache = TRUE} 
 # Add size mapping
 ggplot(mtcars, aes(x = mpg, y = qsec, color = cyl, shape = factor(gear), size = hp / wt)) +
   geom_point()
@@ -1046,7 +1048,7 @@ Note that if we just want to quickly change the axis labels, we can do this with
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 palette <- c(automatic = "#377EB8", manual = "#E41A1C")
 
 ggplot(mtcars, aes(x = cyl, fill = factor(gear))) +
@@ -1063,7 +1065,7 @@ Use scale_fill_manual() to define custom colors and a legend title.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 # Define custom colors for gear levels
 palette <- c("3" = "#377EB8", "4" = "#E41A1C", "5" = "#4DAF4A")
 
@@ -1080,7 +1082,7 @@ Set the bar position to dodge for a side-by-side comparison.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r}  
+```{r, cache = TRUE}  
 # Define custom colors for gear levels
 palette <- c("3" = "#377EB8", "4" = "#E41A1C", "5" = "#4DAF4A")
 
@@ -1101,7 +1103,7 @@ Map mpg to the x-axis and use a dummy y-axis (set to 0).
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 # Scatter plot with jitter
 ggplot(mtcars, aes(x = mpg, y = 0)) +
   geom_point(position = "jitter")
@@ -1115,7 +1117,7 @@ Restrict the y-axis using ylim() to improve focus.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 # Add y-axis limits
 ggplot(mtcars, aes(x = mpg, y = 0)) +
   geom_point(position = "jitter") +
@@ -1455,7 +1457,7 @@ Consider the `diamonds` dataset:
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
 
-```{r} 
+```{r, cache = TRUE} 
 # Plot price vs. carat, colored by clarity
 ggplot(diamonds, aes(carat, price, color = clarity)) +
   geom_point(alpha = 0.5, shape = ".")
@@ -1480,7 +1482,7 @@ Adjust jitter width and dodge position for clarity.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 # Base plot for aligned values
 ggplot(mtcars, aes(cyl, mpg, color = gear)) +
   geom_point(position = position_jitter(width = 0.3))
@@ -1500,7 +1502,7 @@ Add transparency (alpha) to reveal overlaps.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 # Scatter plot with jitter for low-precision data
 ggplot(iris, aes(Sepal.Length, Sepal.Width, color = Species)) +
   geom_jitter(alpha = 0.5, width = 0.1)
@@ -1523,7 +1525,7 @@ Use the labs() function to set x and y-axis labels.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}   
 
-```{r} 
+```{r, cache = TRUE} 
 library(carData)
 # Plot vocabulary vs. education
 ggplot(Vocab, aes(education, vocabulary)) +
@@ -1640,7 +1642,7 @@ The y axis label didn't change, but it should say proportion, not count.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny} 
 
-```{r}
+```{r, cache = TRUE}
 # Basic histogram of mpg
 ggplot(mtcars, aes(x = mpg)) +
   geom_histogram()
@@ -1653,7 +1655,7 @@ Set the histogram binwidth to 1 for finer detail.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny} 
 
-```{r}
+```{r, cache = TRUE}
 # Adjust histogram binwidth
 ggplot(mtcars, aes(x = mpg)) +
   geom_histogram(binwidth = 1)
@@ -1667,7 +1669,7 @@ Show frequency densities instead of counts using ..density...
 
 \AddToHookNext{env/Highlighting/begin}{\tiny} 
 
-```{r}
+```{r, cache = TRUE}
 # Histogram with density on the y-axis
 ggplot(mtcars, aes(x = mpg, y = ..density..)) +
   geom_histogram(binwidth = 1)
@@ -1679,7 +1681,7 @@ Set the histogram bars' fill color to datacamp_light_blue.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny} 
 
-```{r}
+```{r, cache = TRUE}
 # Define a custom color
 datacamp_light_blue <- "#1F77B4"
 
@@ -1700,7 +1702,7 @@ Map the fill aesthetic to gear (factor version of gear).
 
 \AddToHookNext{env/Highlighting/begin}{\tiny} 
 
-```{r}
+```{r, cache = TRUE}
 # Map fill to a variable
 ggplot(mtcars, aes(x = mpg, fill = factor(gear))) +
   geom_histogram(binwidth = 1) +
@@ -1710,12 +1712,1277 @@ ggplot(mtcars, aes(x = mpg, fill = factor(gear))) +
 
 
 
+## Bar Plots in R
+
+- Histograms are a specialized version of bar plots for continuous data.
+- Classic bar plots have a categorical X-axis.
+- `{ggplot2}` provides `geom_bar()` and `geom_col()`.
+
+
+
+## Bar Plots with Categorical X-axis
+
+![](../images/im207.png)
+
+- `geom_bar()` counts occurrences per category.
+- `geom_col()` directly uses values from the dataset.
+
+
+## Difference Between geom_bar and geom_col
+
+- `geom_col()` maps `y` to actual data values.
+- Useful when working with summary statistics.
+
+
+## Bar Plots for Mammal Habits
+
+We'll use a dataset on the REM sleep time and eating habits of mammals.
+
+```{r, cache = TRUE}
+str(msleep)
+```
+
+
+## Bar plot
+
+```{r, cache = TRUE}
+ggplot(msleep, aes(vore)) + geom_bar()
+```
+
+
+## Bar plot
+
+  - In this bar plot, we've split our data set according to eating behavior and simply asked how many observations we have in each category.
+
+  - Notice that something very similar to what happened with geom_histogram has happened here. 
+  
+  
+## Bar plot  
+  
+The data was counted and that count was plotted, so once again there were some statistics which occurred under the hood, in this case there was a default value of "bin" set for the stat argument. 
+
+## Bar plot
+
+  - These kind of plots are useful in getting a quick visual output, but we often see another type of bar plot, one which tries to depict the distribution     of a data set. 
+  
+  - Let's consider a scenario similar to what we saw with the point geom - that we have a data set with the summary values already calculated.
+
+## Plotting distributions instead of absolute counts
+
+Often times this is the case - you will have descriptive statistics already calculated, but remember that we can make ggplot do this on the fly.
+
+![](../images/im208.png)
+
+## Plotting distributions
+
+  - If we want to plot the average sepal width for each species, we can map the avg column in our dataset onto the y aesthetic. 
+  
+![](../images/im209.png)  
+  
+  - In this case we need to use $geom\_col$. If we want to add error bars, there is another geom for that, appropriately called $geom\_errorbar$. 
+  
+## Plotting distributions
+
+
+  - Here we again need to specify some aesthetics specific to this geom, namely **ymin** and **ymax**. 
+  
+![](../images/im209.png)    
+  
+  - On top of that I've set the width of the error bar tips to be narrow and I've made the fill of the bars themselves gray, so that we can see the error     bars. 
+  
+## Plotting distributions
+
+  - This is the kind of plot that you'll typically see in scientific publications, but it's pretty terrible. 
+  
+![](../images/im209.png)    
+  
+  - There is a special name in the data vis community for these types of plots - they're called dynamite plots.
+  
+  
+## Plotting distributions
+
+  They are strongly discouraged for many reasons, which we'll explore in the data vis best practices chapter at the end of the second course.
 
 
 
 
+## Practice Exercise: Position in Bar and Col Plots
+
+Let's see how the `position` argument changes `geom_bar()`.
+
+We have three position options:
+- `stack`: The default
+- `dodge`: Preferred
+- `fill`: To show proportions
+
+## Instructions
+
+1. **Using `mtcars`**, plot `cyl`, filled by `am`.
+   - Add a bar layer using `geom_bar()`.
+
+```{r, cache = TRUE}
+# Plot cyl, filled by am
+ggplot(mtcars, aes(cyl, fill = am)) +
+  geom_bar()
+```
 
 
 
 
+## Instructions
+
+2. **Set the bar `position` argument to "fill".**
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+ggplot(mtcars, aes(cyl, fill = am)) +
+  geom_bar(position = "fill")
+```
+
+## Instructions
+
+3. **Change the bar `position` argument to "dodge".**
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+ggplot(mtcars, aes(cyl, fill = am)) +
+  geom_bar(position = "dodge")
+```
+
+Try running these commands in RStudio and observe how the bar plot changes.
+
+
+## Practice Exercise: Position in Bar and Col Plots
+
+Let's see how the `position` argument changes `geom_bar()`.
+
+We have three position options:
+- `stack`: The default
+- `dodge`: Preferred
+- `fill`: To show proportions
+
+## Instructions
+
+1. **Using `mtcars`**, plot `cyl`, filled by `am`.
+   - Add a bar layer using `geom_bar()`.
+   
+\AddToHookNext{env/Highlighting/begin}{\tiny}    
+
+```{r, cache = TRUE}
+# Plot cyl, filled by am
+ggplot(mtcars, aes(cyl, fill = am)) +
+  geom_bar()
+```
+
+## Instructions
+
+2. **Set the bar `position` argument to "fill".**
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+ggplot(mtcars, aes(cyl, fill = am)) +
+  geom_bar(position = "fill")
+```
+
+
+## Instructions
+
+3. **Change the bar `position` argument to "dodge".**
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+ggplot(mtcars, aes(cyl, fill = am)) +
+  geom_bar(position = "dodge")
+```
+
+## Instructions
+
+
+4. **Modify the `dodge` width to 0.2 for overlapping bars.**
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+ggplot(mtcars, aes(cyl, fill = am)) +
+  geom_bar(position = position_dodge(width = 0.2))
+```
+
+## Instructions
+
+5. **Set the bar transparency level to `0.6` (alpha blending).**
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+ggplot(mtcars, aes(cyl, fill = am)) +
+  geom_bar(position = position_dodge(width = 0.2), alpha = 0.6)
+```
+
+Try running these commands in RStudio and observe how the bar plot changes.
+
+## Practice Exercise: Sequential Color Palette in Bar Plots
+
+We'll use a sequential color palette to fill segments based on an ordinal variable.
+
+## Instructions
+
+1. **Using the `Vocab` dataset**, plot `education`, filled by `vocabulary`.
+   - Add a bar layer using `geom_bar()`.
+
+```{r, cache = TRUE}
+# Plot education, filled by vocabulary
+ggplot(Vocab, aes(education, fill = vocabulary)) +
+  geom_bar()
+```
+
+
+## Instructions
+
+2. **Apply a sequential color palette using `scale_fill_brewer()`.**
+
+```{r, cache = TRUE}
+ggplot(Vocab, aes(education, fill = vocabulary)) +
+  geom_bar() +
+  scale_fill_brewer(palette = "Set1")
+```
+
+## Instructions
+
+3. **Try different color palettes from `RColorBrewer`.**
+
+```{r, cache = TRUE}
+library(RColorBrewer)
+
+ggplot(Vocab, aes(education, fill = vocabulary)) +
+  geom_bar() +
+  scale_fill_brewer(palette = "Blues")
+```
+
+Try running these commands in RStudio and observe how the color changes based on the ordinal variable.
+
+## Line plots
+
+Line plots are another very common plot type.
+
+## Common plot types
+
+We'll take a look at two examples of lines plots in situations in which they are very well-suited - time series.
+
+![](../images/im210.png) 
+
+## Introduction to Line Plots with ggplot2
+
+- **Line plots** are essential for visualizing trends over time.
+- In `ggplot2`, they are created using `geom_line()`.
+- Used extensively for **time series analysis** and **trend visualization**.
+
+
+## Data Preparation
+
+```{r, cache = TRUE}
+# Load necessary libraries
+library(tidyverse)
+
+# Create an example dataset
+data <- data.frame(
+  year = 2000:2020,
+  value = cumsum(runif(21, min=-5, max=5))
+)
+
+# Preview data
+head(data)
+```
+
+
+## Basic Line Plot
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+# Create a simple line plot
+ggplot(data, aes(x = year, y = value)) +
+  geom_line(color = "blue") +
+  labs(title = "Trend Over Time",
+       x = "Year",
+       y = "Value")
+```
+
+
+
+## Adding Points to the Line Plot
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+# Line plot with points
+ggplot(data, aes(x = year, y = value)) +
+  geom_line(color = "blue") +
+  geom_point(color = "red") +
+  labs(title = "Trend with Data Points",
+       x = "Year",
+       y = "Value")
+```
+
+
+## Customizing Line Types and Colors
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+# Customize line type and size
+ggplot(data, aes(x = year, y = value)) +
+  geom_line(color = "darkgreen", linetype = "dashed", size = 1) +
+  labs(title = "Customized Line Plot",
+       x = "Year",
+       y = "Value")
+```
+
+
+## Plotting Multiple Lines
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+# Creating a dataset with multiple groups
+data_multi <- data.frame(
+  year = rep(2000:2020, times = 2),
+  value = c(cumsum(runif(21, min=-5, max=5)),
+            cumsum(runif(21, min=-5, max=5))),
+  group = rep(c("Series A", "Series B"), each = 21)
+)
+```
+
+
+## Plotting Multiple Lines
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+# Plot multiple lines
+ggplot(data_multi, aes(x = year, y = value, color = group)) +
+  geom_line(size = 1) +
+  labs(title = "Multiple Line Plot",
+       x = "Year",
+       y = "Value")
+```
+
+
+## Smoothing the Line with `geom_smooth()`
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+# Line plot with smoothing
+ggplot(data, aes(x = year, y = value)) +
+  geom_line(color = "blue") +
+  geom_smooth(method = "loess", color = "red") +
+  labs(title = "Smoothed Line Plot",
+       x = "Year",
+       y = "Value")
+```
+
+## Practice Exercises
+
+1. **Modify the line color and thickness** in the basic line plot.
+2. **Change the point shape** in the line plot with points.
+3. **Use different line types** for the multi-line plot.
+4. **Apply `geom_smooth()` with different methods** (`lm`, `loess`).
+
+
+
+
+# Themes
+
+
+## Themes from scratch
+
+The themes layer controls all the non-data ink on your plot.
+
+## The themes layer
+
+Which are all the visual elements that are not actually part of the data.
+
+## The themes layer
+
+Visual elements can be classified as one of three different types - text, line or rectangle.
+
+## The themes layer
+
+Each type can be modified by using the appropriate function, which all begin with $element\_$ followed by text, line, or rect, respectively.
+
+## A starting plot...
+
+For example, consider this plot that we've already encounter a few times. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) + 
+geom_jitter(alpha = 0.6)
+```
+
+## A starting plot...
+  
+  - It's composed out of a combination of data and lots of non-data embellishments. 
+  
+  - For example, these are all the text elements on our plot
+
+## The text elements
+
+  - Each element has it's own unique name. 
+
+  - We can access all the text in general, all titles in general but also more and more specific items, such as the plot, legend and axis titles, or the text on specific axes. 
+  
+## The text elements  
+  
+  All these items are arguments of the theme function.
+
+![](../images/im212.png)
+
+
+## The text elements
+
+This is used like all other layers in ggplot, by adding a plus to our plot.
+
+## Adjusting theme elements
+
+To modify an element, just call its argument in the theme function and use the appropriate $element\_$ function to specify what we want to change, in this case we need to use an $element\_text$ call. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) + 
+geom_jitter(alpha = 0.6) + 
+theme(axis.title = element_text(color = "blue"))
+```
+
+## Adjusting theme elements
+
+It's within this function that we manipulate things like size, color, alignment and angle of the text.
+
+## A starting plot...
+
+Lines include the tick marks on the axes, the axis lines themselves and all grid lines, both major and minor.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) + 
+geom_jitter(alpha = 0.6)
+```
+
+
+## Line elements
+
+These are also all just arguments within the theme function and are modified by the $element\_line$ argument.
+
+![](../images/im212.png)
+
+## A starting plot...
+
+The remaining non-data ink on our plot are all rectangles of various sizes.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) + 
+geom_jitter(alpha = 0.6)
+```
+
+## Rect elements
+
+Access rectangles using arguments in the theme function and modify them using $element\_rect$.
+
+![](../images/im214.png)
+
+## Hierarchical naming reflects inheritance rules
+
+Although we have access to every item, we don't need to modify them individually. 
+
+![](../images/im215.png)
+
+
+## Hierarchical naming reflects inheritance rules
+
+They inherent from each other in a hierarchy. 
+
+![](../images/im215.png)
+
+
+## Hierarchical naming reflects inheritance rules
+
+All text elements inherit from text, so if we changed that argument, all downstream arguments would be affected. 
+
+The same goes for line and rectangle. 
+
+
+## Hierarchical naming reflects inheritance rules
+
+The naming convention is pretty intuitive. 
+
+In practice you will call a small combination of arguments that you want to change.
+
+## element_blank()
+
+There is one other element function that we haven't discussed yet: $element\_blank$. 
+
+We can use this in a plot to remove any item. 
+
+
+## element_blank()
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) + 
+geom_jitter(alpha = 0.6) + 
+theme(line = element_blank(),
+      rect = element_blank(),
+      text = element_blank())
+```
+
+
+## element_blank()
+
+That is, it won't be drawn at all. 
+
+In this example we set all lines, text and rectangles to blank, so we are left with just the data. 
+
+Notice that the legend keys themselves are part of the data, if you want to modify these elements refer back to the chapter aesthetics and the exercises on scales.
+
+## Let's practice!
+
+Here, we saw how the theme layer allows us to modify visual attributes of non-data ink, including text lines and rectangles. 
+
+But in addition to that, we can also modify a plot's margins and legend position. 
+
+Let's head over to the exercises and see how this in action.
+
+
+## Practice
+
+
+
+  - In this exercise, we will explore how to modify legend positions in **ggplot2**.  
+  - Legends help communicate information about different elements in a plot, but sometimes we need to adjust their placement for better visualization.
+
+## Learning Objectives:
+
+- Remove the legend from a plot.
+- Change the legend position to the bottom.
+- Place the legend inside the plot at specific coordinates.
+
+
+
+## Sample data
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}  
+
+```{r, cache=TRUE}
+# Sample data
+data <- data.frame(
+  year = seq(2000, 2020, by = 1),
+  unemployed = c(4.0, 4.2, 4.3, 4.7, 5.0, 5.3, 5.5, 5.7, 6.1, 6.3, 
+                 6.5, 6.7, 7.0, 7.3, 7.5, 7.8, 8.0, 8.2, 8.5, 8.7, 9.0)
+)
+```
+
+
+## Practice
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}  
+
+```{r, cache=TRUE}
+# We use ggplot() to plot the data with a line chart.
+plt_prop_unemployed_over_time <- ggplot(data, aes(x = year, y = unemployed)) +
+  geom_line(color = "blue", size = 1) +
+  labs(title = "Unemployment Rate Over Time", x = "Year", y = "Unemployment Rate (%)") +
+theme_minimal()
+  # The theme_minimal() function is used to apply a clean and simple theme.
+# Display the default plot
+plt_prop_unemployed_over_time
+```    
+
+
+## Practice
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}  
+
+```{r, cache=TRUE}
+# Remove legend entirely
+plt_prop_unemployed_over_time +
+  theme(legend.position = "none")
+```
+
+
+## Practice
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}  
+
+```{r, cache=TRUE}
+plt_prop_unemployed_over_time +
+  theme(
+    # For all rectangles, set the fill color to grey92
+    rect = element_rect(fill = "grey92"),
+    # For the legend key, turn off the outline
+    legend.key = element_rect(color = NA)
+  )
+```
+
+
+## Practice
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}  
+
+```{r, cache=TRUE}
+# Load necessary libraries
+library(ggplot2)
+library(grid)  # Required for unit()
+
+# Create a scatter plot of MPG vs Weight, colored by Cylinders
+plt_mpg_vs_wt_by_cyl <- ggplot(mtcars, aes(x = mpg, y = wt, color = factor(cyl))) +
+  geom_point(size = 3, alpha = 0.7) + 
+  labs(
+    title = "MPG vs Weight by Cylinder Count",
+    x = "Miles Per Gallon (MPG)",
+    y = "Weight (1000 lbs)",
+    color = "Cylinders"
+  ) +
+  theme_minimal()
+```
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}  
+
+```{r, cache=TRUE}
+# View the original plot
+plt_mpg_vs_wt_by_cyl
+plt_mpg_vs_wt_by_cyl +
+  theme(
+    # Set the axis tick length to 2 lines
+    axis.ticks.length = unit(2, "lines")
+  )
+```
+
+
+## Theme flexibility
+
+We saw how to fine-tune every part of our plot using the theme layer.
+
+## Ways to use themes
+
+  - There are a few other ways of changing theme elements, so let's take a look. 
+   - We'll begin with defining our own theme layer object.
+
+## Defining theme objects
+
+  - If you're using many plots within a presentation or publication, you'll want to have consistency in your style. 
+  
+\AddToHookNext{env/Highlighting/begin}{\tiny}    
+  
+```{r, cache=TRUE}
+z <- ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
+  geom_jitter(alpha = 0.6) +
+  scale_x_continuous("Sepal Length (cm)", limits = c(4,8), expand = c(0,0)) +
+  scale_y_continuous("Sepal Width (cm)", limits = c(1.5,5), expand = c(0,0)) +
+  scale_color_brewer("Species", palette = "Dark2", labels = c("Setosa", "Versicolor", "Virginica"))
+
+```
+  
+So, once you settle on a a specific theme, you'll want to apply it to all plots of the same type. 
+
+## Defining theme objects
+
+Creating a theme from scratch is a detailed process, that we don't want to repeat for every plot we make. 
+  
+\AddToHookNext{env/Highlighting/begin}{\tiny}    
+  
+```{r, cache=TRUE}
+z <- ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
+  geom_jitter(alpha = 0.6) +
+  scale_x_continuous("Sepal Length (cm)", limits = c(4,8), expand = c(0,0)) +
+  scale_y_continuous("Sepal Width (cm)", limits = c(1.5,5), expand = c(0,0)) +
+  scale_color_brewer("Species", palette = "Dark2", labels = c("Setosa", "Versicolor", "Virginica"))
+
+```
+
+That's where defining a theme layer object comes into play.
+
+## Defining theme objects
+
+To see how this works let's return to a plot we've already seen. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}    
+
+```{r, cache=TRUE}
+z + theme(text = element_text(family = "serif", size = 14),
+          rect = element_blank(),
+          panel.grid = element_blank(),
+          title = element_text(color = "#8b0000"),
+          axis.line = element_line(color = "black"))
+
+```
+
+
+
+For convenience, we're going to save this plot as an object called Z.
+
+6. Defining theme objects
+
+We can adjust specific theme arguments to get the desired plot style. Here, I've changed the font family, size and title color.
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}    
+
+```{r, cache=TRUE}
+theme_iris <- theme(text = element_text(family = "serif", size = 14),
+                    rect = element_blank(),
+                    panel.grid = element_blank(),
+                    title = element_text(color = "#8b0000"),
+                    axis.line = element_line(color = "black"))
+
+```
+
+
+
+## Defining theme objects
+
+The first method in automating this process is to save our layer as an object. Here we're just going to call it theme iris.
+
+## Reusing theme objects
+
+Just as we've seen throughout the course, we can add individual layers to any ggplot object. 
+
+```{r, cache = TRUE}
+z + theme_iris
+```
+
+
+## Reusing theme objects
+
+This means we can reuse this style over and over. 
+
+Let's see what happens when we try to apply our new theme object on another plot.
+
+## Reusing theme objects
+
+Remember this histogram of the iris Sepal widths?
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}    
+
+```{r, cache=TRUE}
+m <- ggplot(iris, aes(x = Sepal.Width)) +
+  geom_histogram(binwidth = 0.1,
+                 center = 0.05)
+
+m
+```
+
+
+
+## Reusing theme objects
+
+Now it has the same style as our scatter plot, without having to retype the whole theme layer.
+
+```{r, cache=TRUE}
+m + theme_iris
+```
+
+
+## Reusing theme objects
+
+But let's say that on occasion I wanted to modify some other specific elements of a plot.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}  
+
+```{r, cache=TRUE}
+m + theme_iris +
+  theme(axis.line.x = element_blank())
+```
+
+Not a problem, we can just add a another theme layer which will override any previous settings. In this example, I've removed the x axis line.
+
+## Ways to use themes
+
+So far we just used our theme as an object itself. 
+
+This is a pretty flexible way of working with theme, but a third way of working with themes is accessing the built-in theme templates.
+
+## Using built-in themes
+
+Built-in theme functions begin with $theme\_\star$. 
+
+theme classic is my go-to template for great publication-quality plots.
+
+```{r, cache=TRUE}
+z + theme_classic()
+```
+
+
+## Using built-in themes
+
+Of course we can always modify any specific element, as we've already seen.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}  
+
+```{r, cache=TRUE}
+z + theme_classic() +
+theme(text  = element_text(family = "serif"))
+```
+
+## Ways to use themes
+
+There are also packages with pre-defined themes, like the ggthemes package.
+
+## The ggthemes package
+
+The tufte theme mimics Tufte's classic style, which removes all non-data ink and sets the font to a serif typeface.
+
+
+```{r, cache=TRUE}
+library(ggthemes)
+
+z + theme_tufte()
+```
+
+## Ways to use themes
+
+Finally, we can update and set the default theme
+
+## Updating themes
+
+Updating is done with the theme_update function. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}  
+
+```{r, cache=TRUE}
+original <- theme_update(text = element_text(family = "serif", size = 14),
+                         rect = element_blank(),
+                         panel.grid = element_blank(),
+                         title = element_text(color = "#8b0000"),
+                         axis.line = element_line(color = "black"))
+
+```
+
+
+This function behaves differently from a typical function. This command updates the default theme and saves the current default to the object "original".
+
+## Updating themes
+
+```{r, cache = TRUE}
+z
+```
+
+Now, all plots will automatically have the same theme.
+
+## Setting themes
+
+```{r, cache = TRUE}
+theme_set(original)
+
+# Alternatively
+
+theme_set(theme_grey())
+```
+
+We can set a complete theme object, like original, using the theme_set function.
+
+## Practice
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}  
+
+```{r, cache = TRUE}
+# Add a black and white theme
+plt_prop_unemployed_over_time +
+  theme_bw()
+```
+
+
+## Practice
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}  
+
+```{r, cache = TRUE}
+# Use the fivethirtyeight theme
+plt_prop_unemployed_over_time +
+  theme_fivethirtyeight()
+```
+
+## Practice
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}  
+
+```{r, cache = TRUE}
+# Theme layer saved as an object, theme_recession
+theme_recession <- theme(
+  rect = element_rect(fill = "grey92"),
+  legend.key = element_rect(color = NA),
+  axis.ticks = element_blank(),
+  panel.grid = element_blank(),
+  panel.grid.major.y = element_line(color = "white", size = 0.5, linetype = "dotted"),
+  axis.text = element_text(color = "grey25"),
+  plot.title = element_text(face = "italic", size = 16),
+  legend.position = c(0.6, 0.1)
+)
+```
+
+## Practice
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}  
+
+```{r, cache = TRUE}
+# Combine the Tufte theme with theme_recession
+theme_tufte_recession <- theme_tufte() + theme_recession
+
+# Add the recession theme to the plot
+plt_prop_unemployed_over_time + theme_tufte_recession
+```
+
+
+
+## Effective explanatory plots
+
+For our last exercises, I want to go through an example of producing explanatory plots in an info viz style, something that you'd see in a magazine or website for a mostly lay audience.
+
+## Our goal, an effective explanatory plot
+
+These plots tend to have both a small number of observations and variables, have embellishments and typically make a clear or dramatic statement.
+
+![](../images/im216.png)
+
+## Our goal, an effective explanatory plot
+
+  - Our example comes from the gapminder data set and plots the countries with the highest and lowest life expectancies in 2007. 
+  
+  - The global mean is plotted for comparison. Here we focus on the large gap between the highest and lowest life expectancies, which is about 40 years!
+
+## Complete data
+
+We would begin with our complete data set, which contains three variables for 142 countries.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache=TRUE}
+# Load necessary libraries
+library(gapminder)    # Load the gapminder dataset
+library(RColorBrewer) # For color palettes
+library(tidyverse)    # Includes dplyr, ggplot2, tidyr, etc.
+# Filter and process the gapminder dataset
+gm2007 <- gapminder %>%
+  dplyr::filter(year == 2007) %>%                   # Select data for the year 2007
+  dplyr::select(country, lifeExp, continent) %>%     # Keep only relevant columns
+  dplyr::filter(lifeExp > 80.6 | lifeExp < 46) %>%   # Filter countries with extreme life expectancy
+  arrange(lifeExp)                            # Arrange in ascending order
+
+# View the processed dataset
+glimpse(gm2007)  # Check the structure
+head(gm2007)     # Preview the first few rows
+
+```
+
+
+## First exploratory plots - distributions
+
+Our first exploratory plot would probably be a histogram, which isn't a bad choice. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache=TRUE}
+ggplot(gm2007, aes(lifeExp)) +
+geom_histogram()  
+```
+
+Recall that we have already applied a binning statistic here.
+
+
+## Add a geom_segment() layer
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE, eval=FALSE}
+# Add a geom_segment() layer
+ggplot(gm2007, aes(x = lifeExp, y = country, color = lifeExp)) +
+  geom_point(size = 4) +
+  geom_segment(aes(xend = 30, yend = country), size = 2)
+```
+
+## Add a geom_segment() layer
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE, echo=FALSE}
+# Add a geom_segment() layer
+ggplot(gm2007, aes(x = lifeExp, y = country, color = lifeExp)) +
+  geom_point(size = 4) +
+  geom_segment(aes(xend = 30, yend = country), size = 2)
+```
+
+
+## Add a geom_text() layer
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE, eval=FALSE}
+# Add a geom_text() layer
+ggplot(gm2007, aes(x = lifeExp, y = country, color = lifeExp)) +
+  geom_point(size = 4) +
+  geom_segment(aes(xend = 30, yend = country), size = 2) +
+  geom_text(aes(label = lifeExp), color = "white", size = 1.5)
+```
+
+## Add a geom_text() layer
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE, echo=FALSE}
+# Add a geom_text() layer
+ggplot(gm2007, aes(x = lifeExp, y = country, color = lifeExp)) +
+  geom_point(size = 4) +
+  geom_segment(aes(xend = 30, yend = country), size = 2) +
+  geom_text(aes(label = lifeExp), color = "white", size = 1.5)
+```
+
+
+
+## Set the color scale
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+# Set the color scale
+palette <- brewer.pal(5, "RdYlBu")[-(2:4)]
+```
+
+
+## Modify the scales
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE, eval=FALSE}
+# Modify the scales
+ggplot(gm2007, aes(x = lifeExp, y = country, color = lifeExp)) +
+  geom_point(size = 4) +
+  geom_segment(aes(xend = 30, yend = country), size = 2) +
+  geom_text(aes(label = round(lifeExp,1)), color = "white", size = 1.5) +
+  scale_x_continuous("", expand = c(0,0), limits = c(30,90), position = "top") +
+  scale_color_gradientn(colors = palette)
+```
+
+## Modify the scales
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE, echo=FALSE}
+# Modify the scales
+ggplot(gm2007, aes(x = lifeExp, y = country, color = lifeExp)) +
+  geom_point(size = 4) +
+  geom_segment(aes(xend = 30, yend = country), size = 2) +
+  geom_text(aes(label = round(lifeExp,1)), color = "white", size = 1.5) +
+  scale_x_continuous("", expand = c(0,0), limits = c(30,90), position = "top") +
+  scale_color_gradientn(colors = palette)
+```
+
+
+
+## Set the color scale
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+
+```{r, cache = TRUE}
+# Set the color scale
+palette <- brewer.pal(5, "RdYlBu")[-(2:4)]
+```
+
+
+## Add a title and caption
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+# Add a title and caption
+ggplot(gm2007, aes(x = lifeExp, y = country, color = lifeExp)) +
+  geom_point(size = 4) +
+  geom_segment(aes(xend = 30, yend = country), size = 2) +
+  geom_text(aes(label = round(lifeExp,1)), color = "white", size = 1.5) +
+  scale_x_continuous("", expand = c(0,0), limits = c(30,90), position = "top") +
+  scale_color_gradientn(colors = palette) +
+  labs(title = "Highest and lowest life expectancies, 2007", caption = "Source: gapminder")
+```
+
+
+
+## Using annotate for embellishments
+
+In the previous exercise, we completed our basic plot. 
+
+Now let’s polish it by playing with the theme and adding annotations. 
+
+In this exercise, you’ll use annotate() to add text and a curve to the plot.
+
+
+
+## Clean up the theme
+
+  - Add a classic theme to the plot with theme_classic().
+  - Set axis.line.y, axis.ticks.y, and axis.title to element_blank().
+  - Set the axis.text color to "black".
+  - Remove the legend by setting legend.position to "none".
+
+## Clean up the theme
+
+  - Use $geom\_vline()$ to add a vertical line. Set **xintercept** to global_mean, specify the color to be "grey40", and set linetype to 3.
+
+  - $x\_start$ and $y\_start$ will be used as positions to place text and have been calculated for you.
+
+## Add a "text" geom as an annotation.
+
+  - For the annotation, set x to $x\_start$, y to $y\_start$, and label to "The global average".
+  - Annotate the plot with an arrow connecting your text to the line.
+
+## Use a "curve" geom.
+
+  - Set the arrow ends xend to x_end and yend to y_end.
+  - Set the length of the arrowhead to 0.2 cm and the type to "closed".
+
+## Use a "curve" geom.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+# Select only the highest/lowest 10 life expectancies
+gm2007_full <- gapminder %>%
+  dplyr::filter(year == 2007) %>%
+  dplyr::select(country, lifeExp, continent) %>%
+  dplyr::arrange(lifeExp) %>% 
+  dplyr::slice(c(1:10, (n()-9):n()))  # Keep only 10 lowest and 10 highest countries
+```
+
+
+## Calculate Global Mean & Define Annotations
+
+
+The following values have been calculated for you to assist with adding embellishments to the plot:
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+ 
+
+```{r, cache = TRUE}
+# Calculate global mean life expectancy
+global_mean <- mean(gm2007_full$lifeExp)
+
+# Define annotation points for the curve
+x_start <- global_mean + 3   # Move text slightly right
+y_start <- 8                 # Adjust y-position
+x_end <- global_mean
+y_end <- 10
+```
+
+
+## Define Color Palette
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+# Define a color palette
+palette <- brewer.pal(9, "YlGnBu")  # Yellow-Green-Blue gradient
+```
+
+
+## Create the Base Plot
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+plt_country_vs_lifeExp <- ggplot(gm2007_full, aes(x = lifeExp, y = reorder(country, lifeExp), color = lifeExp)) +
+  geom_point(size = 4) +  # Increase point size
+  geom_segment(aes(x = 30, xend = lifeExp, y = country, yend = country), size = 0.8, color = "gray") +  # Reduce line size
+  geom_text(aes(label = round(lifeExp, 1)), color = "white", size = 3, hjust = -0.5) +  # Improve label readability
+  scale_x_continuous("", expand = c(0, 0), limits = c(30, 90), position = "top") +  # Adjust axis
+  scale_color_gradientn(colors = palette) +  # Apply better color gradient
+  labs(title = "Highest and Lowest Life Expectancies, 2007", 
+       caption = "Source: Gapminder") +
+  theme_minimal()
+```
+
+
+##  Add Theme Adjustments
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+plt_country_vs_lifeExp <- plt_country_vs_lifeExp +
+  theme_classic() +
+  theme(axis.line.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text = element_text(color = "black"),
+        axis.title = element_blank(),
+        legend.position = "none")
+```
+
+
+## Add Vertical Reference Line
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+plt_country_vs_lifeExp <- plt_country_vs_lifeExp +
+  geom_vline(xintercept = global_mean, color = "grey40", linetype = "dashed")
+```
+
+
+## Add Annotation Text
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+plt_country_vs_lifeExp <- plt_country_vs_lifeExp +
+  annotate(
+    "text",
+    x = x_start, y = y_start,
+    label = "The\nglobal\naverage",
+    vjust = 1, hjust = 0, size = 4, color = "black"
+  )
+```
+
+
+## Add the Annotation Curve
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE}
+plt_country_vs_lifeExp <- plt_country_vs_lifeExp +
+  annotate(
+    "curve",
+    x = x_start, y = y_start,
+    xend = x_end, yend = y_end,
+    curvature = 0.3, 
+    arrow = arrow(length = unit(0.3, "cm"), type = "closed"),
+    color = "black", size = 1
+  )
+```
+
+
+## Final Visualization
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE, eval=FALSE}
+plt_country_vs_lifeExp
+```
+
+## Final Visualization
+
+\AddToHookNext{env/Highlighting/begin}{\tiny} 
+
+```{r, cache = TRUE, echo=FALSE}
+plt_country_vs_lifeExp
+```
 

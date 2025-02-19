@@ -174,7 +174,7 @@
 \title{Lecture 2}
 \subtitle{Data Visualization with ggplot2}
 \author{Endri Raco}
-\date{10 February, 2025}
+\date{19 February, 2025}
 
 \begin{document}
 \frame{\titlepage}
@@ -190,51 +190,67 @@ The first step in thinking creatively about data visualization is to
 appreciate that graphics are built upon an underlying grammar.
 \end{frame}
 
-\begin{frame}[fragile]{The quick brown fox jumps over the lazy dog}
+\begin{frame}{The quick brown fox jumps over the lazy dog}
 \phantomsection\label{the-quick-brown-fox-jumps-over-the-lazy-dog}
-\begin{verbatim}
-- To begin, let's consider one of the most well-known sentences in English. 
-
-- The quick brown fox jumps over the lazy dog.
-\end{verbatim}
+\begin{itemize}
+\item
+  To begin, let's consider one of the most well-known sentences in
+  English.
+\item
+  The quick brown fox jumps over the lazy dog.
+\end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{The quick brown fox jumps over the lazy dog}
+\begin{frame}{The quick brown fox jumps over the lazy dog}
 \phantomsection\label{the-quick-brown-fox-jumps-over-the-lazy-dog-1}
-\begin{verbatim}
-- Every word in the sentence has a clear grammatical definition and when we write text, we take great care to choose the grammatical elements so that we communicate a very specific message. 
-\end{verbatim}
+\begin{itemize}
+\tightlist
+\item
+  Every word in the sentence has a clear grammatical definition and when
+  we write text, we take great care to choose the grammatical elements
+  so that we communicate a very specific message.
+\end{itemize}
 
 \includegraphics{../images/im120.png}
 \end{frame}
 
-\begin{frame}[fragile]{Grammar of graphics}
+\begin{frame}{Grammar of graphics}
 \phantomsection\label{grammar-of-graphics}
-\begin{verbatim}
-- If we changed any of the grammatical elements of this sentence it would change the meaning, sometimes subtly, sometimes dramatically.
-
-- The same concept holds true for data visualization - graphics are built on an underlying grammar. 
-\end{verbatim}
+\begin{itemize}
+\item
+  If we changed any of the grammatical elements of this sentence it
+  would change the meaning, sometimes subtly, sometimes dramatically.
+\item
+  The same concept holds true for data visualization - graphics are
+  built on an underlying grammar.
+\end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Grammar of graphics}
+\begin{frame}{Grammar of graphics}
 \phantomsection\label{grammar-of-graphics-1}
-\begin{verbatim}
-- The grammar of graphics is a plotting framework developed by Leland Wilkinson and published in his 1999 book, *The Grammar of Graphics*. 
-\end{verbatim}
+\begin{itemize}
+\tightlist
+\item
+  The grammar of graphics is a plotting framework developed by Leland
+  Wilkinson and published in his 1999 book, \emph{The Grammar of
+  Graphics}.
+\end{itemize}
 
 \includegraphics{../images/im121.png}
 \end{frame}
 
-\begin{frame}[fragile]{Grammar of graphics}
+\begin{frame}{Grammar of graphics}
 \phantomsection\label{grammar-of-graphics-2}
 There are two key things to note about the grammar of graphics.
 
-\begin{verbatim}
-- First, graphics are made up of distinct layers of grammatical elements, 
-
-- Second, meaningful plots are built around appropriate aesthetic mappings. 
-\end{verbatim}
+\begin{itemize}
+\item
+  First, graphics are made up of distinct layers of grammatical
+  elements,
+\item
+  Second, meaningful plots are built around appropriate aesthetic
+  mappings.
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Grammar of graphics}
@@ -264,14 +280,16 @@ geometries.
 \begin{frame}{The three essential grammatical elements}
 \phantomsection\label{the-three-essential-grammatical-elements-2}
 \begin{itemize}
+\tightlist
 \item
   The data is obviously the data which we want to plot.
-
-  \includegraphics{../images/im123.png}
 \end{itemize}
 
-\#\# The three essential grammatical elements
+\includegraphics{../images/im123.png}
+\end{frame}
 
+\begin{frame}{The three essential grammatical elements}
+\phantomsection\label{the-three-essential-grammatical-elements-3}
 \begin{itemize}
 \tightlist
 \item
@@ -281,9 +299,10 @@ geometries.
 \end{itemize}
 
 \includegraphics{../images/im123.png}
+\end{frame}
 
-\#\# The three essential grammatical elements
-
+\begin{frame}{The three essential grammatical elements}
+\phantomsection\label{the-three-essential-grammatical-elements-4}
 \begin{itemize}
 \tightlist
 \item
@@ -321,13 +340,16 @@ each element.
 \includegraphics{../images/im125.png}
 \end{frame}
 
-\begin{frame}[fragile]{Jargon for each element}
+\begin{frame}{Jargon for each element}
 \phantomsection\label{jargon-for-each-element-1}
-\begin{verbatim}
-- Whenever we make a plot we are choosing among these options and many others not displayed. 
-
-- By the end of this lecture you'll be able to generate meaningful and publication-quality exploratory plots using       the first four layers.
-\end{verbatim}
+\begin{itemize}
+\item
+  Whenever we make a plot we are choosing among these options and many
+  others not displayed.
+\item
+  By the end of this lecture you'll be able to generate meaningful and
+  publication-quality exploratory plots using the first four layers.
+\end{itemize}
 \end{frame}
 
 \begin{frame}{ggplot2 layers}
@@ -411,7 +433,7 @@ the 1930s and thereafter popularized by Ronald Fisher.
 \phantomsection\label{iris-dataset-2}
 \begin{itemize}
 \item
-  You're probably familiar with petals, they're the colorful part of a
+  You're probably amiliar with petals, they're the colorful part of a
   flower.
 \item
   Sepals are the outer leaves of the flower, they are typically green,
@@ -746,6 +768,8 @@ Display the updated plot stored in plt\_price\_vs\_carat.
 \begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-9-1} \end{center}
 \end{frame}
 
+\section{Aesthetics}\label{aesthetics-2}
+
 \begin{frame}{Visible aesthetics}
 \phantomsection\label{visible-aesthetics}
 In this section we'll explore aesthetics, and understand how they are
@@ -827,9 +851,11 @@ Importantly, we call aesthetics in the aes function. We could have also
 called aesthetics in the geom layer as shown here, and get the same
 result.
 
-\includegraphics{../images/im138.png} \#\# Mapping onto the color
-aesthetic in geom
+\includegraphics{../images/im138.png}
+\end{frame}
 
+\begin{frame}{Mapping onto the color aesthetic in geom}
+\phantomsection\label{mapping-onto-the-color-aesthetic-in-geom-1}
 \begin{itemize}
 \item
   This is typically only done if we don't want all layers to inherit the
@@ -2406,6 +2432,1754 @@ Map the fill aesthetic to gear (factor version of gear).
 \end{Shaded}
 
 \begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-41-1} \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Bar Plots in R}
+\phantomsection\label{bar-plots-in-r}
+\begin{itemize}
+\tightlist
+\item
+  Histograms are a specialized version of bar plots for continuous data.
+\item
+  Classic bar plots have a categorical X-axis.
+\item
+  \texttt{\{ggplot2\}} provides \texttt{geom\_bar()} and
+  \texttt{geom\_col()}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Bar Plots with Categorical X-axis}
+\phantomsection\label{bar-plots-with-categorical-x-axis}
+\includegraphics{../images/im207.png}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{geom\_bar()} counts occurrences per category.
+\item
+  \texttt{geom\_col()} directly uses values from the dataset.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Difference Between geom\_bar and geom\_col}
+\phantomsection\label{difference-between-geom_bar-and-geom_col}
+\begin{itemize}
+\tightlist
+\item
+  \texttt{geom\_col()} maps \texttt{y} to actual data values.
+\item
+  Useful when working with summary statistics.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Bar Plots for Mammal Habits}
+\phantomsection\label{bar-plots-for-mammal-habits}
+We'll use a dataset on the REM sleep time and eating habits of mammals.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str}\NormalTok{(msleep)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+tibble [83 x 11] (S3: tbl_df/tbl/data.frame)
+ $ name        : chr [1:83] "Cheetah" "Owl monkey" "Mountain beaver" "Greater short-tailed shrew" ...
+ $ genus       : chr [1:83] "Acinonyx" "Aotus" "Aplodontia" "Blarina" ...
+ $ vore        : chr [1:83] "carni" "omni" "herbi" "omni" ...
+ $ order       : chr [1:83] "Carnivora" "Primates" "Rodentia" "Soricomorpha" ...
+ $ conservation: chr [1:83] "lc" NA "nt" "lc" ...
+ $ sleep_total : num [1:83] 12.1 17 14.4 14.9 4 14.4 8.7 7 10.1 3 ...
+ $ sleep_rem   : num [1:83] NA 1.8 2.4 2.3 0.7 2.2 1.4 NA 2.9 NA ...
+ $ sleep_cycle : num [1:83] NA NA NA 0.133 0.667 ...
+ $ awake       : num [1:83] 11.9 7 9.6 9.1 20 9.6 15.3 17 13.9 21 ...
+ $ brainwt     : num [1:83] NA 0.0155 NA 0.00029 0.423 NA NA NA 0.07 0.0982 ...
+ $ bodywt      : num [1:83] 50 0.48 1.35 0.019 600 ...
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]{Bar plot}
+\phantomsection\label{bar-plot}
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(msleep, }\FunctionTok{aes}\NormalTok{(vore)) }\SpecialCharTok{+} \FunctionTok{geom\_bar}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-43-1} \end{center}
+\end{frame}
+
+\begin{frame}{Bar plot}
+\phantomsection\label{bar-plot-1}
+\begin{itemize}
+\item
+  In this bar plot, we've split our data set according to eating
+  behavior and simply asked how many observations we have in each
+  category.
+\item
+  Notice that something very similar to what happened with
+  geom\_histogram has happened here.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Bar plot}
+\phantomsection\label{bar-plot-2}
+The data was counted and that count was plotted, so once again there
+were some statistics which occurred under the hood, in this case there
+was a default value of ``bin'' set for the stat argument.
+\end{frame}
+
+\begin{frame}{Bar plot}
+\phantomsection\label{bar-plot-3}
+\begin{itemize}
+\item
+  These kind of plots are useful in getting a quick visual output, but
+  we often see another type of bar plot, one which tries to depict the
+  distribution of a data set.
+\item
+  Let's consider a scenario similar to what we saw with the point geom -
+  that we have a data set with the summary values already calculated.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Plotting distributions instead of absolute counts}
+\phantomsection\label{plotting-distributions-instead-of-absolute-counts}
+Often times this is the case - you will have descriptive statistics
+already calculated, but remember that we can make ggplot do this on the
+fly.
+
+\includegraphics{../images/im208.png}
+\end{frame}
+
+\begin{frame}{Plotting distributions}
+\phantomsection\label{plotting-distributions}
+\begin{itemize}
+\tightlist
+\item
+  If we want to plot the average sepal width for each species, we can
+  map the avg column in our dataset onto the y aesthetic.
+\end{itemize}
+
+\includegraphics{../images/im209.png}
+
+\begin{itemize}
+\tightlist
+\item
+  In this case we need to use \(geom\_col\). If we want to add error
+  bars, there is another geom for that, appropriately called
+  \(geom\_errorbar\).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Plotting distributions}
+\phantomsection\label{plotting-distributions-1}
+\begin{itemize}
+\tightlist
+\item
+  Here we again need to specify some aesthetics specific to this geom,
+  namely \textbf{ymin} and \textbf{ymax}.
+\end{itemize}
+
+\includegraphics{../images/im209.png}
+
+\begin{itemize}
+\tightlist
+\item
+  On top of that I've set the width of the error bar tips to be narrow
+  and I've made the fill of the bars themselves gray, so that we can see
+  the error bars.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Plotting distributions}
+\phantomsection\label{plotting-distributions-2}
+\begin{itemize}
+\tightlist
+\item
+  This is the kind of plot that you'll typically see in scientific
+  publications, but it's pretty terrible.
+\end{itemize}
+
+\includegraphics{../images/im209.png}
+
+\begin{itemize}
+\tightlist
+\item
+  There is a special name in the data vis community for these types of
+  plots - they're called dynamite plots.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Plotting distributions}
+\phantomsection\label{plotting-distributions-3}
+They are strongly discouraged for many reasons, which we'll explore in
+the data vis best practices chapter at the end of the second course.
+\end{frame}
+
+\begin{frame}[fragile]{Practice Exercise: Position in Bar and Col Plots}
+\phantomsection\label{practice-exercise-position-in-bar-and-col-plots}
+Let's see how the \texttt{position} argument changes
+\texttt{geom\_bar()}.
+
+We have three position options: - \texttt{stack}: The default -
+\texttt{dodge}: Preferred - \texttt{fill}: To show proportions
+\end{frame}
+
+\begin{frame}[fragile]{Instructions}
+\phantomsection\label{instructions}
+\begin{enumerate}
+\tightlist
+\item
+  \textbf{Using \texttt{mtcars}}, plot \texttt{cyl}, filled by
+  \texttt{am}.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Add a bar layer using \texttt{geom\_bar()}.
+  \end{itemize}
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Plot cyl, filled by am}
+\FunctionTok{ggplot}\NormalTok{(mtcars, }\FunctionTok{aes}\NormalTok{(cyl, }\AttributeTok{fill =}\NormalTok{ am)) }\SpecialCharTok{+} \FunctionTok{geom\_bar}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-44-1} \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Instructions}
+\phantomsection\label{instructions-1}
+\begin{enumerate}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  \textbf{Set the bar \texttt{position} argument to ``fill''.}
+\end{enumerate}
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(mtcars, }\FunctionTok{aes}\NormalTok{(cyl, }\AttributeTok{fill =}\NormalTok{ am)) }\SpecialCharTok{+} \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{position =} \StringTok{"fill"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-45-1} \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Instructions}
+\phantomsection\label{instructions-2}
+\begin{enumerate}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  \textbf{Change the bar \texttt{position} argument to ``dodge''.}
+\end{enumerate}
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(mtcars, }\FunctionTok{aes}\NormalTok{(cyl, }\AttributeTok{fill =}\NormalTok{ am)) }\SpecialCharTok{+} \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{position =} \StringTok{"dodge"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-46-1} \end{center}
+
+Try running these commands in RStudio and observe how the bar plot
+changes.
+\end{frame}
+
+\begin{frame}[fragile]{Practice Exercise: Position in Bar and Col Plots}
+\phantomsection\label{practice-exercise-position-in-bar-and-col-plots-1}
+Let's see how the \texttt{position} argument changes
+\texttt{geom\_bar()}.
+
+We have three position options: - \texttt{stack}: The default -
+\texttt{dodge}: Preferred - \texttt{fill}: To show proportions
+\end{frame}
+
+\begin{frame}[fragile]{Instructions}
+\phantomsection\label{instructions-3}
+\begin{enumerate}
+\tightlist
+\item
+  \textbf{Using \texttt{mtcars}}, plot \texttt{cyl}, filled by
+  \texttt{am}.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Add a bar layer using \texttt{geom\_bar()}.
+  \end{itemize}
+\end{enumerate}
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Plot cyl, filled by am}
+\FunctionTok{ggplot}\NormalTok{(mtcars, }\FunctionTok{aes}\NormalTok{(cyl, }\AttributeTok{fill =}\NormalTok{ am)) }\SpecialCharTok{+} \FunctionTok{geom\_bar}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-47-1} \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Instructions}
+\phantomsection\label{instructions-4}
+\begin{enumerate}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  \textbf{Set the bar \texttt{position} argument to ``fill''.}
+\end{enumerate}
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(mtcars, }\FunctionTok{aes}\NormalTok{(cyl, }\AttributeTok{fill =}\NormalTok{ am)) }\SpecialCharTok{+} \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{position =} \StringTok{"fill"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-48-1} \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Instructions}
+\phantomsection\label{instructions-5}
+\begin{enumerate}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  \textbf{Change the bar \texttt{position} argument to ``dodge''.}
+\end{enumerate}
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(mtcars, }\FunctionTok{aes}\NormalTok{(cyl, }\AttributeTok{fill =}\NormalTok{ am)) }\SpecialCharTok{+} \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{position =} \StringTok{"dodge"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-49-1} \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Instructions}
+\phantomsection\label{instructions-6}
+\begin{enumerate}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  \textbf{Modify the \texttt{dodge} width to 0.2 for overlapping bars.}
+\end{enumerate}
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(mtcars, }\FunctionTok{aes}\NormalTok{(cyl, }\AttributeTok{fill =}\NormalTok{ am)) }\SpecialCharTok{+} \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{position =} \FunctionTok{position\_dodge}\NormalTok{(}\AttributeTok{width =} \FloatTok{0.2}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-50-1} \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Instructions}
+\phantomsection\label{instructions-7}
+\begin{enumerate}
+\setcounter{enumi}{4}
+\tightlist
+\item
+  \textbf{Set the bar transparency level to \texttt{0.6} (alpha
+  blending).}
+\end{enumerate}
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(mtcars, }\FunctionTok{aes}\NormalTok{(cyl, }\AttributeTok{fill =}\NormalTok{ am)) }\SpecialCharTok{+} \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{position =} \FunctionTok{position\_dodge}\NormalTok{(}\AttributeTok{width =} \FloatTok{0.2}\NormalTok{),}
+    \AttributeTok{alpha =} \FloatTok{0.6}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-51-1} \end{center}
+
+Try running these commands in RStudio and observe how the bar plot
+changes.
+\end{frame}
+
+\begin{frame}{Practice Exercise: Sequential Color Palette in Bar Plots}
+\phantomsection\label{practice-exercise-sequential-color-palette-in-bar-plots}
+We'll use a sequential color palette to fill segments based on an
+ordinal variable.
+\end{frame}
+
+\begin{frame}[fragile]{Instructions}
+\phantomsection\label{instructions-8}
+\begin{enumerate}
+\tightlist
+\item
+  \textbf{Using the \texttt{Vocab} dataset}, plot \texttt{education},
+  filled by \texttt{vocabulary}.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Add a bar layer using \texttt{geom\_bar()}.
+  \end{itemize}
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Plot education, filled by vocabulary}
+\FunctionTok{ggplot}\NormalTok{(Vocab, }\FunctionTok{aes}\NormalTok{(education, }\AttributeTok{fill =}\NormalTok{ vocabulary)) }\SpecialCharTok{+} \FunctionTok{geom\_bar}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-52-1} \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Instructions}
+\phantomsection\label{instructions-9}
+\begin{enumerate}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  \textbf{Apply a sequential color palette using
+  \texttt{scale\_fill\_brewer()}.}
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(Vocab, }\FunctionTok{aes}\NormalTok{(education, }\AttributeTok{fill =}\NormalTok{ vocabulary)) }\SpecialCharTok{+} \FunctionTok{geom\_bar}\NormalTok{() }\SpecialCharTok{+}
+    \FunctionTok{scale\_fill\_brewer}\NormalTok{(}\AttributeTok{palette =} \StringTok{"Set1"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-53-1} \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Instructions}
+\phantomsection\label{instructions-10}
+\begin{enumerate}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  \textbf{Try different color palettes from \texttt{RColorBrewer}.}
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(RColorBrewer)}
+
+\FunctionTok{ggplot}\NormalTok{(Vocab, }\FunctionTok{aes}\NormalTok{(education, }\AttributeTok{fill =}\NormalTok{ vocabulary)) }\SpecialCharTok{+} \FunctionTok{geom\_bar}\NormalTok{() }\SpecialCharTok{+}
+    \FunctionTok{scale\_fill\_brewer}\NormalTok{(}\AttributeTok{palette =} \StringTok{"Blues"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-54-1} \end{center}
+
+Try running these commands in RStudio and observe how the color changes
+based on the ordinal variable.
+\end{frame}
+
+\begin{frame}{Line plots}
+\phantomsection\label{line-plots}
+Line plots are another very common plot type.
+\end{frame}
+
+\begin{frame}{Common plot types}
+\phantomsection\label{common-plot-types-2}
+We'll take a look at two examples of lines plots in situations in which
+they are very well-suited - time series.
+
+\includegraphics{../images/im210.png}
+\end{frame}
+
+\begin{frame}[fragile]{Introduction to Line Plots with ggplot2}
+\phantomsection\label{introduction-to-line-plots-with-ggplot2}
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Line plots} are essential for visualizing trends over time.
+\item
+  In \texttt{ggplot2}, they are created using \texttt{geom\_line()}.
+\item
+  Used extensively for \textbf{time series analysis} and \textbf{trend
+  visualization}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Data Preparation}
+\phantomsection\label{data-preparation}
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Load necessary libraries}
+\FunctionTok{library}\NormalTok{(tidyverse)}
+
+\CommentTok{\# Create an example dataset}
+\NormalTok{data }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{year =} \DecValTok{2000}\SpecialCharTok{:}\DecValTok{2020}\NormalTok{, }\AttributeTok{value =} \FunctionTok{cumsum}\NormalTok{(}\FunctionTok{runif}\NormalTok{(}\DecValTok{21}\NormalTok{,}
+    \AttributeTok{min =} \SpecialCharTok{{-}}\DecValTok{5}\NormalTok{, }\AttributeTok{max =} \DecValTok{5}\NormalTok{)))}
+
+\CommentTok{\# Preview data}
+\FunctionTok{head}\NormalTok{(data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+  year value
+1 2000 1.436
+2 2001 1.468
+3 2002 2.263
+4 2003 4.733
+5 2004 4.780
+6 2005 9.191
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]{Basic Line Plot}
+\phantomsection\label{basic-line-plot}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Create a simple line plot}
+\FunctionTok{ggplot}\NormalTok{(data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ year, }\AttributeTok{y =}\NormalTok{ value)) }\SpecialCharTok{+} \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{color =} \StringTok{"blue"}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Trend Over Time"}\NormalTok{, }\AttributeTok{x =} \StringTok{"Year"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Value"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-56-1} \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Adding Points to the Line Plot}
+\phantomsection\label{adding-points-to-the-line-plot}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Line plot with points}
+\FunctionTok{ggplot}\NormalTok{(data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ year, }\AttributeTok{y =}\NormalTok{ value)) }\SpecialCharTok{+} \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{color =} \StringTok{"blue"}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Trend with Data Points"}\NormalTok{,}
+    \AttributeTok{x =} \StringTok{"Year"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Value"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-57-1} \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Customizing Line Types and Colors}
+\phantomsection\label{customizing-line-types-and-colors}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Customize line type and size}
+\FunctionTok{ggplot}\NormalTok{(data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ year, }\AttributeTok{y =}\NormalTok{ value)) }\SpecialCharTok{+} \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{color =} \StringTok{"darkgreen"}\NormalTok{,}
+    \AttributeTok{linetype =} \StringTok{"dashed"}\NormalTok{, }\AttributeTok{size =} \DecValTok{1}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Customized Line Plot"}\NormalTok{,}
+    \AttributeTok{x =} \StringTok{"Year"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Value"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-58-1} \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Plotting Multiple Lines}
+\phantomsection\label{plotting-multiple-lines}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Creating a dataset with multiple groups}
+\NormalTok{data\_multi }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{year =} \FunctionTok{rep}\NormalTok{(}\DecValTok{2000}\SpecialCharTok{:}\DecValTok{2020}\NormalTok{, }\AttributeTok{times =} \DecValTok{2}\NormalTok{), }\AttributeTok{value =} \FunctionTok{c}\NormalTok{(}\FunctionTok{cumsum}\NormalTok{(}\FunctionTok{runif}\NormalTok{(}\DecValTok{21}\NormalTok{,}
+    \AttributeTok{min =} \SpecialCharTok{{-}}\DecValTok{5}\NormalTok{, }\AttributeTok{max =} \DecValTok{5}\NormalTok{)), }\FunctionTok{cumsum}\NormalTok{(}\FunctionTok{runif}\NormalTok{(}\DecValTok{21}\NormalTok{, }\AttributeTok{min =} \SpecialCharTok{{-}}\DecValTok{5}\NormalTok{, }\AttributeTok{max =} \DecValTok{5}\NormalTok{))),}
+    \AttributeTok{group =} \FunctionTok{rep}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Series A"}\NormalTok{, }\StringTok{"Series B"}\NormalTok{), }\AttributeTok{each =} \DecValTok{21}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+\end{frame}
+
+\begin{frame}[fragile]{Plotting Multiple Lines}
+\phantomsection\label{plotting-multiple-lines-1}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Plot multiple lines}
+\FunctionTok{ggplot}\NormalTok{(data\_multi, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ year, }\AttributeTok{y =}\NormalTok{ value, }\AttributeTok{color =}\NormalTok{ group)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{size =} \DecValTok{1}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Multiple Line Plot"}\NormalTok{,}
+    \AttributeTok{x =} \StringTok{"Year"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Value"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-60-1} \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Smoothing the Line with \texttt{geom\_smooth()}}
+\phantomsection\label{smoothing-the-line-with-geom_smooth}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Line plot with smoothing}
+\FunctionTok{ggplot}\NormalTok{(data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ year, }\AttributeTok{y =}\NormalTok{ value)) }\SpecialCharTok{+} \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{color =} \StringTok{"blue"}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{"loess"}\NormalTok{, }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Smoothed Line Plot"}\NormalTok{,}
+    \AttributeTok{x =} \StringTok{"Year"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Value"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-61-1} \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Practice Exercises}
+\phantomsection\label{practice-exercises}
+\begin{enumerate}
+\tightlist
+\item
+  \textbf{Modify the line color and thickness} in the basic line plot.
+\item
+  \textbf{Change the point shape} in the line plot with points.
+\item
+  \textbf{Use different line types} for the multi-line plot.
+\item
+  \textbf{Apply \texttt{geom\_smooth()} with different methods}
+  (\texttt{lm}, \texttt{loess}).
+\end{enumerate}
+\end{frame}
+
+\section{Themes}\label{themes-2}
+
+\begin{frame}{Themes from scratch}
+\phantomsection\label{themes-from-scratch}
+The themes layer controls all the non-data ink on your plot.
+\end{frame}
+
+\begin{frame}{The themes layer}
+\phantomsection\label{the-themes-layer}
+Which are all the visual elements that are not actually part of the
+data.
+\end{frame}
+
+\begin{frame}{The themes layer}
+\phantomsection\label{the-themes-layer-1}
+Visual elements can be classified as one of three different types -
+text, line or rectangle.
+\end{frame}
+
+\begin{frame}{The themes layer}
+\phantomsection\label{the-themes-layer-2}
+Each type can be modified by using the appropriate function, which all
+begin with \(element\_\) followed by text, line, or rect, respectively.
+\end{frame}
+
+\begin{frame}[fragile]{A starting plot\ldots{}}
+\phantomsection\label{a-starting-plot}
+For example, consider this plot that we've already encounter a few
+times.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(iris, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Sepal.Length, }\AttributeTok{y =}\NormalTok{ Sepal.Width, }\AttributeTok{color =}\NormalTok{ Species)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_jitter}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.6}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-62-1} \end{center}
+\end{frame}
+
+\begin{frame}{A starting plot\ldots{}}
+\phantomsection\label{a-starting-plot-1}
+\begin{itemize}
+\item
+  It's composed out of a combination of data and lots of non-data
+  embellishments.
+\item
+  For example, these are all the text elements on our plot
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The text elements}
+\phantomsection\label{the-text-elements}
+\begin{itemize}
+\item
+  Each element has it's own unique name.
+\item
+  We can access all the text in general, all titles in general but also
+  more and more specific items, such as the plot, legend and axis
+  titles, or the text on specific axes.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The text elements}
+\phantomsection\label{the-text-elements-1}
+All these items are arguments of the theme function.
+
+\includegraphics{../images/im212.png}
+\end{frame}
+
+\begin{frame}{The text elements}
+\phantomsection\label{the-text-elements-2}
+This is used like all other layers in ggplot, by adding a plus to our
+plot.
+\end{frame}
+
+\begin{frame}[fragile]{Adjusting theme elements}
+\phantomsection\label{adjusting-theme-elements}
+To modify an element, just call its argument in the theme function and
+use the appropriate \(element\_\) function to specify what we want to
+change, in this case we need to use an \(element\_text\) call.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(iris, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Sepal.Length, }\AttributeTok{y =}\NormalTok{ Sepal.Width, }\AttributeTok{color =}\NormalTok{ Species)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_jitter}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.6}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{theme}\NormalTok{(}\AttributeTok{axis.title =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{color =} \StringTok{"blue"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-63-1} \end{center}
+\end{frame}
+
+\begin{frame}{Adjusting theme elements}
+\phantomsection\label{adjusting-theme-elements-1}
+It's within this function that we manipulate things like size, color,
+alignment and angle of the text.
+\end{frame}
+
+\begin{frame}[fragile]{A starting plot\ldots{}}
+\phantomsection\label{a-starting-plot-2}
+Lines include the tick marks on the axes, the axis lines themselves and
+all grid lines, both major and minor.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(iris, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Sepal.Length, }\AttributeTok{y =}\NormalTok{ Sepal.Width, }\AttributeTok{color =}\NormalTok{ Species)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_jitter}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.6}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-64-1} \end{center}
+\end{frame}
+
+\begin{frame}{Line elements}
+\phantomsection\label{line-elements}
+These are also all just arguments within the theme function and are
+modified by the \(element\_line\) argument.
+
+\includegraphics{../images/im212.png}
+\end{frame}
+
+\begin{frame}[fragile]{A starting plot\ldots{}}
+\phantomsection\label{a-starting-plot-3}
+The remaining non-data ink on our plot are all rectangles of various
+sizes.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(iris, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Sepal.Length, }\AttributeTok{y =}\NormalTok{ Sepal.Width, }\AttributeTok{color =}\NormalTok{ Species)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_jitter}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.6}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-65-1} \end{center}
+\end{frame}
+
+\begin{frame}{Rect elements}
+\phantomsection\label{rect-elements}
+Access rectangles using arguments in the theme function and modify them
+using \(element\_rect\).
+
+\includegraphics{../images/im214.png}
+\end{frame}
+
+\begin{frame}{Hierarchical naming reflects inheritance rules}
+\phantomsection\label{hierarchical-naming-reflects-inheritance-rules}
+Although we have access to every item, we don't need to modify them
+individually.
+
+\includegraphics{../images/im215.png}
+\end{frame}
+
+\begin{frame}{Hierarchical naming reflects inheritance rules}
+\phantomsection\label{hierarchical-naming-reflects-inheritance-rules-1}
+They inherent from each other in a hierarchy.
+
+\includegraphics{../images/im215.png}
+\end{frame}
+
+\begin{frame}{Hierarchical naming reflects inheritance rules}
+\phantomsection\label{hierarchical-naming-reflects-inheritance-rules-2}
+All text elements inherit from text, so if we changed that argument, all
+downstream arguments would be affected.
+
+The same goes for line and rectangle.
+\end{frame}
+
+\begin{frame}{Hierarchical naming reflects inheritance rules}
+\phantomsection\label{hierarchical-naming-reflects-inheritance-rules-3}
+The naming convention is pretty intuitive.
+
+In practice you will call a small combination of arguments that you want
+to change.
+\end{frame}
+
+\begin{frame}{element\_blank()}
+\phantomsection\label{element_blank}
+There is one other element function that we haven't discussed yet:
+\(element\_blank\).
+
+We can use this in a plot to remove any item.
+\end{frame}
+
+\begin{frame}[fragile]{element\_blank()}
+\phantomsection\label{element_blank-1}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(iris, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Sepal.Length, }\AttributeTok{y =}\NormalTok{ Sepal.Width, }\AttributeTok{color =}\NormalTok{ Species)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_jitter}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.6}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{theme}\NormalTok{(}\AttributeTok{line =} \FunctionTok{element\_blank}\NormalTok{(),}
+    \AttributeTok{rect =} \FunctionTok{element\_blank}\NormalTok{(), }\AttributeTok{text =} \FunctionTok{element\_blank}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-66-1} \end{center}
+\end{frame}
+
+\begin{frame}{element\_blank()}
+\phantomsection\label{element_blank-2}
+That is, it won't be drawn at all.
+
+In this example we set all lines, text and rectangles to blank, so we
+are left with just the data.
+
+Notice that the legend keys themselves are part of the data, if you want
+to modify these elements refer back to the chapter aesthetics and the
+exercises on scales.
+\end{frame}
+
+\begin{frame}{Let's practice!}
+\phantomsection\label{lets-practice}
+Here, we saw how the theme layer allows us to modify visual attributes
+of non-data ink, including text lines and rectangles.
+
+But in addition to that, we can also modify a plot's margins and legend
+position.
+
+Let's head over to the exercises and see how this in action.
+\end{frame}
+
+\begin{frame}{Practice}
+\phantomsection\label{practice}
+\begin{itemize}
+\tightlist
+\item
+  In this exercise, we will explore how to modify legend positions in
+  \textbf{ggplot2}.\\
+\item
+  Legends help communicate information about different elements in a
+  plot, but sometimes we need to adjust their placement for better
+  visualization.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Learning Objectives:}
+\phantomsection\label{learning-objectives}
+\begin{itemize}
+\tightlist
+\item
+  Remove the legend from a plot.
+\item
+  Change the legend position to the bottom.
+\item
+  Place the legend inside the plot at specific coordinates.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Sample data}
+\phantomsection\label{sample-data}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Sample data}
+\NormalTok{data }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{year =} \FunctionTok{seq}\NormalTok{(}\DecValTok{2000}\NormalTok{, }\DecValTok{2020}\NormalTok{, }\AttributeTok{by =} \DecValTok{1}\NormalTok{), }\AttributeTok{unemployed =} \FunctionTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{,}
+    \FloatTok{4.2}\NormalTok{, }\FloatTok{4.3}\NormalTok{, }\FloatTok{4.7}\NormalTok{, }\DecValTok{5}\NormalTok{, }\FloatTok{5.3}\NormalTok{, }\FloatTok{5.5}\NormalTok{, }\FloatTok{5.7}\NormalTok{, }\FloatTok{6.1}\NormalTok{, }\FloatTok{6.3}\NormalTok{, }\FloatTok{6.5}\NormalTok{, }\FloatTok{6.7}\NormalTok{, }\DecValTok{7}\NormalTok{, }\FloatTok{7.3}\NormalTok{,}
+    \FloatTok{7.5}\NormalTok{, }\FloatTok{7.8}\NormalTok{, }\DecValTok{8}\NormalTok{, }\FloatTok{8.2}\NormalTok{, }\FloatTok{8.5}\NormalTok{, }\FloatTok{8.7}\NormalTok{, }\DecValTok{9}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+\end{frame}
+
+\begin{frame}[fragile]{Practice}
+\phantomsection\label{practice-2}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# We use ggplot() to plot the data with a line chart.}
+\NormalTok{plt\_prop\_unemployed\_over\_time }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ year, }\AttributeTok{y =}\NormalTok{ unemployed)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{color =} \StringTok{"blue"}\NormalTok{, }\AttributeTok{size =} \DecValTok{1}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Unemployment Rate Over Time"}\NormalTok{,}
+    \AttributeTok{x =} \StringTok{"Year"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Unemployment Rate (\%)"}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{theme\_minimal}\NormalTok{()}
+\CommentTok{\# The theme\_minimal() function is used to apply a clean and}
+\CommentTok{\# simple theme.  Display the default plot}
+\NormalTok{plt\_prop\_unemployed\_over\_time}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-68-1} \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Practice}
+\phantomsection\label{practice-3}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Remove legend entirely}
+\NormalTok{plt\_prop\_unemployed\_over\_time }\SpecialCharTok{+} \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \StringTok{"none"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-69-1} \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Practice}
+\phantomsection\label{practice-4}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{plt\_prop\_unemployed\_over\_time }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}
+    \CommentTok{\# For all rectangles, set the fill color to grey92}
+    \AttributeTok{rect =} \FunctionTok{element\_rect}\NormalTok{(}\AttributeTok{fill =} \StringTok{"grey92"}\NormalTok{),}
+    \CommentTok{\# For the legend key, turn off the outline}
+    \AttributeTok{legend.key =} \FunctionTok{element\_rect}\NormalTok{(}\AttributeTok{color =} \ConstantTok{NA}\NormalTok{)}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-70-1} \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Practice}
+\phantomsection\label{practice-5}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Load necessary libraries}
+\FunctionTok{library}\NormalTok{(ggplot2)}
+\FunctionTok{library}\NormalTok{(grid)  }\CommentTok{\# Required for unit()}
+
+\CommentTok{\# Create a scatter plot of MPG vs Weight, colored by}
+\CommentTok{\# Cylinders}
+\NormalTok{plt\_mpg\_vs\_wt\_by\_cyl }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(mtcars, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ mpg, }\AttributeTok{y =}\NormalTok{ wt, }\AttributeTok{color =} \FunctionTok{factor}\NormalTok{(cyl))) }\SpecialCharTok{+}
+    \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size =} \DecValTok{3}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.7}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"MPG vs Weight by Cylinder Count"}\NormalTok{,}
+    \AttributeTok{x =} \StringTok{"Miles Per Gallon (MPG)"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Weight (1000 lbs)"}\NormalTok{, }\AttributeTok{color =} \StringTok{"Cylinders"}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{theme\_minimal}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# View the original plot}
+\NormalTok{plt\_mpg\_vs\_wt\_by\_cyl}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-72-1} \end{center}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{plt\_mpg\_vs\_wt\_by\_cyl }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}
+    \CommentTok{\# Set the axis tick length to 2 lines}
+    \AttributeTok{axis.ticks.length =} \FunctionTok{unit}\NormalTok{(}\DecValTok{2}\NormalTok{, }\StringTok{"lines"}\NormalTok{)}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-72-2} \end{center}
+\end{frame}
+
+\begin{frame}{Theme flexibility}
+\phantomsection\label{theme-flexibility}
+We saw how to fine-tune every part of our plot using the theme layer.
+\end{frame}
+
+\begin{frame}{Ways to use themes}
+\phantomsection\label{ways-to-use-themes}
+\begin{itemize}
+\tightlist
+\item
+  There are a few other ways of changing theme elements, so let's take a
+  look.
+\item
+  We'll begin with defining our own theme layer object.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Defining theme objects}
+\phantomsection\label{defining-theme-objects}
+\begin{itemize}
+\tightlist
+\item
+  If you're using many plots within a presentation or publication,
+  you'll want to have consistency in your style.
+\end{itemize}
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{z }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(iris, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Sepal.Length, }\AttributeTok{y =}\NormalTok{ Sepal.Width, }\AttributeTok{color =}\NormalTok{ Species)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_jitter}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.6}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{scale\_x\_continuous}\NormalTok{(}\StringTok{"Sepal Length (cm)"}\NormalTok{,}
+    \AttributeTok{limits =} \FunctionTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{, }\DecValTok{8}\NormalTok{), }\AttributeTok{expand =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{)) }\SpecialCharTok{+} \FunctionTok{scale\_y\_continuous}\NormalTok{(}\StringTok{"Sepal Width (cm)"}\NormalTok{,}
+    \AttributeTok{limits =} \FunctionTok{c}\NormalTok{(}\FloatTok{1.5}\NormalTok{, }\DecValTok{5}\NormalTok{), }\AttributeTok{expand =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{)) }\SpecialCharTok{+} \FunctionTok{scale\_color\_brewer}\NormalTok{(}\StringTok{"Species"}\NormalTok{,}
+    \AttributeTok{palette =} \StringTok{"Dark2"}\NormalTok{, }\AttributeTok{labels =} \FunctionTok{c}\NormalTok{(}\StringTok{"Setosa"}\NormalTok{, }\StringTok{"Versicolor"}\NormalTok{, }\StringTok{"Virginica"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+So, once you settle on a a specific theme, you'll want to apply it to
+all plots of the same type.
+\end{frame}
+
+\begin{frame}[fragile]{Defining theme objects}
+\phantomsection\label{defining-theme-objects-1}
+Creating a theme from scratch is a detailed process, that we don't want
+to repeat for every plot we make.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{z }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(iris, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Sepal.Length, }\AttributeTok{y =}\NormalTok{ Sepal.Width, }\AttributeTok{color =}\NormalTok{ Species)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_jitter}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.6}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{scale\_x\_continuous}\NormalTok{(}\StringTok{"Sepal Length (cm)"}\NormalTok{,}
+    \AttributeTok{limits =} \FunctionTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{, }\DecValTok{8}\NormalTok{), }\AttributeTok{expand =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{)) }\SpecialCharTok{+} \FunctionTok{scale\_y\_continuous}\NormalTok{(}\StringTok{"Sepal Width (cm)"}\NormalTok{,}
+    \AttributeTok{limits =} \FunctionTok{c}\NormalTok{(}\FloatTok{1.5}\NormalTok{, }\DecValTok{5}\NormalTok{), }\AttributeTok{expand =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{)) }\SpecialCharTok{+} \FunctionTok{scale\_color\_brewer}\NormalTok{(}\StringTok{"Species"}\NormalTok{,}
+    \AttributeTok{palette =} \StringTok{"Dark2"}\NormalTok{, }\AttributeTok{labels =} \FunctionTok{c}\NormalTok{(}\StringTok{"Setosa"}\NormalTok{, }\StringTok{"Versicolor"}\NormalTok{, }\StringTok{"Virginica"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+That's where defining a theme layer object comes into play.
+\end{frame}
+
+\begin{frame}[fragile]{Defining theme objects}
+\phantomsection\label{defining-theme-objects-2}
+To see how this works let's return to a plot we've already seen.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{z }\SpecialCharTok{+} \FunctionTok{theme}\NormalTok{(}\AttributeTok{text =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{family =} \StringTok{"serif"}\NormalTok{, }\AttributeTok{size =} \DecValTok{14}\NormalTok{), }\AttributeTok{rect =} \FunctionTok{element\_blank}\NormalTok{(),}
+    \AttributeTok{panel.grid =} \FunctionTok{element\_blank}\NormalTok{(), }\AttributeTok{title =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{color =} \StringTok{"\#8b0000"}\NormalTok{),}
+    \AttributeTok{axis.line =} \FunctionTok{element\_line}\NormalTok{(}\AttributeTok{color =} \StringTok{"black"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-75-1} \end{center}
+
+For convenience, we're going to save this plot as an object called Z.
+
+\begin{enumerate}
+\setcounter{enumi}{5}
+\tightlist
+\item
+  Defining theme objects
+\end{enumerate}
+
+We can adjust specific theme arguments to get the desired plot style.
+Here, I've changed the font family, size and title color.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{theme\_iris }\OtherTok{\textless{}{-}} \FunctionTok{theme}\NormalTok{(}\AttributeTok{text =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{family =} \StringTok{"serif"}\NormalTok{, }\AttributeTok{size =} \DecValTok{14}\NormalTok{),}
+    \AttributeTok{rect =} \FunctionTok{element\_blank}\NormalTok{(), }\AttributeTok{panel.grid =} \FunctionTok{element\_blank}\NormalTok{(), }\AttributeTok{title =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{color =} \StringTok{"\#8b0000"}\NormalTok{),}
+    \AttributeTok{axis.line =} \FunctionTok{element\_line}\NormalTok{(}\AttributeTok{color =} \StringTok{"black"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+\end{frame}
+
+\begin{frame}{Defining theme objects}
+\phantomsection\label{defining-theme-objects-3}
+The first method in automating this process is to save our layer as an
+object. Here we're just going to call it theme iris.
+\end{frame}
+
+\begin{frame}[fragile]{Reusing theme objects}
+\phantomsection\label{reusing-theme-objects}
+Just as we've seen throughout the course, we can add individual layers
+to any ggplot object.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{z }\SpecialCharTok{+}\NormalTok{ theme\_iris}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-77-1} \end{center}
+\end{frame}
+
+\begin{frame}{Reusing theme objects}
+\phantomsection\label{reusing-theme-objects-1}
+This means we can reuse this style over and over.
+
+Let's see what happens when we try to apply our new theme object on
+another plot.
+\end{frame}
+
+\begin{frame}[fragile]{Reusing theme objects}
+\phantomsection\label{reusing-theme-objects-2}
+Remember this histogram of the iris Sepal widths?
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{m }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(iris, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Sepal.Width)) }\SpecialCharTok{+} \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{binwidth =} \FloatTok{0.1}\NormalTok{,}
+    \AttributeTok{center =} \FloatTok{0.05}\NormalTok{)}
+
+\NormalTok{m}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-78-1} \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Reusing theme objects}
+\phantomsection\label{reusing-theme-objects-3}
+Now it has the same style as our scatter plot, without having to retype
+the whole theme layer.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{m }\SpecialCharTok{+}\NormalTok{ theme\_iris}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-79-1} \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Reusing theme objects}
+\phantomsection\label{reusing-theme-objects-4}
+But let's say that on occasion I wanted to modify some other specific
+elements of a plot.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{m }\SpecialCharTok{+}\NormalTok{ theme\_iris }\SpecialCharTok{+} \FunctionTok{theme}\NormalTok{(}\AttributeTok{axis.line.x =} \FunctionTok{element\_blank}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-80-1} \end{center}
+
+Not a problem, we can just add a another theme layer which will override
+any previous settings. In this example, I've removed the x axis line.
+\end{frame}
+
+\begin{frame}{Ways to use themes}
+\phantomsection\label{ways-to-use-themes-1}
+So far we just used our theme as an object itself.
+
+This is a pretty flexible way of working with theme, but a third way of
+working with themes is accessing the built-in theme templates.
+\end{frame}
+
+\begin{frame}[fragile]{Using built-in themes}
+\phantomsection\label{using-built-in-themes}
+Built-in theme functions begin with \(theme\_\star\).
+
+theme classic is my go-to template for great publication-quality plots.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{z }\SpecialCharTok{+} \FunctionTok{theme\_classic}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-81-1} \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Using built-in themes}
+\phantomsection\label{using-built-in-themes-1}
+Of course we can always modify any specific element, as we've already
+seen.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{z }\SpecialCharTok{+} \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+} \FunctionTok{theme}\NormalTok{(}\AttributeTok{text =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{family =} \StringTok{"serif"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-82-1} \end{center}
+\end{frame}
+
+\begin{frame}{Ways to use themes}
+\phantomsection\label{ways-to-use-themes-2}
+There are also packages with pre-defined themes, like the ggthemes
+package.
+\end{frame}
+
+\begin{frame}[fragile]{The ggthemes package}
+\phantomsection\label{the-ggthemes-package}
+The tufte theme mimics Tufte's classic style, which removes all non-data
+ink and sets the font to a serif typeface.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(ggthemes)}
+
+\NormalTok{z }\SpecialCharTok{+} \FunctionTok{theme\_tufte}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-83-1} \end{center}
+\end{frame}
+
+\begin{frame}{Ways to use themes}
+\phantomsection\label{ways-to-use-themes-3}
+Finally, we can update and set the default theme
+\end{frame}
+
+\begin{frame}[fragile]{Updating themes}
+\phantomsection\label{updating-themes}
+Updating is done with the theme\_update function.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{original }\OtherTok{\textless{}{-}} \FunctionTok{theme\_update}\NormalTok{(}\AttributeTok{text =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{family =} \StringTok{"serif"}\NormalTok{,}
+    \AttributeTok{size =} \DecValTok{14}\NormalTok{), }\AttributeTok{rect =} \FunctionTok{element\_blank}\NormalTok{(), }\AttributeTok{panel.grid =} \FunctionTok{element\_blank}\NormalTok{(),}
+    \AttributeTok{title =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{color =} \StringTok{"\#8b0000"}\NormalTok{), }\AttributeTok{axis.line =} \FunctionTok{element\_line}\NormalTok{(}\AttributeTok{color =} \StringTok{"black"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+This function behaves differently from a typical function. This command
+updates the default theme and saves the current default to the object
+``original''.
+\end{frame}
+
+\begin{frame}[fragile]{Updating themes}
+\phantomsection\label{updating-themes-1}
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{z}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-85-1} \end{center}
+
+Now, all plots will automatically have the same theme.
+\end{frame}
+
+\begin{frame}[fragile]{Setting themes}
+\phantomsection\label{setting-themes}
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{theme\_set}\NormalTok{(original)}
+
+\CommentTok{\# Alternatively}
+
+\FunctionTok{theme\_set}\NormalTok{(}\FunctionTok{theme\_grey}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+We can set a complete theme object, like original, using the theme\_set
+function.
+\end{frame}
+
+\begin{frame}[fragile]{Practice}
+\phantomsection\label{practice-6}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Add a black and white theme}
+\NormalTok{plt\_prop\_unemployed\_over\_time }\SpecialCharTok{+} \FunctionTok{theme\_bw}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-87-1} \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Practice}
+\phantomsection\label{practice-7}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Use the fivethirtyeight theme}
+\NormalTok{plt\_prop\_unemployed\_over\_time }\SpecialCharTok{+} \FunctionTok{theme\_fivethirtyeight}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-88-1} \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Practice}
+\phantomsection\label{practice-8}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Theme layer saved as an object, theme\_recession}
+\NormalTok{theme\_recession }\OtherTok{\textless{}{-}} \FunctionTok{theme}\NormalTok{(}\AttributeTok{rect =} \FunctionTok{element\_rect}\NormalTok{(}\AttributeTok{fill =} \StringTok{"grey92"}\NormalTok{),}
+    \AttributeTok{legend.key =} \FunctionTok{element\_rect}\NormalTok{(}\AttributeTok{color =} \ConstantTok{NA}\NormalTok{), }\AttributeTok{axis.ticks =} \FunctionTok{element\_blank}\NormalTok{(),}
+    \AttributeTok{panel.grid =} \FunctionTok{element\_blank}\NormalTok{(), }\AttributeTok{panel.grid.major.y =} \FunctionTok{element\_line}\NormalTok{(}\AttributeTok{color =} \StringTok{"white"}\NormalTok{,}
+        \AttributeTok{size =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{linetype =} \StringTok{"dotted"}\NormalTok{), }\AttributeTok{axis.text =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{color =} \StringTok{"grey25"}\NormalTok{),}
+    \AttributeTok{plot.title =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{face =} \StringTok{"italic"}\NormalTok{, }\AttributeTok{size =} \DecValTok{16}\NormalTok{), }\AttributeTok{legend.position =} \FunctionTok{c}\NormalTok{(}\FloatTok{0.6}\NormalTok{,}
+        \FloatTok{0.1}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+\end{frame}
+
+\begin{frame}[fragile]{Practice}
+\phantomsection\label{practice-9}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Combine the Tufte theme with theme\_recession}
+\NormalTok{theme\_tufte\_recession }\OtherTok{\textless{}{-}} \FunctionTok{theme\_tufte}\NormalTok{() }\SpecialCharTok{+}\NormalTok{ theme\_recession}
+
+\CommentTok{\# Add the recession theme to the plot}
+\NormalTok{plt\_prop\_unemployed\_over\_time }\SpecialCharTok{+}\NormalTok{ theme\_tufte\_recession}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-90-1} \end{center}
+\end{frame}
+
+\begin{frame}{Effective explanatory plots}
+\phantomsection\label{effective-explanatory-plots}
+For our last exercises, I want to go through an example of producing
+explanatory plots in an info viz style, something that you'd see in a
+magazine or website for a mostly lay audience.
+\end{frame}
+
+\begin{frame}{Our goal, an effective explanatory plot}
+\phantomsection\label{our-goal-an-effective-explanatory-plot}
+These plots tend to have both a small number of observations and
+variables, have embellishments and typically make a clear or dramatic
+statement.
+
+\includegraphics{../images/im216.png}
+\end{frame}
+
+\begin{frame}{Our goal, an effective explanatory plot}
+\phantomsection\label{our-goal-an-effective-explanatory-plot-1}
+\begin{itemize}
+\item
+  Our example comes from the gapminder data set and plots the countries
+  with the highest and lowest life expectancies in 2007.
+\item
+  The global mean is plotted for comparison. Here we focus on the large
+  gap between the highest and lowest life expectancies, which is about
+  40 years!
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Complete data}
+\phantomsection\label{complete-data}
+We would begin with our complete data set, which contains three
+variables for 142 countries.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Load necessary libraries}
+\FunctionTok{library}\NormalTok{(gapminder)    }\CommentTok{\# Load the gapminder dataset}
+\FunctionTok{library}\NormalTok{(RColorBrewer) }\CommentTok{\# For color palettes}
+\FunctionTok{library}\NormalTok{(tidyverse)    }\CommentTok{\# Includes dplyr, ggplot2, tidyr, etc.}
+\CommentTok{\# Filter and process the gapminder dataset}
+\NormalTok{gm2007 }\OtherTok{\textless{}{-}}\NormalTok{ gapminder }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{==} \DecValTok{2007}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}                   \CommentTok{\# Select data for the year 2007}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{select}\NormalTok{(country, lifeExp, continent) }\SpecialCharTok{\%\textgreater{}\%}     \CommentTok{\# Keep only relevant columns}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{filter}\NormalTok{(lifeExp }\SpecialCharTok{\textgreater{}} \FloatTok{80.6} \SpecialCharTok{|}\NormalTok{ lifeExp }\SpecialCharTok{\textless{}} \DecValTok{46}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}   \CommentTok{\# Filter countries with extreme life expectancy}
+  \FunctionTok{arrange}\NormalTok{(lifeExp)                            }\CommentTok{\# Arrange in ascending order}
+
+\CommentTok{\# View the processed dataset}
+\FunctionTok{glimpse}\NormalTok{(gm2007)  }\CommentTok{\# Check the structure}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Rows: 20
+Columns: 3
+$ country   <fct> "Swaziland", "Mozambique", "Zambia", "Sierra Leone", "Lesoth~
+$ lifeExp   <dbl> 39.61, 42.08, 42.38, 42.57, 42.59, 42.73, 43.49, 43.83, 44.7~
+$ continent <fct> Africa, Africa, Africa, Africa, Africa, Africa, Africa, Asia~
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{head}\NormalTok{(gm2007)     }\CommentTok{\# Preview the first few rows}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 6 x 3
+  country      lifeExp continent
+  <fct>          <dbl> <fct>    
+1 Swaziland       39.6 Africa   
+2 Mozambique      42.1 Africa   
+3 Zambia          42.4 Africa   
+4 Sierra Leone    42.6 Africa   
+5 Lesotho         42.6 Africa   
+6 Angola          42.7 Africa   
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]{First exploratory plots - distributions}
+\phantomsection\label{first-exploratory-plots---distributions}
+Our first exploratory plot would probably be a histogram, which isn't a
+bad choice.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(gm2007, }\FunctionTok{aes}\NormalTok{(lifeExp)) }\SpecialCharTok{+} \FunctionTok{geom\_histogram}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-92-1} \end{center}
+
+Recall that we have already applied a binning statistic here.
+\end{frame}
+
+\begin{frame}[fragile]{Add a geom\_segment() layer}
+\phantomsection\label{add-a-geom_segment-layer}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Add a geom\_segment() layer}
+\FunctionTok{ggplot}\NormalTok{(gm2007, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ lifeExp, }\AttributeTok{y =}\NormalTok{ country, }\AttributeTok{color =}\NormalTok{ lifeExp)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size =} \DecValTok{4}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{geom\_segment}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{xend =} \DecValTok{30}\NormalTok{, }\AttributeTok{yend =}\NormalTok{ country),}
+    \AttributeTok{size =} \DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+\end{frame}
+
+\begin{frame}{Add a geom\_segment() layer}
+\phantomsection\label{add-a-geom_segment-layer-1}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-94-1} \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Add a geom\_text() layer}
+\phantomsection\label{add-a-geom_text-layer}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Add a geom\_text() layer}
+\FunctionTok{ggplot}\NormalTok{(gm2007, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ lifeExp, }\AttributeTok{y =}\NormalTok{ country, }\AttributeTok{color =}\NormalTok{ lifeExp)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size =} \DecValTok{4}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{geom\_segment}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{xend =} \DecValTok{30}\NormalTok{, }\AttributeTok{yend =}\NormalTok{ country),}
+    \AttributeTok{size =} \DecValTok{2}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{geom\_text}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{label =}\NormalTok{ lifeExp), }\AttributeTok{color =} \StringTok{"white"}\NormalTok{,}
+    \AttributeTok{size =} \FloatTok{1.5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+\end{frame}
+
+\begin{frame}{Add a geom\_text() layer}
+\phantomsection\label{add-a-geom_text-layer-1}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-96-1} \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Set the color scale}
+\phantomsection\label{set-the-color-scale}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Set the color scale}
+\NormalTok{palette }\OtherTok{\textless{}{-}} \FunctionTok{brewer.pal}\NormalTok{(}\DecValTok{5}\NormalTok{, }\StringTok{"RdYlBu"}\NormalTok{)[}\SpecialCharTok{{-}}\NormalTok{(}\DecValTok{2}\SpecialCharTok{:}\DecValTok{4}\NormalTok{)]}
+\end{Highlighting}
+\end{Shaded}
+\end{frame}
+
+\begin{frame}[fragile]{Modify the scales}
+\phantomsection\label{modify-the-scales}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Modify the scales}
+\FunctionTok{ggplot}\NormalTok{(gm2007, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ lifeExp, }\AttributeTok{y =}\NormalTok{ country, }\AttributeTok{color =}\NormalTok{ lifeExp)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size =} \DecValTok{4}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{geom\_segment}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{xend =} \DecValTok{30}\NormalTok{, }\AttributeTok{yend =}\NormalTok{ country),}
+    \AttributeTok{size =} \DecValTok{2}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{geom\_text}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{label =} \FunctionTok{round}\NormalTok{(lifeExp, }\DecValTok{1}\NormalTok{)), }\AttributeTok{color =} \StringTok{"white"}\NormalTok{,}
+    \AttributeTok{size =} \FloatTok{1.5}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{scale\_x\_continuous}\NormalTok{(}\StringTok{""}\NormalTok{, }\AttributeTok{expand =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{), }\AttributeTok{limits =} \FunctionTok{c}\NormalTok{(}\DecValTok{30}\NormalTok{,}
+    \DecValTok{90}\NormalTok{), }\AttributeTok{position =} \StringTok{"top"}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{scale\_color\_gradientn}\NormalTok{(}\AttributeTok{colors =}\NormalTok{ palette)}
+\end{Highlighting}
+\end{Shaded}
+\end{frame}
+
+\begin{frame}{Modify the scales}
+\phantomsection\label{modify-the-scales-1}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-99-1} \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Set the color scale}
+\phantomsection\label{set-the-color-scale-1}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Set the color scale}
+\NormalTok{palette }\OtherTok{\textless{}{-}} \FunctionTok{brewer.pal}\NormalTok{(}\DecValTok{5}\NormalTok{, }\StringTok{"RdYlBu"}\NormalTok{)[}\SpecialCharTok{{-}}\NormalTok{(}\DecValTok{2}\SpecialCharTok{:}\DecValTok{4}\NormalTok{)]}
+\end{Highlighting}
+\end{Shaded}
+\end{frame}
+
+\begin{frame}[fragile]{Add a title and caption}
+\phantomsection\label{add-a-title-and-caption}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Add a title and caption}
+\FunctionTok{ggplot}\NormalTok{(gm2007, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ lifeExp, }\AttributeTok{y =}\NormalTok{ country, }\AttributeTok{color =}\NormalTok{ lifeExp)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size =} \DecValTok{4}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{geom\_segment}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{xend =} \DecValTok{30}\NormalTok{, }\AttributeTok{yend =}\NormalTok{ country),}
+    \AttributeTok{size =} \DecValTok{2}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{geom\_text}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{label =} \FunctionTok{round}\NormalTok{(lifeExp, }\DecValTok{1}\NormalTok{)), }\AttributeTok{color =} \StringTok{"white"}\NormalTok{,}
+    \AttributeTok{size =} \FloatTok{1.5}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{scale\_x\_continuous}\NormalTok{(}\StringTok{""}\NormalTok{, }\AttributeTok{expand =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{), }\AttributeTok{limits =} \FunctionTok{c}\NormalTok{(}\DecValTok{30}\NormalTok{,}
+    \DecValTok{90}\NormalTok{), }\AttributeTok{position =} \StringTok{"top"}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{scale\_color\_gradientn}\NormalTok{(}\AttributeTok{colors =}\NormalTok{ palette) }\SpecialCharTok{+}
+    \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Highest and lowest life expectancies, 2007"}\NormalTok{,}
+        \AttributeTok{caption =} \StringTok{"Source: gapminder"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-101-1} \end{center}
+\end{frame}
+
+\begin{frame}{Using annotate for embellishments}
+\phantomsection\label{using-annotate-for-embellishments}
+In the previous exercise, we completed our basic plot.
+
+Now let's polish it by playing with the theme and adding annotations.
+
+In this exercise, you'll use annotate() to add text and a curve to the
+plot.
+\end{frame}
+
+\begin{frame}{Clean up the theme}
+\phantomsection\label{clean-up-the-theme}
+\begin{itemize}
+\tightlist
+\item
+  Add a classic theme to the plot with theme\_classic().
+\item
+  Set axis.line.y, axis.ticks.y, and axis.title to element\_blank().
+\item
+  Set the axis.text color to ``black''.
+\item
+  Remove the legend by setting legend.position to ``none''.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Clean up the theme}
+\phantomsection\label{clean-up-the-theme-1}
+\begin{itemize}
+\item
+  Use \(geom\_vline()\) to add a vertical line. Set \textbf{xintercept}
+  to global\_mean, specify the color to be ``grey40'', and set linetype
+  to 3.
+\item
+  \(x\_start\) and \(y\_start\) will be used as positions to place text
+  and have been calculated for you.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Add a ``text'' geom as an annotation.}
+\phantomsection\label{add-a-text-geom-as-an-annotation.}
+\begin{itemize}
+\tightlist
+\item
+  For the annotation, set x to \(x\_start\), y to \(y\_start\), and
+  label to ``The global average''.
+\item
+  Annotate the plot with an arrow connecting your text to the line.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Use a ``curve'' geom.}
+\phantomsection\label{use-a-curve-geom.}
+\begin{itemize}
+\tightlist
+\item
+  Set the arrow ends xend to x\_end and yend to y\_end.
+\item
+  Set the length of the arrowhead to 0.2 cm and the type to ``closed''.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Use a ``curve'' geom.}
+\phantomsection\label{use-a-curve-geom.-1}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Select only the highest/lowest 10 life expectancies}
+\NormalTok{gm2007\_full }\OtherTok{\textless{}{-}}\NormalTok{ gapminder }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{    dplyr}\SpecialCharTok{::}\FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{==} \DecValTok{2007}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{    dplyr}\SpecialCharTok{::}\FunctionTok{select}\NormalTok{(country, lifeExp, continent) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{    dplyr}\SpecialCharTok{::}\FunctionTok{arrange}\NormalTok{(lifeExp) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{    dplyr}\SpecialCharTok{::}\FunctionTok{slice}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\DecValTok{10}\NormalTok{, (}\FunctionTok{n}\NormalTok{() }\SpecialCharTok{{-}} \DecValTok{9}\NormalTok{)}\SpecialCharTok{:}\FunctionTok{n}\NormalTok{()))  }\CommentTok{\# Keep only 10 lowest and 10 highest countries}
+\end{Highlighting}
+\end{Shaded}
+\end{frame}
+
+\begin{frame}[fragile]{Calculate Global Mean \& Define Annotations}
+\phantomsection\label{calculate-global-mean-define-annotations}
+The following values have been calculated for you to assist with adding
+embellishments to the plot:
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Calculate global mean life expectancy}
+\NormalTok{global\_mean }\OtherTok{\textless{}{-}} \FunctionTok{mean}\NormalTok{(gm2007\_full}\SpecialCharTok{$}\NormalTok{lifeExp)}
+
+\CommentTok{\# Define annotation points for the curve}
+\NormalTok{x\_start }\OtherTok{\textless{}{-}}\NormalTok{ global\_mean }\SpecialCharTok{+} \DecValTok{3}  \CommentTok{\# Move text slightly right}
+\NormalTok{y\_start }\OtherTok{\textless{}{-}} \DecValTok{8}  \CommentTok{\# Adjust y{-}position}
+\NormalTok{x\_end }\OtherTok{\textless{}{-}}\NormalTok{ global\_mean}
+\NormalTok{y\_end }\OtherTok{\textless{}{-}} \DecValTok{10}
+\end{Highlighting}
+\end{Shaded}
+\end{frame}
+
+\begin{frame}[fragile]{Define Color Palette}
+\phantomsection\label{define-color-palette}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Define a color palette}
+\NormalTok{palette }\OtherTok{\textless{}{-}} \FunctionTok{brewer.pal}\NormalTok{(}\DecValTok{9}\NormalTok{, }\StringTok{"YlGnBu"}\NormalTok{)  }\CommentTok{\# Yellow{-}Green{-}Blue gradient}
+\end{Highlighting}
+\end{Shaded}
+\end{frame}
+
+\begin{frame}[fragile]{Create the Base Plot}
+\phantomsection\label{create-the-base-plot}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{plt\_country\_vs\_lifeExp }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(gm2007\_full, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ lifeExp, }\AttributeTok{y =} \FunctionTok{reorder}\NormalTok{(country, lifeExp), }\AttributeTok{color =}\NormalTok{ lifeExp)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size =} \DecValTok{4}\NormalTok{) }\SpecialCharTok{+}  \CommentTok{\# Increase point size}
+  \FunctionTok{geom\_segment}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \DecValTok{30}\NormalTok{, }\AttributeTok{xend =}\NormalTok{ lifeExp, }\AttributeTok{y =}\NormalTok{ country, }\AttributeTok{yend =}\NormalTok{ country), }\AttributeTok{size =} \FloatTok{0.8}\NormalTok{, }\AttributeTok{color =} \StringTok{"gray"}\NormalTok{) }\SpecialCharTok{+}  \CommentTok{\# Reduce line size}
+  \FunctionTok{geom\_text}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{label =} \FunctionTok{round}\NormalTok{(lifeExp, }\DecValTok{1}\NormalTok{)), }\AttributeTok{color =} \StringTok{"white"}\NormalTok{, }\AttributeTok{size =} \DecValTok{3}\NormalTok{, }\AttributeTok{hjust =} \SpecialCharTok{{-}}\FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+}  \CommentTok{\# Improve label readability}
+  \FunctionTok{scale\_x\_continuous}\NormalTok{(}\StringTok{""}\NormalTok{, }\AttributeTok{expand =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{), }\AttributeTok{limits =} \FunctionTok{c}\NormalTok{(}\DecValTok{30}\NormalTok{, }\DecValTok{90}\NormalTok{), }\AttributeTok{position =} \StringTok{"top"}\NormalTok{) }\SpecialCharTok{+}  \CommentTok{\# Adjust axis}
+  \FunctionTok{scale\_color\_gradientn}\NormalTok{(}\AttributeTok{colors =}\NormalTok{ palette) }\SpecialCharTok{+}  \CommentTok{\# Apply better color gradient}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Highest and Lowest Life Expectancies, 2007"}\NormalTok{, }
+       \AttributeTok{caption =} \StringTok{"Source: Gapminder"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+\end{frame}
+
+\begin{frame}[fragile]{Add Theme Adjustments}
+\phantomsection\label{add-theme-adjustments}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{plt\_country\_vs\_lifeExp }\OtherTok{\textless{}{-}}\NormalTok{ plt\_country\_vs\_lifeExp }\SpecialCharTok{+} \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
+    \FunctionTok{theme}\NormalTok{(}\AttributeTok{axis.line.y =} \FunctionTok{element\_blank}\NormalTok{(), }\AttributeTok{axis.ticks.y =} \FunctionTok{element\_blank}\NormalTok{(),}
+        \AttributeTok{axis.text =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{color =} \StringTok{"black"}\NormalTok{), }\AttributeTok{axis.title =} \FunctionTok{element\_blank}\NormalTok{(),}
+        \AttributeTok{legend.position =} \StringTok{"none"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+\end{frame}
+
+\begin{frame}[fragile]{Add Vertical Reference Line}
+\phantomsection\label{add-vertical-reference-line}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{plt\_country\_vs\_lifeExp }\OtherTok{\textless{}{-}}\NormalTok{ plt\_country\_vs\_lifeExp }\SpecialCharTok{+} \FunctionTok{geom\_vline}\NormalTok{(}\AttributeTok{xintercept =}\NormalTok{ global\_mean,}
+    \AttributeTok{color =} \StringTok{"grey40"}\NormalTok{, }\AttributeTok{linetype =} \StringTok{"dashed"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+\end{frame}
+
+\begin{frame}[fragile]{Add Annotation Text}
+\phantomsection\label{add-annotation-text}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{plt\_country\_vs\_lifeExp }\OtherTok{\textless{}{-}}\NormalTok{ plt\_country\_vs\_lifeExp }\SpecialCharTok{+} \FunctionTok{annotate}\NormalTok{(}\StringTok{"text"}\NormalTok{,}
+    \AttributeTok{x =}\NormalTok{ x\_start, }\AttributeTok{y =}\NormalTok{ y\_start, }\AttributeTok{label =} \StringTok{"The}\SpecialCharTok{\textbackslash{}n}\StringTok{global}\SpecialCharTok{\textbackslash{}n}\StringTok{average"}\NormalTok{,}
+    \AttributeTok{vjust =} \DecValTok{1}\NormalTok{, }\AttributeTok{hjust =} \DecValTok{0}\NormalTok{, }\AttributeTok{size =} \DecValTok{4}\NormalTok{, }\AttributeTok{color =} \StringTok{"black"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+\end{frame}
+
+\begin{frame}[fragile]{Add the Annotation Curve}
+\phantomsection\label{add-the-annotation-curve}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{plt\_country\_vs\_lifeExp }\OtherTok{\textless{}{-}}\NormalTok{ plt\_country\_vs\_lifeExp }\SpecialCharTok{+} \FunctionTok{annotate}\NormalTok{(}\StringTok{"curve"}\NormalTok{,}
+    \AttributeTok{x =}\NormalTok{ x\_start, }\AttributeTok{y =}\NormalTok{ y\_start, }\AttributeTok{xend =}\NormalTok{ x\_end, }\AttributeTok{yend =}\NormalTok{ y\_end, }\AttributeTok{curvature =} \FloatTok{0.3}\NormalTok{,}
+    \AttributeTok{arrow =} \FunctionTok{arrow}\NormalTok{(}\AttributeTok{length =} \FunctionTok{unit}\NormalTok{(}\FloatTok{0.3}\NormalTok{, }\StringTok{"cm"}\NormalTok{), }\AttributeTok{type =} \StringTok{"closed"}\NormalTok{),}
+    \AttributeTok{color =} \StringTok{"black"}\NormalTok{, }\AttributeTok{size =} \DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+\end{frame}
+
+\begin{frame}[fragile]{Final Visualization}
+\phantomsection\label{final-visualization}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{plt\_country\_vs\_lifeExp}
+\end{Highlighting}
+\end{Shaded}
+\end{frame}
+
+\begin{frame}{Final Visualization}
+\phantomsection\label{final-visualization-1}
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Figs/unnamed-chunk-111-1} \end{center}
 \end{frame}
 
 \end{document}
