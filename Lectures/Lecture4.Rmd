@@ -91,7 +91,6 @@ Welcome to this course on creating interactive maps using the **leaflet** packag
 Let's take a look at how this works in R. 
   
 \AddToHookNext{env/Highlighting/begin}{\tiny}
-
 ```{r, cache=TRUE} 
 library(leaflet)
 
@@ -107,7 +106,6 @@ leaflet() %>%
 Then we initialize an html widget with the leaflet() function call. 
   
 \AddToHookNext{env/Highlighting/begin}{\tiny}
-
 ```{r, cache=TRUE} 
 library(leaflet)
 
@@ -139,7 +137,6 @@ leaflet() %>%
  Filtering and selecting specific columns from the `mtcars` dataset.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}
-
 ```{r, cache=TRUE} 
 mtcars %>%
   mutate(car = rownames(.)) %>%
@@ -167,7 +164,6 @@ We will use the leaflet package to initialize an HTML widget and add a map tile 
 
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}
-
 ```{r, cache=TRUE} 
 # Load the leaflet library
 library(leaflet)
@@ -238,7 +234,6 @@ leaflet() %>%
   For example, to see the first five provider tiles, we call names() on the providers list followed by 1 colon 5 in brackets.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}
-
 ```{r, cache=TRUE} 
 names(providers)[1:5]
 ```
@@ -249,7 +244,6 @@ names(providers)[1:5]
 The first five tiles are all OpenStreetMap tiles, so it might be more useful to print all of the tiles provided by OpenStreetMap, which you can do by using the $str\_detect()$ function from the **stringr** package.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}
-
 ```{r, cache=TRUE} 
 names(providers)[str_detect(names(providers), "OpenStreetMap")]
 ```
@@ -262,7 +256,6 @@ names(providers)[str_detect(names(providers), "OpenStreetMap")]
 For example, to create a leaflet map that uses the black and white OpenStreetMap, we replace the $addTiles()$ with $addProviderTiles()$ and pass in the name of the desired tile to the function.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}
-
 ```{r, cache=TRUE} 
 leaflet() %>% 
   addProviderTiles("OpenStreetMap.BlackAndWhite")
@@ -309,7 +302,7 @@ str_detect(names(providers), "CartoDB")
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}
 
-```{r, cache=TRUE}
+```{r, cache=TRUE}}
 library(stringr)
 # Display provider tile names that include "CartoDB"
 names(providers)[str_detect(names(providers), "CartoDB")]
@@ -392,16 +385,6 @@ wonders <- tibble(
   place = c("Taj Mahal - India", "Petra - Jordan", "Christ the Redeemer - Brazil", "Colosseum - Italy"),
   lon = c(78.0421, 35.4444, 43.2105, 12.4922),
   lat = c(27.1751, 30.3285, 22.9519, 41.8902))
-```
-
-
-
-
-## A Map with a Narrower View
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```{r, cache=TRUE}
 
 
 leaflet(options = leafletOptions(
@@ -489,23 +472,5 @@ map_zoom <- wondersMap %>%
   - You can accomplish these tasks with the following functions.
 
 
-## Cleaning up the Base Map
 
-  - clearMarkers()- Remove one or more features from a map
-  - clearBounds()- Clear bounds and automatically determine bounds based on map elements
-
-## Cleaning up the Base Map
-
-To remove the markers and to reset the bounds of our m map we would:
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```{r, cache=TRUE}
-map_zoom <- map_zoom %>% 
-  addMarkers(lng = wonders$lon, lat = wonders$lat) %>%
-  setView(lng = 20.6843, lat = 88.5678, zoom = 5)
-
-map_zoom %>%
-  clearMarkers() %>%
-  clearBounds()
-```  
+  
