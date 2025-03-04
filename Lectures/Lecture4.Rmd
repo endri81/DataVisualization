@@ -17,7 +17,6 @@ library(knitr)
 library(tidyverse)
 library(leaflet)  # Enables interactive maps
 library(kableExtra)
-
 knitr::opts_chunk$set(
   fig.width=8,   # Optimized for HTML slides
   fig.height=6,
@@ -29,7 +28,6 @@ knitr::opts_chunk$set(
   fig.align = 'center',
   message=FALSE, 
   tidy.opts=list(width.cutoff=80))
-
 ```
 
 
@@ -91,6 +89,7 @@ Welcome to this course on creating interactive maps using the **leaflet** packag
 Let's take a look at how this works in R. 
   
 \AddToHookNext{env/Highlighting/begin}{\tiny}
+
 ```{r, cache=TRUE} 
 library(leaflet)
 
@@ -106,6 +105,7 @@ leaflet() %>%
 Then we initialize an html widget with the leaflet() function call. 
   
 \AddToHookNext{env/Highlighting/begin}{\tiny}
+
 ```{r, cache=TRUE} 
 library(leaflet)
 
@@ -114,8 +114,8 @@ leaflet() %>%
 ```  
   
 ## Creating our First leaflet Map    
-  
-   - You'll notice that leaflet leverages the pipe operator that is common in the tidyverse. 
+
+- You'll notice that leaflet leverages the pipe operator that is common in the tidyverse. 
    
    - This allows us to chain a series of functions together. 
    
@@ -123,26 +123,14 @@ leaflet() %>%
 ## Creating our First leaflet Map
 
    For example, we can pipe the result of our 'leaflet(); call into the 'addTiles()' function to create an interactive map with just two-lines of R code!
-   
-![](../images/im220.png)   
+  
+  ![](../images/im220.png)   
 
 ## Where We are Going 
 
-  - For now, you will practice using different map tiles while working towards creating an interactive map that displays two of college's locations. 
+- For now, you will practice using different map tiles while working towards creating an interactive map that displays two of college's locations. 
 
   - Similar to adding a provider tile, you can add another layer to your map using the pipe operator to include markers that identify specific locations.
-
-## Practice : Using Pipe Operators for Data Manipulation
-
- Filtering and selecting specific columns from the `mtcars` dataset.
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-```{r, cache=TRUE} 
-mtcars %>%
-  mutate(car = rownames(.)) %>%
-  select(car, mpg) %>%
-  filter(mpg >= 25)
-```  
 
 
 ## Practice : Creating a Basic Web Map in R
@@ -164,6 +152,7 @@ We will use the leaflet package to initialize an HTML widget and add a map tile 
 
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}
+
 ```{r, cache=TRUE} 
 # Load the leaflet library
 library(leaflet)
@@ -238,12 +227,12 @@ leaflet() %>%
 names(providers)[1:5]
 ```
 
-
 ## Exploring leaflet Provider Tiles
 
 The first five tiles are all OpenStreetMap tiles, so it might be more useful to print all of the tiles provided by OpenStreetMap, which you can do by using the $str\_detect()$ function from the **stringr** package.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}
+
 ```{r, cache=TRUE} 
 names(providers)[str_detect(names(providers), "OpenStreetMap")]
 ```
@@ -256,6 +245,7 @@ names(providers)[str_detect(names(providers), "OpenStreetMap")]
 For example, to create a leaflet map that uses the black and white OpenStreetMap, we replace the $addTiles()$ with $addProviderTiles()$ and pass in the name of the desired tile to the function.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}
+
 ```{r, cache=TRUE} 
 leaflet() %>% 
   addProviderTiles("OpenStreetMap.BlackAndWhite")
@@ -298,11 +288,12 @@ library(stringr)
 str_detect(names(providers), "CartoDB")
 ```
 
+
 ## Print the actual provider names
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}
 
-```{r, cache=TRUE}}
+```{r, cache=TRUE}
 library(stringr)
 # Display provider tile names that include "CartoDB"
 names(providers)[str_detect(names(providers), "CartoDB")]
@@ -325,22 +316,38 @@ leaflet() %>%
   addProviderTiles(provider = "CartoDB")
 ```
 
-## Setting the Default Map View
 
-  - We have created several maps, but you may have noticed that they are zoomed out. 
-  
-  - Rather than having to manually zoom the map to find the area that we are most interested in, we can load it centered on a particular point with a specific zoom level. Let's take a closer look.
 
+## Adding a Custom Map Tile
+
+Now, that we have got the different providers, let’s try one of them and see how it’s different than the default one.
+
+The first argument to addProviderTiles() is your leaflet map, which allows us to pipe leaflet() output directly into addProviderTiles(). 
+
+
+## Adding a Custom Map Tile
+
+The second argument is provider, which accepts any of the map tiles included in the providers list.
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+leaflet() %>% 
+    addProviderTiles(provider = "CartoDB.DarkMatterNoLabels")
+```
+
+I’ve used the ‘CartoDB.DarkMatterNoLabels’ provider. And it has turned the map into dark mode actually!
 
 ## A Map with a View
 
-  - You may have noticed that, by default, maps are zoomed out to the farthest level. 
+You may have noticed that, by default, maps are zoomed out to the farthest level. 
 
-  - Rather than manually zooming and panning, we can load the map centered on a particular point using the $setView()$ function.
-
-  - The default zoom level is 0 and can reach upto 19. 0 being the zoomed out stage.
+Rather than manually zooming and panning, we can load the map centered on a particular point using the setView() function.
 
 ## A Map with a View
+
+The default zoom level is 0 and can reach upto 19. 0 being the zoomed out stage.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}
 
@@ -352,12 +359,15 @@ leaflet()  %>%
 
 ## A Map with a Narrower View
 
-  - We can limit users’ ability to pan away from the map’s focus using the options argument in the $leaflet()$ function. 
-  
-  - By setting **minZoom** and dragging, we can create an interactive web map that will always be focused on a specific area. Although, user can zoom out using controls.
+We can limit users’ ability to pan away from the map’s focus using the options argument in the leaflet() function. 
+
+By setting minZoom and dragging, we can create an interactive web map that will always be focused on a specific area. 
+
+Although, user can zoom out using controls.
 
 
 ## A Map with a Narrower View
+
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}
 
@@ -370,7 +380,7 @@ leaflet(options =
 
 ## A Map with a Narrower View
 
-  - Alternatively, if we want our users to be able to drag the map while ensuring that they do not stray too far, we can set the maps maximum boundaries by specifying two diagonal corners of a rectangle.
+Alternatively, if we want our users to be able to drag the map while ensuring that they do not stray too far, we can set the maps maximum boundaries by specifying two diagonal corners of a rectangle.
 
 
 ## A Map with a Narrower View
@@ -378,15 +388,23 @@ leaflet(options =
 \AddToHookNext{env/Highlighting/begin}{\tiny}
 
 ```{r, cache=TRUE}
-## Warning: package 'tibble' was built under R version 4.0.5
 library(tibble)
+## Warning: package 'tibble' was built under R version 4.0.5
+#R package that provides easy to use functions for creating tibbles, which is a modern rethinking of data frames. 
 
 wonders <- tibble(
   place = c("Taj Mahal - India", "Petra - Jordan", "Christ the Redeemer - Brazil", "Colosseum - Italy"),
   lon = c(78.0421, 35.4444, 43.2105, 12.4922),
   lat = c(27.1751, 30.3285, 22.9519, 41.8902))
+```
 
 
+
+## A Map with a Narrower View
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
 leaflet(options = leafletOptions(
                     # Set minZoom and dragging 
                     minZoom = 12, dragging = TRUE))  %>% 
@@ -405,26 +423,27 @@ leaflet(options = leafletOptions(
 
 ## A Map with a Narrower View
 
-  - Try, dragging this map. What do you notice. 
-  
-  - It cannot be dragged more than the max bounds we have set i.e. 0.05. So, the map stays in the focused mode and cannot be dragged further than set           limits.
+Try, dragging this map. What do you notice. 
+
+It cannot be dragged more than the max bounds we have set i.e. 0.05. 
+
+So, the map stays in the focused mode and cannot be dragged further than set limits.
 
 ## Adding Markers
 
-  - So far we have been creating maps with a single layer: a base map. 
-  
-  - We can add layers to this base map similar to how you add layers to a plot in ggplot2. 
-  
-## Adding Markers
+So far we have been creating maps with a single layer: a base map. 
 
-  - One of the most common layers to add to a leaflet map is location markers, which you can add by piping the result of $addTiles()$ or                        $addProviderTiles()$ into the add markers function.
+We can add layers to this base map similar to how you add layers to a plot in ggplot2. 
 
 
 ## Adding Markers
 
-  - For example, if we plot Taj Mahal by passing the coordinates to addMarkers() as numeric vectors with one element, 
-  
-  - our web map will place a blue drop pin at the coordinate.
+One of the most common layers to add to a leaflet map is location markers, which you can add by piping the result of addTiles() or addProviderTiles() into the add markers function.
+
+## Adding Markers
+
+For example, if we plot Taj Mahal by passing the coordinates to addMarkers() as numeric vectors with one element, our web map will place a blue drop pin at the coordinate.
+
 
 ## Adding Markers
 
@@ -438,39 +457,435 @@ leaflet() %>%
 
 ## Add maps and store map as a R object
 
-  - To make our map more informative we can add popups. 
+To make our map more informative we can add popups. 
 
-  - To add popups that appear when a marker is clicked we need to specify the popup argument in the $addMarkers()$ function. 
-  
+To add popups that appear when a marker is clicked we need to specify the popup argument in the addMarkers() function. 
+
 ## Add maps and store map as a R object
 
-  - Once we have a map we would like to preserve, we can store it in an object. 
-  
-  - Then we can pipe this object into functions to add or edit the map’s layers.
+Once we have a map we would like to preserve, we can store it in an object. 
+
+Then we can pipe this object into functions to add or edit the map’s layers.
+
 
 ## Add maps and store map as a R object
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}
 
 ```{r, cache=TRUE}
-
 wondersMap <- leaflet() %>%
   addTiles() %>%
   addMarkers(lng = wonders$lon, lat = wonders$lat,
              popup = wonders$place)
+```
 
-## We can add layers to the existing leaflet R object
 
+
+## Add maps and store map as a R object
+
+We can add layers to the existing leaflet R object
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
 map_zoom <- wondersMap %>%
   setView(lng = wonders$lon[4], lat = wonders$lat[4], zoom = 2)
+
+map_zoom
 ```
 
 ## Cleaning up the Base Map
 
-  - If you are storing leaflet maps in objects, there will come a time when you need to remove markers or reset the view. 
-  
-  - You can accomplish these tasks with the following functions.
+If you are storing leaflet maps in objects, there will come a time when you need to remove markers or reset the view. 
+
+You can accomplish these tasks with the following functions.
+
+  - clearMarkers()- Remove one or more features from a map
+
+  - clearBounds()- Clear bounds and automatically determine bounds based on map elements
+
+## Cleaning up the Base Map
+
+To remove the markers and to reset the bounds of our m map we would:
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+map_zoom <- map_zoom %>% 
+  addMarkers(lng = wonders$lon, lat = wonders$lat) %>%
+  setView(lng = 20.6843, lat = 88.5678, zoom = 5)
+
+map_zoom %>%
+  clearMarkers() %>%
+  clearBounds()
+```
+
+
+## Adding Markers
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+library(leaflet)
+my_map <- leaflet() %>% 
+  addTiles()  %>%
+  addMarkers(lat=39.2980803, lng=-76.5898801, 
+             popup="Jeff Leek's Office")
+my_map
+```
+
+
+## Adding Many Markers
+
+Adding one marker at a time is often not practical if you want to display many markers. 
+
+If you have a data frame with columns lat and lng you can pipe that data frame into leaflet() to add all the points at once.
+
+
+## Adding Many Markers
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+set.seed(2016-04-25)
+df <- data.frame(lat = runif(20, min = 39.2, max = 39.3),
+                 lng = runif(20, min = -76.6, max = -76.5))
+df %>% 
+  leaflet() %>%
+  addTiles() %>%
+  addMarkers()
+```
 
 
 
-  
+## Making Custom Markers
+
+The blue markers that leaflet comes packaged with may not be enough depending on what you’re mapping. 
+
+Thankfully you can make your own markers from .png files.
+
+
+
+## Making Custom Markers
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+unytIcon <- makeIcon(
+  iconUrl = "https://upload.wikimedia.org/wikipedia/en/thumb/8/85/Logo_of_the_University_of_New_York%E2%80%93Tirana.svg/150px-Logo_of_the_University_of_New_York%E2%80%93Tirana.svg.png",
+  iconWidth = 31*215/230, iconHeight = 31,
+  iconAnchorX = 31*215/230/2, iconAnchorY = 16
+)
+```
+
+
+## Making Custom Markers
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+
+unytLatLong <- data.frame(
+  lat = c(41.3275),  # Latitude of UNYT
+  lng = c(19.8189)   # Longitude of UNYT
+)
+
+unytLatLong %>% 
+  leaflet() %>%
+  addTiles() %>%
+  addMarkers(icon = unytIcon)
+
+```
+
+
+## Adding Multiple Popups
+
+When adding multiple markers to a map, you may want to add popups for each marker. 
+
+You can specify a string of plain text for each popup, or you can provide HTML which will be rendered inside of each popup.
+
+
+
+## Adding Multiple Popups
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+unytSites <- c(
+  "<a href='https://unyt.edu.al/'>University of New York Tirana</a>",
+  "<a href='https://unyt.edu.al/academics/'>UNYT Academics</a>",
+  "<a href='https://unyt.edu.al/research/'>UNYT Research Center</a>",
+  "<a href='https://unyt.edu.al/admissions/'>UNYT Admissions</a>",
+  "<a href='https://unyt.edu.al/contact/'>UNYT Contact</a>"
+)
+```
+
+## Adding Multiple Popups
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+unytLatLong <- data.frame(
+  lat = c(41.3275, 41.3280, 41.3268, 41.3272, 41.3282),  # Approximate locations
+  lng = c(19.8189, 19.8195, 19.8178, 19.8201, 19.8182)   # Adjusted for different locations
+)
+```
+
+## Adding Multiple Popups
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+unytIcon <- makeIcon(
+  iconUrl = "https://upload.wikimedia.org/wikipedia/en/thumb/8/85/Logo_of_the_University_of_New_York%E2%80%93Tirana.svg/150px-Logo_of_the_University_of_New_York%E2%80%93Tirana.svg.png",
+  iconWidth = 31*215/230, iconHeight = 31,
+  iconAnchorX = 31*215/230/2, iconAnchorY = 16
+)
+```
+
+## Adding Multiple Popups
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+
+unytLatLong %>% 
+  leaflet() %>%
+  addTiles() %>%
+  addMarkers(icon = unytIcon, popup = unytSites)
+
+
+```
+
+
+
+## Mapping Clusters
+
+Sometimes you might have so many points on a map that it doesn’t make sense to plot every marker. 
+
+In these situations leaflet allows you to plot clusters of markers using addMarkers(clusterOptions = markerClusterOptions()). 
+
+When you zoom in to each cluster, the clusters will separate until you can see the individual markers.
+
+
+## Mapping Clusters
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+
+# Generate 20 random points around the University of New York Tirana
+df <- data.frame(
+  lat = runif(20, min = 41.315, max = 41.335),  # Latitude range for Tirana
+  lng = runif(20, min = 19.805, max = 19.830)   # Longitude range for Tirana
+)
+```
+
+
+## Mapping Clusters
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+
+# Create a leaflet map with circle markers
+df %>% 
+  leaflet() %>%
+  addTiles() %>%
+  addCircleMarkers(
+    radius = 5,  # Size of the circles
+    color = "blue",  # Outline color
+    fillColor = "lightblue",  # Fill color
+    fillOpacity = 0.5,  # Transparency level
+    stroke = TRUE
+  )
+
+
+```
+
+## Mapping Clusters
+
+Instead of adding markers or clusters you can easily add circle markers using addCircleMarkers().
+
+
+## Mapping Clusters
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+# Generate 500 random points around Tirana, Albania
+df <- data.frame(
+  lat = runif(500, min = 41.315, max = 41.335),  # Latitude range for Tirana
+  lng = runif(500, min = 19.805, max = 19.830)   # Longitude range for Tirana
+)
+```
+
+## Mapping Clusters
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+# Create a leaflet map with clustered markers
+df %>% 
+  leaflet() %>%
+  addTiles() %>%
+  addMarkers(clusterOptions = markerClusterOptions())
+
+
+```
+
+
+
+## Drawing Circles
+
+You can draw arbitrary shapes on the maps you create, including circles and squares. 
+
+The code below draws a map where the circle on each city is proportional to the population of that city.
+
+
+## Drawing Circles
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+# Data for major cities in Albania with estimated population
+albania_cities <- data.frame(
+  name = c("Tirana", "Durres", "Vlore", "Shkoder", "Fier",
+           "Korce", "Berat", "Elbasan", "Lushnje", "Gjirokaster"),
+  pop = c(418495, 201110, 130827, 135612, 120655,
+          75694, 60331, 141714, 83274, 25000),  # Approximate population values
+  lat = c(41.3275, 41.3167, 40.4667, 42.0667, 40.7250,
+          40.6167, 40.7050, 41.1125, 40.9333, 40.0783),
+  lng = c(19.8189, 19.4500, 19.4897, 19.5156, 19.5561,
+          20.7667, 19.9522, 20.0822, 19.7050, 20.1333)
+)
+```
+
+## Drawing Circles
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+# Create a leaflet map with circle sizes representing city population
+albania_cities %>%
+  leaflet() %>%
+  addTiles() %>%
+  addCircles(
+    weight = 1,
+    radius = sqrt(albania_cities$pop) * 30,  # Adjusted radius to scale with population
+    color = "blue",  # Outline color
+    fillColor = "lightblue",  # Fill color
+    fillOpacity = 0.5,  # Transparency
+    popup = ~paste0("<b>", name, "</b><br>Population: ", pop)  # Popup with city name & population
+  )
+```
+
+
+
+## Drawing Rectangles
+
+You can add rectangles on leaflet maps as well:
+
+
+
+## Drawing Rectangles
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+# Create a leaflet map with a rectangle in Tirana
+leaflet() %>%
+  addTiles() %>%
+  addRectangles(
+    lat1 = 41.3220, lng1 = 19.8100,  # Bottom-left corner of rectangle
+    lat2 = 41.3300, lng2 = 19.8250,  # Top-right corner of rectangle
+    color = "black", weight = 2, fillOpacity = 0.3
+  )
+```
+
+
+## Drawing Rectangles
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+# Generate 20 random points around Tirana with different colors
+df <- data.frame(
+  lat = runif(20, min = 41.315, max = 41.335),  # Latitude range for Tirana
+  lng = runif(20, min = 19.805, max = 19.830),  # Longitude range for Tirana
+  col = sample(c("red", "blue", "green"), 20, replace = TRUE),
+  stringsAsFactors = FALSE
+)
+```
+
+## Drawing Rectangles
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+# Create a leaflet map with circle markers and a legend
+df %>%
+  leaflet() %>%
+  addTiles() %>%
+  addCircleMarkers(color = df$col, fillOpacity = 0.7, radius = 5) %>%
+  addLegend(position = "bottomright",
+            labels = c("Category A", "Category B", "Category C"),
+            colors = c("blue", "red", "green"),
+            title = "Legend for Categories")
+
+```
+
+
+## Adding Legends
+
+
+Adding a legend can be useful if you have markers on your map with different colors:
+
+
+## Adding Legends
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+# Generate 20 random points around Tirana with different colors
+df <- data.frame(
+  lat = runif(20, min = 41.315, max = 41.335),  # Latitude range for Tirana
+  lng = runif(20, min = 19.805, max = 19.830),  # Longitude range for Tirana
+  col = sample(c("red", "blue", "green"), 20, replace = TRUE),
+  stringsAsFactors = FALSE
+)
+```
+
+
+
+## Adding Legends
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+# Create a leaflet map with circle markers and a legend
+df %>%
+  leaflet() %>%
+  addTiles() %>%
+  addCircleMarkers(
+    color = df$col,
+    fillOpacity = 0.7,
+    radius = 5
+  ) %>%
+  addLegend(
+    position = "bottomright",
+    labels = c("Category A", "Category B", "Category C"),
+    colors = c("blue", "red", "green"),
+    title = "Legend for Categories"
+  )
+
+```
+
+
+
+
+
+
+
+
