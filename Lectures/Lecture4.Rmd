@@ -1687,6 +1687,8 @@ Here, we type polished variable labels as character strings and use the variable
 
 To start a new line use the HTML line-break, br, wrapped in angled brackets. 
 
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
 ```{r, cache=TRUE}
 winequality %>% 
   plot_ly(x = ~free_so2, y = ~total_so2) %>% 
@@ -1705,4 +1707,432 @@ Finally, notice that we use the tilde operator to specify the hover info text.
 Remember that the tilde operator is used to map columns to aesthetic parameters. 
 
 Here, we map the variables Flavanoids and Alcohol to the hover info. Without this tilde, plotly would return an error, since these objects are not in the global environment, but are stored as columns in our dataset.
+
+
+
+
+# Advanced Charts
+
+## Adding layers
+
+Previously, you have focused on creating a plotly chart based on a single trace. 
+
+Now, you will learn how to layer traces to create more complex charts. 
+
+
+## Adding layers
+
+Specifically, you'll learn how to add smoothers to scatterplots and overlay density plots. 
+
+While complex charts often look impressive, it's important to remember that the simplest chart that conveys your message is usually the best choice. So layer cautiously.
+
+
+
+## Adding a smoother
+
+As a first example, consider adding a LOESS smoother to the scatterplot of alcohol content against flavonoids to highlight the nonlinear structure. 
+
+
+## Adding a smoother
+
+
+We begin by fitting the LOESS model and storing it as the object m. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+m <- loess(Alcohol ~ Flavanoids, data = wine, span = 1.5)  
+wine %>% 
+  plot_ly(x = ~Flavanoids, y = ~Alcohol) %>% 
+  add_markers() %>%  
+  add_lines(y = ~fitted(m)) %>%  
+  layout(showlegend = FALSE)
+```
+
+## Adding a smoother
+
+Next, we construct a scatterplot with Flavonoids on the x-axis and Alcohol on the y-axis. 
+
+To add another layer, we pipe the plot into another trace layer. 
+
+## Adding a smoother
+
+Here, we wish to add a line for representing the fitted model, so we add the lines trace. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+m2 <- lm(Alcohol ~ poly(Flavanoids, 2), data = wine)  
+wine %>% 
+  plot_ly(x = ~Flavanoids, y = ~Alcohol) %>% 
+  add_markers(showlegend = FALSE) %>% 
+  add_lines(y = ~fitted(m))
+```
+
+To plot the fitted values we need to map Flavonoids to the x-axis and the fitted values to the y-axis. 
+
+
+## Adding a smoother
+
+Notice here that we only need to explicitly map fitted(m) to the y aesthetic because the x aesthetic will be inherited from the base layer. 
+
+Finally, we specify showlegend equals FALSE to remove the legend. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+m2 <- lm(Alcohol ~ poly(Flavanoids, 2), data = wine)  
+wine %>% 
+  plot_ly(x = ~Flavanoids, y = ~Alcohol) %>% 
+  add_markers(showlegend = FALSE) %>% 
+  add_lines(y = ~fitted(m)) %>%
+  layout(showlegend = FALSE)
+```
+
+
+If we retained the legend, then each trace would be represented, and it seems silly to have a legend differentiating the observed points from the fitted values.
+
+## Adding a second smoother
+
+To compare two models we can add multiple layers to the chart. For example, we may wish to compare how a second-order polynomial fits the data compared to the LOESS fit. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+m2 <- lm(Alcohol ~ poly(Flavanoids, 2), data = wine)  
+wine %>% 
+  plot_ly(x = ~Flavanoids, y = ~Alcohol) %>% 
+  add_markers(showlegend = FALSE) %>% 
+  add_lines(y = ~fitted(m), name = "LOESS") %>% 
+  add_lines(y = ~fitted(m2), name = "Polynomial")
+```
+
+We begin by fitting the polynomial model using the lm() function and storing it as the object m2. 
+
+
+## Adding a second smoother
+
+The LOESS model is still stored in the object m. The code to create the chart is nearly identical to the previous slide, but we now have three layers with different traces: we add the points using $add\_markers()$, the LOESS fit using the first $add\_lines()$ trace, and the polynomial fit using the second $add\_lines()$ trace. 
+
+
+
+## Adding a second smoother
+
+The key differences in the code relate to the creation of the legend, which is necessary to differentiate the two models. 
+
+We can name each trace by adding the name argument. Here, we have added name equals "LOESS" and name equals "Polynomial". 
+
+
+## Adding a second smoother
+
+
+In the markers trace, we specify showlegend equals FALSE to remove this trace from the legend since it is obvious that the points represent observed data.
+
+## Layering densities
+
+Layering is also a useful tool when comparing distributions. 
+
+
+## Layering densities
+
+For example, here we layer density plots to compare the distribution of Flavanoids between wine types. 
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+d1 <- filter(wine, Type == 1) 
+d2 <- filter(wine, Type == 2) 
+d3 <- filter(wine, Type == 3)  
+
+density1 <- density(d1$Flavanoids) 
+density2 <- density(d2$Flavanoids) 
+density3 <- density(d3$Flavanoids)  
+```
+
+
+## Layering densities
+
+If you're not familiar with density plots, you can think of them as smoothed histograms.
+
+## Layering densities
+
+Layering density plots requires three steps: 
+
+First, we create subsets for each wine type using filter(). 
+
+Next, we use the density() command to calculate the x, y coordinates needed for the smoothers. 
+
+
+## Layering densities
+
+We then add three layers to our chart using $add\_lines()$, mapping x and y to the appropriate aesthetics, and setting the name of the trace to the wine type. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+plot_ly(opacity = 0.5) %>% 
+  add_lines(x = ~density1$x, y = ~density1$y, name = "Type 1") %>% 
+  add_lines(x = ~density2$x, y = ~density2$y, name = "Type 2") %>% 
+  add_lines(x = ~density3$x, y = ~density3$y, name = "Type 3") %>% 
+  layout(xaxis = list(title = 'Flavonoids'), 
+         yaxis = list(title = 'Density'))
+```
+
+
+We also polish the axis labels.
+
+
+##  Faceting plotly graphics
+
+Creating a series of subplots is another powerful way to explore the impact of additional variables.
+
+## 2016 video game sales
+
+We'll use subplots to explore the vgsales2016 dataset, which contains information about video games released in 2016, including sales and ratings. 
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+vgsales2016 <- read.csv("https://raw.githubusercontent.com/endri81/DataVisualization/refs/heads/main/data/vgsales2016.csv", sep = ",")
+glimpse(vgsales2016)
+```
+
+
+## Representing many categories
+
+You created a scatterplot exploring the relationship between user and critic scores, where color represented genre. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+vgsales2016 %>% 
+  plot_ly(x = ~Critic_Score, y = ~User_Score, color = ~Genre) %>% 
+  add_markers()
+```
+
+
+There are 11 video game genres in 2016, making it difficult to choose a color palette that makes visual comparison easy. 
+
+
+
+
+## Representing many categories
+
+In fact, if you run this code in your console, you'll receive a warning message that the default palette only has 8 colors. 
+
+To overcome this difficulty we can create multiple graphs of the dataset — one for each category — arranged in a series. 
+
+These are often called small multiples, trellis graphics, faceted graphics, or subplots.
+
+## A single subplot
+
+To understand how subplots are constructed, let’s create a plot for only the action genre. 
+
+
+## A single subplot
+
+First, we extract the rows corresponding to action games using $filter(Genre == "Action")$. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+action_df <- vgsales2016 %>% 
+  filter(Genre == "Action")  
+```
+
+
+This new data frame, action_df, only contains 178 observations.
+
+## A single subplot
+
+Next, we pipe $action\_df$ into our scatterplot code to plot the 178 observations.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+action_df %>% 
+  plot_ly(x = ~Critic_Score, y = ~User_Score) %>% 
+  add_markers()
+```
+
+
+
+## Two subplots
+
+Now, let's consider how to create a series of subplots. 
+
+When there are a small number of subplots this can be done manually by storing each plot as an object and combining them using the subplot() function. 
+
+
+## Two subplots
+
+For example, we can store the action scatterplot we just created as p1 and create another scatterplot for adventure games, storing this plot as p2. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+# Two Subplots
+p1 <- action_df %>% 
+  plot_ly(x = ~Critic_Score, y = ~User_Score) %>% 
+  add_markers()  
+p2 <- vgsales2016 %>% 
+  filter(Genre == "Adventure") %>% 
+  plot_ly(x = ~Critic_Score, y = ~User_Score) %>% 
+  add_markers()  
+subplot(p1, p2, nrows = 1)
+```
+
+Finally, we use the subplot function to combine p1 and p2 into a grid of plots. Here we specify $nrows = 1$ to produce a single row of plots. 
+
+
+## Two subplots
+
+Notice that when we create subplots, the default legend simply gives numeric labels to the traces, which is extremely uninformative.
+
+## Legends
+
+To add an informative legend to the subplot, we map genre to the name of the trace. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+p1 <- vgsales2016 %>%
+  plot_ly(x = ~Critic_Score, y = ~User_Score, color = ~Genre) %>%
+  add_markers()
+
+
+p2 <- vgsales2016 %>% 
+  filter(Genre == "Adventure") %>% 
+  plot_ly(x = ~Critic_Score, y = ~User_Score) %>% 
+  add_markers(name = ~Genre)  
+
+subplot(p1, p2, nrows = 1)
+```
+
+Now we have Action and Adventure in the legend, providing far more information.
+
+## Axis labels
+
+Now that we have an informative legend, it's time to add informative axis labels. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+subplot(p1, p2, nrows = 1, shareY = TRUE, shareX = TRUE)
+```
+
+If the subplots share the same x- and y-axes, as they do in faceted plots, then adding $shareX = TRUE$ and $shareY = TRUE$ to the subplot() command will add axis labels for the variable names. 
+
+
+## Axis labels
+
+Additionally, sharing an axis allows interactivity to be linked. 
+
+For example, if we zoom in on the y-axis on the left plot, the y-axis will be restricted on both plots. 
+
+If this isn't the desired behavior, then you use the titleX and titleY arguments to specify axis titles instead of setting shareX and shareY to TRUE.
+
+## Iterate to automate
+
+Manually creating facets is tedious and, as with all copy-and-paste solutions, is error-prone. 
+
+A better approach is to automate this split and plot procedure. 
+
+Let's see how to create this faceted scatterplot of user score against critic score for all genres using tidyverse tools.
+
+## Iterate to automate
+
+To begin, we load the tidyverse because we need tools from the dplyr, tidyr, and purrr packages. 
+
+Then, we pipe the data set into `group_by()` to create subsets for each region and `nest()` the results. 
+
+This produces a tibble with a column for Genre and a column called data that houses the remaining data for each genre.
+
+## Iterate to automate
+
+Next, we add a plot column to store the plotly objects for each Genre using mutate.
+
+To create a plotly object for each Genre, we use the `map2()` function from the purrr package. Map2 allows us to iterate over two arguments. 
+
+In our example it iterates over the elements of the Genre and data columns in the tibble. 
+
+## Iterate to automate
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+vgsales2016 %>% 
+  group_by(Genre) %>% 
+  nest() %>%  
+  mutate( 
+    plot = map2(data, Genre, 
+                \(data, Genre)  
+                plot_ly(data = data,  
+                        x = ~Critic_Score,  
+                        y = ~User_Score) %>% 
+                  add_markers(name = ~Genre) 
+    ))
+```
+
+
+
+
+
+## Iterate to automate
+
+For each genre-data pair, it then creates a plotly object. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+vgsales2016 %>% 
+  group_by(Genre) %>% 
+  nest() %>% 
+  mutate( 
+    plot = map2( 
+      data, Genre, 
+      \(data, Genre)  
+      plot_ly(data = data,  
+              x = ~Critic_Score,  
+              y = ~User_Score) %>% 
+        add_markers(name = ~Genre) 
+    )) %>%  
+  subplot(nrows = 2)
+```
+
+
+To create this plotly object, we write an anonymous function that takes genre and data as inputs. 
+
+## Iterate to automate
+
+
+As of R 4.1, we can write such an anonymous function in shorthand which you see here. \(data, Genre) begins the definition of the anonymous function and we then use our typical plotly code as the body of the function. 
+
+To be more verbose you can write the word function in place of the slash, but I show the slash usage here to align with the help files.
+
+## Iterate to automate
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+wine %>% 
+  plot_ly() %>% 
+  add_trace( 
+    type = 'splom', 
+    dimensions = list( 
+      list(label='Alcohol', values=~Alcohol), 
+      list(label='Flavonoids', values=~Flavanoids), 
+      list(label='Color', values=~Color) 
+    ) 
+  )
+```
+
+
+## Iterate to automate
+
+Finally, we pipe the results into subplot() to produce the graphic, specifying nrows = 2 to produce a grid of subplots with two rows.
+
 
