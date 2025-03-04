@@ -11,3 +11,6 @@ forcats
 lubridate
 leaflet
 kableExtra
+bitops
+rattle
+plotly

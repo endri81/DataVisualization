@@ -861,6 +861,7 @@ df <- data.frame(
 
 
 ## Adding Legends
+
 \AddToHookNext{env/Highlighting/begin}{\tiny}
 
 ```{r, cache=TRUE}
@@ -885,7 +886,823 @@ df %>%
 
 
 
+# Plotly
+
+## plotly
+
+The plotly R package provides an interface to the plotly JavaScript graphing library, allowing you to create interactive web-based graphics entirely in R.
+
+## plotly
+
+plotly is a great choice for creating interactive graphics because you can create a wide variety of interactive graphics in multiple formats. 
+
+For example, you can execute your code in the console and interact with your graphic entirely in the viewer pane, or you could deploy your graphic to the web as a shiny app. 
+
+## plotly
+
+plotly is also backed by a strong community and is still under heavy development, making it a great time to learn how to harness its power. 
+
+As of November 2018, plotly downloads were an order of magnitude higher than its competitors like rbokeh and highcharter.
+
+## Static vs. Interactive graphics
+
+Before you start creating graphics, it's important to think carefully about what type of graphic best suits your purpose: a static graphic, or an interactive graphic. 
+
+## Static vs. Interactive graphics
+
+To highlight features of each type of graphic, let's consider a scatterplot of proline against flavonoids, two chemicals found in wine. 
+
+![](../images/im219.png)
+
+
+## Static vs. Interactive graphics
+
+A static plot, such as one rendered in ggplot2, remains permanently fixed. 
+
+This format is useful for printed materials such as reports, but can only display what you, the creator, have highlighted. 
+
+
+## Static vs. Interactive graphics
+
+On the other hand, the user can update an interactive graphic. 
+
+For example, you can drill down to specific observations using hover info, or focus on subsets of your data by selecting or deselecting groups. 
+
+Simple interactions can improve your ability to explore your data, and throughout this course, you'll learn how to add these to your graphics toolkit.
+
+## Wine data
+To begin, consider the wine dataset from the UCI Machine Learning Repository, containing the results of a chemical analysis of 178 wines all grown in the same region in Italy, but derived from three different cultivars.
 
 
 
+## ggplot2 scatterplot
+
+We'll begin by converting the static scatterplot of proline against flavanoids we saw earlier to a plotly interactive graphic. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+# Install and load the rattle package
+#install.packages("rattle")
+library(rattle)
+# Load the wine dataset
+data(wine)
+# Display the first few rows of the dataset
+glimpse(wine)
+
+```
+
+
+## ggplot2 scatterplot
+
+Remember that there are three parts to a ggplot graphic: First, we have the dataset. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+static <- wine %>% 
+  ggplot(aes(x = Flavanoids, y = Proline, color = Type)) + 
+  geom_point()
+static
+```
+
+
+
+## ggplotly()
+
+The command ggplotly() allows you to convert a ggplot graphic to a plotly interactive graphic in a single line of code. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+library(plotly)
+ggplotly(static)
+```
+
+
+## ggplotly()
+
+After loading the plotly package, pass the static ggplot object to the ggplotly() command, and an interactive version is created.
+
+
+## Plotting a single variable
+
+You learned how to convert your static ggplot2 plots into interactive plotly charts. 
+
+Not all ggplot objects can be converted to plotly objects, and sometimes you want more control over how your graphics are rendered. 
+
+
+## Plotting a single variable
+
+In this lesson, we'll explore how to create histograms and bar charts using plotly.
+
+## Exploring the wine data
+
+As first examples of univariate graphics, we'll explore the distribution of the wine types and phenols using the wine dataset.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+# Install and load the rattle package
+#install.packages("rattle")
+library(rattle)
+# Load the wine dataset
+data(wine)
+# Display the first few rows of the dataset
+glimpse(wine)
+
+```
+
+## Bar charts with plotly
+
+To explore the distribution of wine type, a categorical variable, we use a bar chart displaying the number of wines of each type. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+# Install and load the rattle package
+#install.packages("rattle")
+library(plotly)
+wine %>% 
+  count(Type) %>%
+  plot_ly(x = ~Type, y = ~n) %>%
+  add_bars()
+```
+
+
+## Bar charts with plotly
+
+There are three fundamental parts to a plotly graphic: First, we have the dataset. Here we calculate a frequency table giving the number of wines of each type using the count() command. 
+
+
+## Bar charts with plotly
+
+We then pass this summarized dataset to the plot underscore ly command, which creates our base layer, similar to the ggplot() function. 
+
+
+## Bar charts with plotly
+
+The second piece is the mapping of the variables in the dataset to aesthetics in the graph. 
+
+Here, we specify the mappings using tildes, x = ~Type, y = ~n, telling the plot which variable defines each aesthetic. 
+
+
+## Bar charts with plotly
+
+Third, we specify the plot type by adding a trace, similar to how we add a geometry in ggplot2. 
+
+To create a bar chart we add the pipe operator, %>%, after the plot underscore ly base layer and specify add underscore bars.
+
+## Reordering the bars
+
+With only three wine types our bar chart was easy enough to read; however, with more categories bar charts can become difficult to read unless the bars are sorted. 
+
+For example, we may wish to rearrange the bars in descending order. 
+
+
+## Reordering the bars
+
+To do this we use the fct underscore reorder command found in the forcats package. 
+
+## Reordering the bars
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+library(forcats)
+wine %>%
+  count(Type) %>%
+  mutate(Type = fct_reorder(Type, n, .desc = TRUE)) %>%
+  plot_ly(x = ~Type, y = ~n) %>%
+  add_bars()
+```
+
+
+## Reordering the bars
+
+To sort the bars in descending order we add a single line of code to our data-plot pipeline: Mutate creates a new variable, Type, and fct underscore reorder reorders the levels of Type by the values in n. 
+
+To organize the levels in descending order, we add the argument dot-desc = TRUE.
+
+## Histograms with plotly
+
+To explore the distribution of phenols, a numeric variable, we use a histogram displaying the number of wines with **phenols** falling into equal-width bins. 
+
+## Histograms with plotly
+
+We again need to specify three parts: First, we pipe the wine dataset into the plot underscore ly command. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+wine %>%
+  plot_ly(x = ~Phenols) %>%
+  add_histogram()
+```
+
+
+## Histograms with plotly
+
+Next, we specify $x = \sim Phenols$, indicating that Phenols should be plotted on the x-axis. 
+
+Finally, we add the histogram trace using the add underscore histogram command. 
+
+## Histograms with plotly
+
+Notice that we do not need to specify a variable for the y-axis here since plotly calculates the frequency for each bin in the background.
+
+## Adjusting the number of bins
+
+Whenever you create a histogram, it's important to explore different binning schemes, since bins that are too wide may mask interesting features of the data, and bins that are too small provide little insight. 
+
+## Adjusting the number of bins
+
+There are two ways to adjust the binning scheme in plotly. 
+
+The first is to change the number of bins displayed by adding the nbinsx argument to the add_histogram() command. 
+
+Here we specify that 10 bins should be displayed.
+
+
+## Adjusting the number of bins
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+wine %>%
+  plot_ly(x = ~Phenols) %>%
+  add_histogram(nbinsx = 10)
+```
+
+
+## Adjusting the bin width
+
+The second way to change the binning is to specify the exact values for the bins. 
+
+Here, we specify xbins equals list parenthesis start = point-8 , end = 4, and size = point-25, resulting in bins of width 0-point-25 spanning from 0-point-8 to 4. 
+
+## Adjusting the bin width
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+wine %>%
+  plot_ly(x = ~Phenols) %>%
+  add_histogram(xbins = list(start = 0.8, end = 4, size = 0.25))
+```
+
+## Adjusting the bin width
+
+If you specify the exact values for the bins, be sure to look at a summary of the variable first so that you choose a logical start and end value.
+
+
+## Bivariate graphics
+
+Now, we extend your plotly toolkit to include bivariate graphics. 
+
+Specifically, you will learn how to explore associations using scatterplots, stacked bar charts, and boxplots.
+
+
+
+## Scatterplots with plotly
+
+Scatterplots allow us to explore the relationship between two numeric variables, such as the residual sugar and fixed acidity in wine. 
+
+As before, we begin by piping our dataset into the plot_ly() command. 
+
+
+
+## Scatterplots with plotly
+
+Data we will use:
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+winequality <- read.csv("https://raw.githubusercontent.com/endri81/DataVisualization/refs/heads/main/data/winequality.csv", sep = ",")
+wine <- read.csv("https://raw.githubusercontent.com/endri81/DataVisualization/refs/heads/main/data/wine.csv", sep = ",")
+```
+
+
+
+
+## Scatterplots with plotly
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+winequality %>%
+  plot_ly(x = ~residual_sugar, y = ~fixed_acidity) %>%
+  add_markers()
+```
+
+
+## Scatterplots with plotly
+
+Next, we specify that residual sugar should be mapped to the x-axis and fixed acidity should be mapped to the y-axis. 
+
+Finally, we add a markers trace to plot a point for each ordered pair.
+
+## Stacked bar charts with plotly
+
+Stacked bar charts allow you to explore associations between two categorical variables. 
+
+For example, we can explore how the type of wine is related to the quality label. 
+
+
+## Stacked bar charts with plotly
+
+To begin, we count the number of wines for each combination of type and quality label. 
+
+Next, we map variables to the x-axis, y-axis, and color of the segments. 
+
+
+## Stacked bar charts with plotly
+
+In this example, we map type to the x-axis, n to the y-axis, and quality label to color. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+winequality %>%
+  count(type, quality_label) %>%  
+  plot_ly(x = ~type, y = ~n, color = ~quality_label) %>%  
+  add_bars() %>% 
+  layout(barmode = "stack")
+```
+
+
+## Stacked bar charts with plotly
+
+We add the bars trace as before, but we have to refine the layout in order to create a stacked bar chart since the bars plot side-by-side by default. 
+
+To stack the bars, we modify the layout of the bar chart by specifying barmode = "stack".
+
+## From counts to proportions
+
+The stacked bar chart of the counts we just created is useful for comparing the total number of high, medium, and low-quality wines across type. 
+
+If, however, we are interested in comparing the distribution of quality between red and white wines, it may be more useful to plot proportions on the y-axis. 
+
+## From counts to proportions
+
+Changing from a stacked bar chart of counts to a stacked bar chart of proportions is a data manipulation problem, which is solved in two lines of code. 
+
+First, we group the table of counts by the x-variable, which is type in our example. 
+
+Next, we use mutate to calculate the proportions within each group, and store it in the prop column.
+
+## From counts to proportions
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+winequality %>%
+  count(type, quality_label) %>%  
+  group_by(type) %>%  
+  mutate(prop = n / sum(n)) %>%  
+  plot_ly(x = ~type, y = ~prop, color = ~quality_label) %>% 
+  add_bars() %>% 
+  layout(barmode = "stack")
+```
+
+## Boxplots with plotly
+
+So far we've talked about exploring associations between either two numeric or two categorical variables. 
+
+Boxplots are one way to explore how the distribution of a numeric variable may change based on the level of a categorical variable. 
+
+## Boxplots with plotly
+
+For example, here we see that the distribution of alcohol content is positively associated with wine quality: higher quality wines tend to have higher alcohol content. Of course, there is substantial variability. 
+
+To create this set of side-by-side boxplots we map the quality label to the x-axis, alcohol to the y-axis, and add a boxplot trace.
+
+## Boxplots with plotly
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+winequality %>%
+  plot_ly(x = ~quality_label, y = ~alcohol) %>%
+  add_boxplot()
+```
+
+
+# Styling and customizing your graphics
+
+
+## Customize your traces
+
+You've seen how to create a variety of common graphics using plotly. 
+
+Now, you'll learn how to style and customize your graphics so that they are ready to publish. To begin, you'll learn how to style traces.
+
+
+## Color
+
+First, let's consider how to change the color of the markers placed on the canvas when you add a trace. 
+
+As an example, let's create a histogram of fixed acidity. 
+
+By default, the bars are blue, but what if you don't like blue, or if you want to match the theme of your website or organization?
+
+## Color
+
+To change the color of all markers placed in a trace, such as all of the bars in this histogram, we add the color argument to the trace. 
+
+For example, to create a red histogram we add the argument color equals I("red"). 
+
+
+## Color
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+winequality %>% 
+  plot_ly(x = ~fixed_acidity) %>%   
+  add_histogram()
+```
+
+## Color
+
+Here we use the as is function, I(), to set the color of the histogram. 
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+winequality %>% 
+  plot_ly(x = ~fixed_acidity) %>%   
+  add_histogram(color = I("red"))
+```
+
+Without this function, plotly assumes that you are mapping a variable to the color.
+
+## Opacity
+
+Another way to customize your graphics is to adjust the opacity of the markers. 
+
+For example, on this scatterplot of $fixed\_acidity$ against $residual\_sugar$ many points are overlapping or close together, making the data appear as a blob on the left side. 
+
+This is an issue called overplotting. 
+
+## Adjusting opacity
+
+One approach to overcome overplotting is to increase the transparency of the points, or said another way, to decrease the opacity of the points.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+winequality %>% 
+  plot_ly(x = ~residual_sugar, y = ~fixed_acidity) %>% 
+  add_markers()
+```
+
+## Adjusting opacity
+
+Here is the scatterplot where points are only $20\%$ opaque; that is, they are $80\%$ transparent. 
+
+This effect allows us to see the density of points on the scatterplot: high-density regions appear darker than low-density regions. 
+
+
+## Adjusting opacity
+
+Only one change is made to the code: we pass a list with opacity equals 0-point-2 to the marker argument to add underscore markers.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+winequality %>% 
+  plot_ly(x = ~residual_sugar, y = ~fixed_acidity) %>% 
+  add_markers(marker = list(opacity = 0.2))
+```
+
+
+## Symbols
+
+Another way to address the issue of overplotting is to change the plotting symbol from a filled glyph to an open glyph. 
+
+For example, an open circle is drawn for each point on this version of the scatterplot. 
+
+## Symbols
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+winequality %>% 
+  plot_ly(x = ~residual_sugar, y = ~fixed_acidity) %>% 
+  add_markers(marker = list(symbol = "circle-open"))
+```
+
+## Symbols
+
+To change the plotting symbol to an open circle, we pass a list with element symbol equals "circle-open" to the marker argument of the trace.
+
+Notice that we certainly get more of a sense of point density than the original version, but adjusting the opacity is probably preferred.
+
+
+
+## Marker options
+
+There are other marker options that we haven't discussed here, but they are intuitive to add. 
+
+For example, we can change the size of the points on our scatterplot by adding a size argument to the list. 
+
+Or we can specify the width of the lines dividing bars on histograms and bar charts.
+
+## Marker options
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+winequality %>% 
+  plot_ly(x = ~residual_sugar, y = ~fixed_acidity) %>% 
+	add_markers(marker = list(symbol = "diamond", size = 4))
+```
+
+
+## Thoughtful use of color
+
+You learned how to style your traces.
+
+Now, you'll learn how to use color to thoughtfully represent the values of a variable in your dataset.
+
+## A nonlinear relationship?
+
+To begin, consider this scatterplot of alcohol against flavonoids in wine. 
+
+A scatterplot with a smoother reveals a possibly nonlinear relationship between the variables. 
+
+However, the plot doesn't consider how this relationship might be explained by a third variable, such as the wine type.
+
+## Adding a third variable
+
+Once we add color representing wine type to this scatterplot, the nonlinear relationship is explained.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+wine %>% 
+  plot_ly(x = ~Flavanoids, y = ~Alcohol, color = ~Type) %>% 
+  add_markers()
+```
+
+
+## Adding a third variable
+
+The overall trend appears nonlinear since the relationship between alcohol and flavanoids differs by wine type. 
+
+As always, we begin by piping in the data and specifying our aesthetic mappings. 
+
+To add color to the plot we specified that Type should be mapped to color, in addition to mapping Flavanoids and Alcohol to the x- and y-axes. 
+
+Then, we add the markers trace to create the scatterplot.
+
+## Adding a quantitative variable
+
+In the previous example, we used color to represent a factor, but color can also be used to add a third numeric variable to a scatterplot.
+
+For example, here we use color to represent the color intensity of the wine. 
+
+
+## Adding a quantitative variable
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+wine %>% 
+  plot_ly(x = ~Flavanoids, y = ~Alcohol, color = ~Color) %>% 
+  add_markers()
+```
+
+## Adding a quantitative variable
+
+It appears that wines with higher alcohol content tend to have higher color intensities. 
+
+Notice that plotly is using a color gradient to represent this numeric variable. 
+
+
+
+## Adding a quantitative variable
+
+
+We again only need to add an aesthetic mapping for color and plotly determines the method to display the variable as well as the default color palette. 
+
+This is important to keep in mind in case factors have been recorded and loaded as numbers. 
+
+
+## Adding a quantitative variable
+
+In this situation, you may wish to convert the variable to a factor so that discrete colors are chosen.
+
+## RColorBrewer palettes
+
+The default color palettes chosen by plotly are often sensible, but there are times that you may wish or need to change them. 
+
+For example, you may wish to make your graphic more colorblind safe or match the theme of the website where you plan to host the graphic. 
+
+
+## RColorBrewer palettes
+
+Let's change the palette of this scatterplot coded by wine type. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+wine %>% 
+  plot_ly(x = ~Flavanoids, y = ~Alcohol, color = ~Type) %>% 
+  add_markers(colors = "Dark2")
+```
+
+
+## RColorBrewer palettes
+
+To change the colors used in the scatterplot, we add the colors argument to the markers trace. 
+
+There are numerous palettes available in plotly, such as those provided in the RColorBrewer package. 
+
+Here, we specify colors equal "Dark2" to change the palette.
+
+## Manual palettes
+
+If you are trying to style your graph according to a specific theme, it's unlikely that the palette is already defined in the RColorBrewer package.
+
+Luckily, the colors argument accepts vectors of valid R color code. 
+
+## Manual palettes
+
+For example, we can pass colors the character vector "orange", "black", "skyblue" to change the palette. 
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+wine %>% 
+  plot_ly(x = ~Flavanoids, y = ~Alcohol, color = ~Type) %>% 
+  add_markers(colors = c("orange", "black", "skyblue"))
+```
+
+## Manual palettes
+
+In addition to named colors, you can also use numerous formats including rgb and hex to define your palette. 
+
+At this point, it's important to note the difference in syntax between changing a palette and setting the value of all points using the as is function.
+
+
+## Manual palettes
+
+When you change a palette, you have already mapped a variable, such as wine type, to the color aesthetic; thus, the color argument in add_markers() knows that the vector of colors is referring to the palette and not the individual observations.
+
+
+## Labeling your data
+
+Now that you know how to customize the appearance of your traces, you'll learn how to customize a key interactive tool: the hover information. By default, plotly will add hover information to your chart. Let's see what information appears by default.
+
+## Hover info
+
+First, let's consider the scatterplot of alcohol content against flavanoids. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+wine %>% 
+  plot_ly(x = ~Flavanoids, y = ~Alcohol, hoverinfo = "text", 
+          text = ~paste("Flavanoids:", Flavanoids, "<br>", "Alcohol:", Alcohol)) %>% 
+  add_markers()
+
+```
+
+As we hover our mouse above specific points the coordinates appear; however, they are displayed only as coordinate pairs, without variable names.
+
+## Hover info
+
+Next, let's consider a bar chart of wine type. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+wine %>% 
+  count(Type) %>%   
+  plot_ly(x = ~Type, y = ~n, hoverinfo = "y") %>% 
+  add_bars()
+
+```
+
+The hover info again reveals the coordinates of the top of each bar but lacks variable names.
+
+## Hover info
+
+As another example, consider boxplots of alcohol content by wine quality. 
+
+
+
+Here, the hover information gives the category name, high, medium, or low, as well as summary statistics, including the minimum, first quartile, median, third quartile, and maximum. 
+
+## Hover info
+
+By now you see the pattern. By default, plotly shows the coordinates in the hover info, but the default settings can be improved.
+
+## Changing the default
+
+In some situations, a simple change to the hover info, such as only displaying the y coordinate may make your chart more intuitive. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+winequality %>% 
+  plot_ly(x = ~free_so2, y = ~total_so2) %>% 
+  add_markers(marker = list(opacity = 0.2))
+```
+
+For example, on a bar chart, each bar is clearly labeled with the level of a factor. 
+
+## Changing the default
+
+Let's take a look at the code. The only change necessary is to add the hoverinfo argument to $plot\_ly()$. 
+
+The hoverinfo argument allows you to choose what information is displayed. 
+
+## Changing the default
+
+By default hoverinfo is set to "all", displaying information about all elements of a trace. 
+
+To restrict the amount of information, you can set hoverinfo to "x" or "y", or you can remove it altogether by setting hoverinfo to "none". 
+
+For multivariate displays "$x + y$" and "$x + y + z$" are additional options.
+
+## Custom hover text
+
+Let's return to the scatterplot of alcohol content against flavanoids. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+winequality %>% 
+  plot_ly(x = ~free_so2, y = ~total_so2) %>% 
+  add_markers(marker = list(opacity = 0.2)) %>% 
+  layout(xaxis = list(title = "Free SO2 (ppm)"), 
+         yaxis = list(title = "Total SO2 (ppm)"))
+```
+
+Here, we want to customize the hover information to include the variable names, rather than simply displaying an ordered pair. 
+
+
+## Custom hover text
+
+To customize the hover info there are two key arguments that are passed to the $plot\_ly()$ function: hoverinfo and text. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+winequality %>% 
+  plot_ly(x = ~free_so2, y = ~total_so2) %>% 
+  add_markers(marker = list(opacity = 0.2)) %>% 
+  layout(title = "Does free SO2 predict total SO2 in wine?",
+         xaxis = list(title = "Free SO2 (ppm, log scale)", type = "log"), 
+         yaxis = list(title = "Total SO2 (ppm, log scale)", type = "log"))
+```
+
+We set hoverinfo equal to "text" to indicate that we will be manually defining the information.
+
+## Custom hover text
+
+The text argument expects a character string, so we use the paste() function to string together the information we want to display.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```{r, cache=TRUE}
+winequality %>% 
+  plot_ly(x = ~free_so2, y = ~total_so2) %>% 
+  add_markers(marker = list(opacity = 0.5)) %>% 
+  layout(xaxis = list(title = "Free SO2 (ppm)", zeroline = FALSE), 
+         yaxis = list(title = "Total SO2 (ppm)", zeroline = FALSE, showgrid = FALSE))
+```
+
+Here, we type polished variable labels as character strings and use the variable without quotes to specify the value. 
+
+
+## Custom hover text
+
+To start a new line use the HTML line-break, br, wrapped in angled brackets. 
+
+```{r, cache=TRUE}
+winequality %>% 
+  plot_ly(x = ~free_so2, y = ~total_so2) %>% 
+  add_markers(marker = list(opacity = 0.5)) %>% 
+  layout(xaxis = list(title = "Free SO2 (ppm)"), 
+         yaxis = list(title = "Total SO2 (ppm)"),
+         plot_bgcolor = toRGB("gray90"),  
+         paper_bgcolor = toRGB("skyblue"))
+```
+
+Finally, notice that we use the tilde operator to specify the hover info text. 
+
+
+## Custom hover text
+
+Remember that the tilde operator is used to map columns to aesthetic parameters. 
+
+Here, we map the variables Flavanoids and Alcohol to the hover info. Without this tilde, plotly would return an error, since these objects are not in the global environment, but are stored as columns in our dataset.
 
