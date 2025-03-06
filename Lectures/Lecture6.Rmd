@@ -1,6 +1,6 @@
 ---
-title: "Lecture 5"
-subtitle: "Data Visualization with Python : Matplotlib"
+title: "Lecture 6"
+subtitle: "Data Visualization with Python : Seaborn"
 author: "Endri Raco"
 output:
   beamer_presentation:
@@ -37,1439 +37,2127 @@ knitr::opts_chunk$set(
 ```
 
 
-# Introduction
+# Introduction to Data Visualization with Seaborn
 
-## Using the matplotlib.pyplot interface
+# Introduction to Seaborn
 
-There are many ways to use Matplotlib. 
+## Making a scatter plot with lists
 
-In this lecture, we will focus on the **pyplot** interface, which provides the most flexibility in creating and customizing data visualizations.
-
-
-## Using the matplotlib.pyplot interface
-
-Initially, we will use the pyplot interface to create two kinds of objects: Figure objects and Axes objects.
-
-This lecture introduces a lot of new concepts, so if you ever need a quick refresher, download the Matplotlib Cheat Sheet and keep it handy!
-
-
-
-## Introduction to Google Colab
-
-- Google Colab is a **cloud-based Jupyter Notebook** environment.
-- It allows you to write and run **Python code** without installation.
-- Colab provides **free access to GPUs and TPUs** for machine learning.
-- **No setup required**—just log in with a Google account.
-
-
-
-## Key Features of Colab
-
-- **Runs in the cloud** (no local setup needed).
-- **Supports Python 3** with pre-installed libraries.
-- **Free GPUs and TPUs** for deep learning.
-- **Collaborate in real-time** like Google Docs.
-- **Supports LaTeX, Markdown, and interactive widgets.**
-
-
-
-## Opening Google Colab
-
-1. Go to [Google Colab](https://colab.research.google.com/).
-2. Click **File → New Notebook**.
-3. Start coding in the cells (Python code or Markdown text).
-
-
-
-## Writing and Running Python Code
+In this exercise, we’ll use a dataset that contains information about 227 countries. 
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}
 
 ```python
-# Simple Python code in Colab
-print("Hello, Google Colab!")
-```
+import pandas as pd
+import matplotlib.pyplot as plt
 
-- Run the cell by clicking **Run** or pressing `Shift + Enter`.
-
-
-## Writing and Running Python Code
-
-![](../images/im222.png)
-
-## Installing Packages
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-!pip install numpy pandas matplotlib
-```
-
-- Use `!pip install` to install Python packages.
-- **Colab comes with pre-installed packages** like NumPy, Pandas, Matplotlib, and TensorFlow.
-
-
-
-## Using Google Drive with Colab
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-from google.colab import drive
-# Mount Google Drive to access files
-drive.mount('/content/drive')
-```
-
-- This allows you to access files stored in **Google Drive** from Colab.
-
-
-
-## Uploading and Downloading Files
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-from google.colab import files
-
-# Upload a file
-uploaded = files.upload()
-
-# Download a file
-files.download("example.csv")
+# URL for the dataset
+url = "https://raw.githubusercontent.com/endri81/DataVisualization/refs/heads/main/data/countries-of-the-world.csv"
 ```
 
 
 
-## Creating and Plotting Data with Matplotlib
+## Making a scatter plot with lists
+
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}
 
 ```python
+# Load the dataset into a DataFrame
+df = pd.read_csv(url)
+# Process columns by replacing commas with periods and converting to float
+gdp = list(map(float, [word.replace(",", ".") for word in df["GDP ($ per capita)"].astype(str)]))
+phones = list(map(float, [word.replace(",", ".") for word in df["Phones (per 1000)"].astype(str)]))
+percent_literate = list(map(float, [word.replace(",", ".") for word in df["Literacy (%)"].astype(str)]))
+```
+
+
+## Making a scatter plot with lists
+
+This dataset has lots of interesting information on each country, such as the country’s birth rates, death rates, and its gross domestic product (GDP). 
+
+GDP is the value of all the goods and services produced in a year, expressed as dollars per person.
+
+
+## Making a scatter plot with lists
+
+We’ve created three lists of data from this dataset to get you started. 
+
+gdp is a list that contains the value of GDP per country, expressed as dollars per person. 
+
+phones is a list of the number of mobile phones per 1,000 people in that country. 
+
+
+## Making a scatter plot with lists
+
+Finally, percent_literate is a list that contains the percent of each country’s population that can read and write.
+
+## Making a scatter plot with lists
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+# URL for the dataset
+url = "https://raw.githubusercontent.com/endri81/DataVisualization/refs/heads/main/data/countries-of-the-world.csv"
+# Load the dataset into a DataFrame
+df = pd.read_csv(url)
+# Process columns by replacing commas with periods and converting to float
+gdp = list(map(float, [word.replace(",", ".") for word in df["GDP ($ per capita)"].astype(str)]))
+phones = list(map(float, [word.replace(",", ".") for word in df["Phones (per 1000)"].astype(str)]))
+percent_literate = list(map(float, [word.replace(",", ".") for word in df["Literacy (%)"].astype(str)]))
+```
+
+
+## Making a scatter plot with lists
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Import Matplotlib and Seaborn
+import matplotlib.pyplot as plt
+import seaborn as sns
+# Create scatter plot with GDP on the x-axis and number of phones on the y-axis
+sns.scatterplot(x=gdp, y=phones)
+# Show plot
+plt.show()
+```
+
+
+## Making a scatter plot with lists
+
+![](../images/im253.png)
+
+
+
+## Making a scatter plot with lists
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Change this scatter plot to have percent literate on the y-axis
+sns.scatterplot(x=gdp, y=percent_literate)
+
+# Show plot
+plt.show()
+```
+
+## Making a scatter plot with lists
+
+![](../images/im254.png)
+
+## Making a count plot with a list
+
+In the last exercise, we explored a dataset that contains information about 227 countries. 
+
+Let’s do more exploration of this data - specifically, how many countries are in each region of the world?
+
+
+## Making a count plot with a list
+
+To do this, we’ll need to use a count plot. 
+
+Count plots take in a categorical list and return bars that represent the number of list entries per category. 
+
+## Making a count plot with a list
+
+You can create one here using a list of regions for each country, which is a variable named region.
+
+## Making a count plot with a list
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+region = countries["Region"]
+# Import Matplotlib and Seaborn
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Create count plot with region on the y-axis
+sns.countplot(y=region)
+
+# Show plot
+plt.show()
+```
+
+
+## Making a count plot with a list
+
+
+
+![](../images/im255.png)
+
+
+## “Tidy” vs. “untidy” data
+
+Here, we have a sample dataset from a survey of children about their favorite animals. 
+
+But can we use this dataset as-is with Seaborn? Let’s use pandas to import the csv file with the data collected from the survey and determine whether it is tidy, which is essential to having it work well with Seaborn.
+
+
+## “Tidy” vs. “untidy” data
+
+To get you started, the filepath to the csv file has been assigned to the variable csv_filepath.
+
+Note that because csv_filepath is a Python variable, you will not need to put quotation marks around it when you read the csv.
+
+## “Tidy” vs. “untidy” data
+
+Read the csv file located at csv_filepath into a DataFrame named df.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# URL for the dataset
+url = "https://raw.githubusercontent.com/endri81/DataVisualization/refs/heads/main/data/example_csv.csv"
+
+# Load the dataset
+df = pd.read_csv(url)
+
+# Rename columns for easier access (handling spaces and special characters)
+df.columns = ["Name", "Age_or_Animal"]
+# Print the head of df
+print(df.head())
+```
+
+Print the head of df to show the first five rows.
+
+
+## “Tidy” vs. “untidy” data
+
+![](../images/im256.png)
+
+
+## “Tidy” vs. “untidy” data
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Convert age values to numeric, keeping non-numeric (animals) separate
+df_numeric = df.copy()
+df_numeric["Age_or_Animal"] = pd.to_numeric(df_numeric["Age_or_Animal"], errors="coerce")
+```
+
+
+## “Tidy” vs. “untidy” data
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Plot distribution of numeric values (ages)
+plt.figure(figsize=(8, 5))
+sns.histplot(df_numeric["Age_or_Animal"].dropna(), bins=10, kde=True)
+plt.xlabel("Age")
+plt.ylabel("Count")
+plt.title("Distribution of Ages in Dataset")
+plt.show()
+```
+
+## “Tidy” vs. “untidy” data
+
+![](../images/im257.png)
+
+## Making a count plot with a DataFrame
+
+In this exercise, we’ll look at the responses to a survey sent out to young people. 
+
+Our primary question here is: how many young people surveyed report being scared of spiders? 
+
+## Making a count plot with a DataFrame
+
+Survey participants were asked to agree or disagree with the statement “I am afraid of spiders”. Responses vary from 1 to 5, where 1 is “Strongly disagree” and 5 is “Strongly agree”.
+
+
+## Making a count plot with a DataFrame
+
+Read the csv file located at csv_filepath into a DataFrame named df.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# URL for the dataset
+url = "https://raw.githubusercontent.com/endri81/DataVisualization/main/data/spiders_data.csv"
+
+# Load the dataset
+df = pd.read_csv(url)
+```
+
+## Making a count plot with a DataFrame
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Create a count plot with "Spiders" on the x-axis
+plt.figure(figsize=(8, 5))
+ax = sns.countplot(x="Spiders", data=df, palette="Set2")
+
+# Annotate bars with values
+for p in ax.patches:
+    ax.annotate(f'{p.get_height()}', 
+                (p.get_x() + p.get_width() / 2., p.get_height()), 
+                ha='center', va='center', fontsize=10, color='black', 
+                xytext=(0, 5), textcoords='offset points')
+```
+
+## Making a count plot with a DataFrame
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+
+# Display the plot
+plt.xlabel("Number of Spiders")
+plt.ylabel("Count")
+plt.title("Distribution of Spiders Count")
+plt.grid(axis="y", linestyle="--", alpha=0.7)
+plt.show()
+
+```
+
+## Making a count plot with a DataFrame
+
+
+![](../images/im258.png)
+
+
+
+## Hue and scatter plots
+
+Previosly, we learned how hue allows us to easily make subgroups within Seaborn plots. 
+
+Let’s try it out by exploring data from students in secondary school. 
+
+We have a lot of information about each student like their age, where they live, their study habits and their extracurricular activities.
+
+
+## Hue and scatter plots
+
+For now, we’ll look at the relationship between the number of absences they have in school and their final grade in the course, segmented by where the student lives (rural vs. urban area).
+
+## Hue and scatter plots
+
+Create a scatter plot with "absences" on the x-axis and final grade ("G3") on the y-axis using the DataFrame student_data. 
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# URL for the dataset
+url = "https://raw.githubusercontent.com/endri81/DataVisualization/refs/heads/main/data/student-alcohol-consumption.csv"
+
+# Load the dataset
+df = pd.read_csv(url)
+
+```
+
+## Hue and scatter plots
+
+
+Color the plot points based on "location" (urban vs. rural).
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Import Matplotlib and Seaborn
+import matplotlib.pyplot as plt
+import seaborn as sns
+# Create a scatter plot of absences vs. final grade
+sns.scatterplot(x="absences", y="G3", 
+                data=df, 
+                hue="location")
+# Show plot
+plt.show()
+```
+
+## Hue and scatter plots
+
+Make "Rural" appear before "Urban" in the plot legend.
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Change the legend order in the scatter plot
+ sns.scatterplot(x="absences", y="G3", 
+                data=df, 
+                hue="location",
+                hue_order=["Rural", "Urban"])
+
+# Show plot
+plt.show()
+```
+
+## Hue and scatter plots
+
+![](../images/im260.png)
+
+
+## Hue and count plots
+
+Let’s continue exploring our dataset from students in secondary school by looking at a new variable. 
+
+The "school" column indicates the initials of which school the student attended - either “GP” or “MS”.
+
+
+## Hue and count plots
+
+In the last exercise, we created a scatter plot where the plot points were colored based on whether the student lived in an urban or rural area. 
+
+How many students live in urban vs. rural areas, and does this vary based on what school the student attends? 
+
+
+## Hue and count plots
+
+Let’s make a count plot with subgroups to find out.
+
+## Hue and count plots
+
+Fill in the palette_colors dictionary to map the "Rural" location value to the color "green" and the "Urban" location value to the color "blue".
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Import Matplotlib and Seaborn
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Create a dictionary mapping subgroup values to colors
+palette_colors = {"Rural": "green", "Urban": "blue"}
+```
+## Hue and count plots
+
+Create a count plot with "school" on the x-axis using the student_data DataFrame.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Create a count plot of school with location subgroups
+sns.countplot(x="school", data=df,
+              hue="location",
+              palette=palette_colors)
+```
+
+## Hue and count plots
+
+Add subgroups to the plot using "location" variable and use the palette_colors dictionary to make the location subgroups green and blue.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Display plot
+plt.show()
+```
+
+## Hue and count plots
+
+![](../images/im261.png)
+
+
+# Visualizing Two Quantitative Variables
+
+## Creating subplots with col and row
+
+We’ve seen in prior exercises that students with more absences ("absences") tend to have lower final grades ("G3"). 
+
+Does this relationship hold regardless of how much time students study each week?
+
+
+## Creating subplots with col and row
+
+To answer this, we’ll look at the relationship between the number of absences that a student has in school and their final grade in the course, creating separate subplots based on each student’s weekly study time ("study_time").
+
+
+## Creating subplots with col and row
+
+Seaborn has been imported as sns and matplotlib.pyplot has been imported as plt.
+
+## Creating subplots with col and row
+
+Modify the code to use relplot() instead of scatterplot().
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Change to use relplot() instead of scatterplot()
+sns.relplot(x="absences", y="G3", 
+            data=df,
+            kind="scatter")
+
+
+plt.close()
+```
+
+## Creating subplots with col and row
+
+![](../images/im262.png)
+
+
+
+
+## Creating subplots with col and row
+
+Modify the code to create one scatter plot for each level of the variable "study_time", arranged in columns.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Change to make subplots based on study time
+sns.relplot(x="absences", y="G3", 
+            data=df,
+            kind="scatter",
+            col="study_time")
+plt.show()
+            
+```
+
+## Creating subplots with col and row
+
+![](../images/im263.png)
+
+## Creating subplots with col and row
+
+Adapt your code to create one scatter plot for each level of a student’s weekly study time, this time arranged in rows.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Change this scatter plot to arrange the plots in rows instead of columns
+sns.relplot(x="absences", y="G3", 
+            data=student_data,
+            kind="scatter", 
+            row="study_time")
+plt.show()
+```
+
+## Creating subplots with col and row
+
+![](../images/im264.png)
+
+
+## Creating two-factor subplots
+
+Let’s continue looking at the student_data dataset of students in secondary school. 
+
+Here, we want to answer the following question: does a student’s first semester grade ("G1") tend to correlate with their final grade ("G3")?
+
+
+## Creating two-factor subplots
+
+There are many aspects of a student’s life that could result in a higher or lower final grade in the class. 
+
+For example, some students receive extra educational support from their school ("schoolsup") or from their family ("famsup"), which could result in higher grades. 
+
+
+## Creating two-factor subplots
+
+Let’s try to control for these two factors by creating subplots based on whether the student received extra educational support from their school or family.
+
+
+## Creating two-factor subplots
+
+Use relplot() to create a scatter plot with "G1" on the x-axis and "G3" on the y-axis, using the student_data DataFrame.
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Create a scatter plot of G1 vs. G3
+sns.relplot(x="G1", y="G3", 
+            data=df,
+            kind="scatter")
+```
+
+
+
+## Creating two-factor subplots
+
+![](../images/im265.png)
+
+## Creating two-factor subplots
+
+Create column subplots based on whether the student received support from the school ("schoolsup"), ordered so that “yes” comes before “no”.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Adjust to add subplots based on school support
+sns.relplot(x="G1", y="G3", 
+            data=df,
+            kind="scatter", 
+            col="schoolsup",
+            col_order=["yes", "no"])
+```
+
+## Creating two-factor subplots
+
+![](../images/im266.png)
+
+
+## Creating two-factor subplots
+
+Add row subplots based on whether the student received support from the family ("famsup"), ordered so that “yes” comes before “no”. This will result in subplots based on two factors.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Adjust further to add subplots based on family support
+sns.relplot(x="G1", y="G3", 
+            data=df,
+            kind="scatter", 
+            col="schoolsup",
+            col_order=["yes", "no"],
+            row="famsup",
+            row_order=["yes", "no"])
+```
+
+## Creating two-factor subplots
+
+
+![](../images/im267.png)
+
+## Changing the size of scatter plot points
+
+In this exercise, we’ll explore Seaborn’s mpg dataset, which contains one row per car model and includes information such as the year the car was made, the number of miles per gallon (“M.P.G.”) it achieves, the power of its engine (measured in “horsepower”), and its country of origin.
+
+
+## Changing the size of scatter plot points
+
+What is the relationship between the power of a car’s engine ("horsepower") and its fuel efficiency ("mpg")? And how does this relationship vary by the number of cylinders ("cylinders") the car has? Let’s find out.
+
+
+## Changing the size of scatter plot points
+
+
+Let’s continue to use relplot() instead of scatterplot() since it offers more flexibility.
+
+
+## Changing the size of scatter plot points
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# URL for the dataset
+url = "https://raw.githubusercontent.com/endri81/DataVisualization/refs/heads/main/data/mpg.csv"
+
+# Load the dataset
+mpg = pd.read_csv(url)
+```
+
+## Changing the size of scatter plot points
+
+Use relplot() and the mpg DataFrame to create a scatter plot with "horsepower" on the x-axis and "mpg" on the y-axis. Vary the size of the points by the number of cylinders in the car ("cylinders").
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Import Matplotlib and Seaborn
+import matplotlib.pyplot as plt
+import seaborn as sns
+```
+
+
+## Changing the size of scatter plot points
+
+To make this plot easier to read, use hue to vary the color of the points by the number of cylinders in the car ("cylinders").
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Create scatter plot of horsepower vs. mpg
+sns.relplot(x="horsepower", y="mpg", 
+            data=mpg, kind="scatter", 
+            size="cylinders")
+```
+
+## Changing the size of scatter plot points
+
+![](../images/im268.png)
+
+
+## Changing the size of scatter plot points
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Create scatter plot of horsepower vs. mpg
+sns.relplot(x="horsepower", y="mpg", 
+            data=mpg, kind="scatter", 
+            size="cylinders", hue="cylinders")
+```
+
+
+## Changing the size of scatter plot points
+
+
+![](../images/im269.png)
+
+
+## Changing the style of scatter plot points
+
+Let’s continue exploring Seaborn’s mpg dataset by looking at the relationship between how fast a car can accelerate ("acceleration") and its fuel efficiency ("mpg"). 
+
+Do these properties vary by country of origin ("origin")?
+
+
+## Changing the style of scatter plot points
+
+Note that the "acceleration" variable is the time to accelerate from 0 to 60 miles per hour, in seconds. Higher values indicate slower acceleration.
+
+## Changing the style of scatter plot points
+
+Use relplot() and the mpg DataFrame to create a scatter plot with "acceleration" on the x-axis and "mpg" on the y-axis. 
+
+## Changing the style of scatter plot points
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Import Matplotlib and Seaborn
+import matplotlib.pyplot as plt
+import seaborn as sns
+```
+
+
+## Changing the style of scatter plot points
+
+Vary the style and color of the plot points by country of origin ("origin").
+
+
+## Changing the style of scatter plot points
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Create a scatter plot of acceleration vs. mpg
+sns.relplot(x="acceleration", y="mpg", 
+            data=mpg, kind="scatter", 
+            style="origin", hue="origin")
+```
+
+
+## Changing the style of scatter plot points
+
+
+![](../images/im270.png)
+
+##  Interpreting line plots
+
+In this exercise, we’ll continue to explore Seaborn’s mpg dataset, which contains one row per car model and includes information such as the year the car was made, its fuel efficiency (measured in “miles per gallon” or “M.P.G”), and its country of origin (USA, Europe, or Japan).
+
+How has the average miles per gallon achieved by these cars changed over time? Let’s use line plots to find out!
+
+##  Interpreting line plots
+
+Use relplot() and the mpg DataFrame to create a line plot with "model_year" on the x-axis and "mpg" on the y-axis.
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Import Matplotlib and Seaborn
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Create line plot
+sns.relplot(x="model_year", y="mpg",
+            data=mpg, kind="line")
+```
+
+
+##  Interpreting line plots
+
+![](../images/im271.png)
+
+## Visualizing standard deviation with line plots
+
+
+In the last exercise, we looked at how the average miles per gallon achieved by cars has changed over time. 
+
+Now let’s use a line plot to visualize how the distribution of miles per gallon has changed over time.
+
+Seaborn has been imported as sns and matplotlib.pyplot has been imported as plt.
+
+## Visualizing standard deviation with line plots
+
+Change the plot so the shaded area shows the standard deviation instead of the confidence interval for the mean.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Make the shaded area show the standard deviation
+sns.relplot(x="model_year", y="mpg",
+            data=mpg, kind="line",
+            ci="sd")
+```
+
+
+## Visualizing standard deviation with line plots
+
+![](../images/im272.png)
+
+
+## Plotting subgroups in line plots
+
+Let’s continue to look at the mpg dataset. We’ve seen that the average miles per gallon for cars has increased over time, but how has the average horsepower for cars changed over time? 
+
+And does this trend differ by country of origin?
+
+## Plotting subgroups in line plots
+
+Use relplot() and the mpg DataFrame to create a line plot with "model_year" on the x-axis and "horsepower" on the y-axis. Turn off the confidence intervals on the plot.
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Import Matplotlib and Seaborn
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Create line plot of model year vs. horsepower
+sns.relplot(x="model_year", y="horsepower", 
+            data=mpg, kind="line", 
+            ci=None)
+```
+
+
+## Plotting subgroups in line plots
+
+![](../images/im273.png)
+
+
+
+## Plotting subgroups in line plots
+
+Create different lines for each country of origin ("origin") that vary in both line style and color.
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+
+```
+
+
+## Plotting subgroups in line plots
+
+![](../images/im275.png)
+
+
+## Plotting subgroups in line plots
+
+Add markers for each data point to the lines.
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Change to create subgroups for country of origin
+sns.relplot(x="model_year", y="horsepower", 
+            data=mpg, kind="line", 
+            ci=None, style="origin", 
+            hue="origin")
+```
+
+
+## Plotting subgroups in line plots
+
+![](../images/im275.png)
+
+
+## Plotting subgroups in line plots
+
+Use the dashes parameter to use solid lines for all countries, while still allowing for different marker styles for each line.
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Add markers and make each line have the same style
+sns.relplot(x="model_year", y="horsepower", 
+            data=mpg, kind="line", 
+            ci=None, style="origin", 
+            hue="origin", markers=True,
+            dashes=False)
+```
+
+
+## Plotting subgroups in line plots
+
+![](../images/im276.png)
+
+# Visualizing a Categorical and a Quantitative Variable
+
+## Count plots
+
+In this exercise, we’ll return to exploring our dataset that contains the responses to a survey sent out to young people. We might suspect that young people spend a lot of time on the internet, but how much do they report using the internet each day? 
+
+## Count plots
+
+Let’s use a count plot to break down the number of survey responses in each category and then explore whether it changes based on age.
+
+
+## Count plots
+
+As a reminder, to create a count plot, we’ll use the catplot() function and specify the name of the categorical variable to count (x=____), the pandas DataFrame to use (data=____), and the type of plot (kind="count").
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# URL for the dataset
+url = "https://raw.githubusercontent.com/endri81/DataVisualization/refs/heads/main/data/young-people-survey-responses.csv"
+
+# Load the dataset
+survey_data = pd.read_csv(url)
+```
+
+
+
+## Count plots
+
+Use sns.catplot() to create a count plot using the survey_data DataFrame with "Internet usage" on the x-axis.
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+## Count plots
+sns.set_context("paper", font_scale=0.8)
 import numpy as np
-import matplotlib.pyplot as plt
-
-x = np.linspace(0, 10, 100)
-y = np.sin(x)
-
-plt.plot(x, y)
-plt.title("Sine Wave")
-plt.xlabel("X-axis")
-plt.ylabel("Y-axis")
-plt.show()
+survey_data = pd.read_csv("young-people-survey-responses.csv")
+survey_data["Age Category"] = np.where(survey_data["Age"]<21, "Less than 21", "21+")
+# Create count plot of internet usage
+sns.catplot(x="Internet usage", data=survey_data,
+            kind="count")
 ```
 
-## Creating and Plotting Data with Matplotlib
+
+## Count plots
+
+![](../images/im278.png)
 
 
-![](../images/im223.png)
+## Count plots
 
+Make the bars horizontal instead of vertical.
 
-## Collaborating in Colab
-
-- Click **Share** (top right) to invite collaborators.
-- Multiple users can edit the same notebook in real-time.
-- Version history is automatically saved.
-## Exporting Notebooks
-
-- Save notebooks in **Google Drive**.
-- Download as **.ipynb** or **.py** (`File → Download`).
-- Convert to **HTML, PDF, or Markdown** using:
+\AddToHookNext{env/Highlighting/begin}{\tiny}
 
 ```python
-!jupyter nbconvert --to html notebook.ipynb
+# Change the orientation of the plot
+sns.catplot(y="Internet usage", data=survey_data,
+            kind="count")
 ```
 
-## Let's get started
 
-- Import the **matplotlib.pyplot** API, using the conventional name plt.
-- Create Figure and Axes objects using the **plt.subplots** function.
-- Show the results, an empty set of axes, using the plt.show function.
+## Count plots
+
+![](../images/im279.png)
 
 
-## Let's get started
+
+## Count plots
+
+Separate this plot into two side-by-side column subplots based on "Age Category", which separates respondents into those that are younger than 21 vs. 21 and older.
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
 
 ```python
-# Import the matplotlib.pyplot submodule and name it plt
-import matplotlib.pyplot as plt
-
-# Create a Figure and an Axes with plt.subplots
-fig, ax = plt.subplots()
-
-# Call the show function to show the result
-plt.show()
+# Separate into column subplots based on age category
+sns.catplot(y="Internet usage", data=survey_data,
+            kind="count", col="Age Category")
 ```
 
-## Let's get started
 
-![](../images/im224)
+## Count plots
 
-
-
-## Adding data to an Axes object
-
-- Adding data to a figure is done by calling methods of the **Axes** object. 
-- In this exercise, we will use the plot method to add data about rainfall in two American cities: Seattle, WA and Austin, TX.
+![](../images/im280.png)
 
 
-## Adding data to an Axes object
+##  Bar plots with percentages
 
-seattle_weather stores information about the weather in Seattle, and austin_weather stores information about the weather in Austin. 
+Let’s continue exploring the responses to a survey sent out to young people. 
+
+The variable "Interested in Math" is True if the person reported being interested or very interested in mathematics, and False otherwise. 
+
+##  Bar plots with percentages
+
+What percentage of young people report being interested in math, and does this vary based on gender? Let’s use a bar plot to find out.
+
+
+##  Bar plots with percentages
+
+As a reminder, we’ll create a bar plot using the catplot() function, providing the name of categorical variable to put on the x-axis (x=____), the name of the quantitative variable to summarize on the y-axis (y=____), the pandas DataFrame to use (data=____), and the type of categorical plot (kind="bar").
+
+##  Bar plots with percentages
+
+Use the survey_data DataFrame and sns.catplot() to create a bar plot with "Gender" on the x-axis and "Interested in Math" on the y-axis.
+
+
+##  Bar plots with percentages
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+sns.reset_defaults()
+# Ensure the column names match exactly
+gender_col = "Gender"
+math_interest_col = "Interested in Math"
+```
+
+
+##  Bar plots with percentages
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Drop missing values if necessary
+survey_data = survey_data.dropna(subset=[math_interest_col])
+# Convert to numeric if needed
+survey_data[math_interest_col] = pd.to_numeric(survey_data[math_interest_col], errors="coerce")
+# Create the bar plot
+sns.catplot(x=gender_col, y=math_interest_col, data=survey_data, kind="bar")
+```
+
+
+##  Bar plots with percentages
+
+
+![](../images/im281.png)
+
+
+## Customizing bar plots
+
+In this exercise, we’ll explore data from students in secondary school. 
+
+The "study_time" variable records each student’s reported weekly study time as one of the following categories: "<2 hours", "2 to 5 hours", "5 to 10 hours", or ">10 hours". 
+
+
+## Customizing bar plots
+
+Do students who report higher amounts of studying tend to get better final grades? 
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}
 
 ```python
 import pandas as pd
-
-# URLs for the datasets
-seattle_url = "https://raw.githubusercontent.com/endri81/DataVisualization/refs/heads/main/data/seattle_weather.csv"
-austin_url = "https://raw.githubusercontent.com/endri81/DataVisualization/refs/heads/main/data/austin_weather.csv"
-
-# Load datasets
-seattle_weather = pd.read_csv(seattle_url)
-austin_weather = pd.read_csv(austin_url)
-```
-
-## Adding data to an Axes object
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-# Display first few rows
-print("Seattle Weather:")
-print(seattle_weather.head())
-print("\nAustin Weather:")
-print(austin_weather.head())
-```
-
-## Adding data to an Axes object
-
-![](../images/im225.png)
-
-## Adding data to an Axes object
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-austin_weather["MONTH"] = austin_weather["DATE"]
-seattle_weather = seattle_weather[seattle_weather["STATION"] == "USW00094290"]
-seattle_weather["MONTH"] = seattle_weather["DATE"]
-```
-
-
-
-
-# Creating Basic Plots
-## The Pyplot Interface
-
-Matplotlib's pyplot module allows quick creation of plots. The basic structure involves:
-
-- Creating a Figure and Axes.
-- Adding data to the Axes.
-- Displaying the plot.
-
-## The Pyplot Interface
-
-```python
-import matplotlib.pyplot as plt
-fig, ax = plt.subplots()
-# Adding data to the plot
-ax.plot(seattle_weather["MONTH"], seattle_weather["MLY-TAVG-NORMAL"])
-# Display the plot
-plt.show()
-```
-
-
-
-## Adding Data to Plots: Line Plots
-
-
-![](../images/im226.png)
-
-
-## Adding Multiple Lines
-
-We can overlay multiple datasets by calling .plot() multiple times.
-
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-import matplotlib.pyplot as plt
-# Create a blank figure and axes
-fig, ax = plt.subplots()
-ax.plot(seattle_weather["MONTH"], seattle_weather["MLY-TAVG-NORMAL"], label="Seattle")
-# Plot Austin data
-ax.plot(austin_weather["MONTH"], austin_weather["MLY-TAVG-NORMAL"], label="Austin")
-# Add legend
-ax.legend()
-plt.show()
-```
-
-## Adding Multiple Lines
-
-
-
-
-##  Customizing Plots:Adding Titles and Labels
-
-We can customize our plots by setting labels and titles.
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-fig, ax = plt.subplots()
-ax.plot(seattle_weather["MONTH"], seattle_weather["MLY-TAVG-NORMAL"])
-```
-
-##  Customizing Plots:Adding Titles and Labels
-
-![](../images/im227.png)
-
-
-##  Customizing Plots:Adding Titles and Labels
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-import matplotlib.pyplot as plt
-# Create a blank figure and axes
-fig, ax = plt.subplots()
-ax.plot(seattle_weather["MONTH"], seattle_weather["MLY-TAVG-NORMAL"], label="Seattle")
-# Plot Austin data
-ax.plot(austin_weather["MONTH"], austin_weather["MLY-TAVG-NORMAL"], label="Austin")
-# Add legend
-ax.legend()
-# Adding labels and title
-ax.set_xlabel("Time (months)")
-ax.set_ylabel("Average Temperature (°F)")
-ax.set_title("Seattle Monthly Average Temperature")
-plt.show()
-```
-
-##  Customizing Plots:Adding Titles and Labels
-
-![](../images/im228.png)
-
-## Changing Line Styles and Markers
-
-We can customize line styles (linestyle), colors (color), and markers (marker).
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-fig, ax = plt.subplots()
-ax.plot(seattle_weather["MONTH"], seattle_weather["MLY-TAVG-NORMAL"], marker="o", linestyle="--", color="r")
-plt.show()
-```
-
-## Changing Line Styles and Markers
-
-![](../images/im230.png)
-
-## Changing Line Styles and Markers
-
-- marker="o" adds circular markers.
-- linestyle="--" makes a dashed line.
-- color="r" makes the line red.
-
-## Using Subplots: Creating Multiple Subplots
-
-We can create multiple smaller plots within a single figure.
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-# Create a Figure and an array of subplots with 2 rows and 2 columns
-fig, ax = plt.subplots(2, 2)
-
-# Addressing the top left Axes as index 0, 0, plot month and Seattle precipitation
-ax[0, 0].plot(seattle_weather["MONTH"], seattle_weather["MLY-PRCP-NORMAL"])
-
-# In the top right (index 0,1), plot month and Seattle temperatures
-ax[0, 1].plot(seattle_weather["MONTH"], seattle_weather["MLY-TAVG-NORMAL"])
-
-# In the bottom left (1, 0) plot month and Austin precipitations
-ax[1, 0].plot(austin_weather["MONTH"], austin_weather["MLY-PRCP-NORMAL"])
-
-# In the bottom right (1, 1) plot month and Austin temperatures
-ax[1, 1].plot(austin_weather["MONTH"], austin_weather["MLY-TAVG-NORMAL"])
-plt.show()
-```
-
-## Using Subplots: Creating Multiple Subplots
-
-![](../images/im231.png)
-
-
-## Small multiples with shared y axis
-
-When creating small multiples, it is often preferable to make sure that the different plots are displayed with the same scale used on the y-axis. 
-
-This can be configured by setting the sharey key-word to True.
-
-## Small multiples with shared y axis
-
-In this exercise, you will create a Figure with two Axes objects that share their y-axis. 
-
-As before, the data is provided in seattle_weather and austin_weather DataFrames.
-
-## Small multiples with shared y axis
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-# Create a figure and an array of axes: 2 rows, 1 column with shared y axis
-fig, ax = plt.subplots(2, 1, sharey=True)
-
-# Plot Seattle precipitation in the top axes
-ax[0].plot(seattle_weather["MONTH"], seattle_weather["MLY-PRCP-NORMAL"], color='b')
-ax[0].plot(seattle_weather["MONTH"], seattle_weather["MLY-PRCP-25PCTL"], color='b', linestyle='--')
-ax[0].plot(seattle_weather["MONTH"], seattle_weather["MLY-PRCP-75PCTL"], color='b', linestyle='--')
-```
-
-
-
-## Small multiples with shared y axis
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-# Plot Austin precipitation in the bottom axes
-ax[1].plot(austin_weather["MONTH"], austin_weather["MLY-PRCP-NORMAL"], color='r')
-ax[1].plot(austin_weather["MONTH"], austin_weather["MLY-PRCP-25PCTL"], color='r', linestyle='--')
-ax[1].plot(austin_weather["MONTH"], austin_weather["MLY-PRCP-75PCTL"], color='r', linestyle='--')
-
-plt.show()
-```
-
-
-## Small multiples with shared y axis
-
-![](../images/im232.png)
-
-
-# Plotting time-series
-
-## Read data with a time index
-
-**pandas DataFrame** objects can have an index denoting time, this recognized by Matplotlib for axis labeling.
-
-This exercise involves reading data from climate_change.csv, containing CO2 levels and temperatures recorded on the 6th of each month from 1958 to 2016, using pandas’ read_csv function. 
-
-
-## Read data with a time index
-
-The parse_dates and index_col arguments help set a DateTimeIndex.
-
-Don’t forget to check out the Matplotlib Cheat Sheet for a quick overview of essential concepts and methods.
-
-
-## Read data with a time index
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-# Import pandas
-import pandas as pd
-```
-
-## Read data with a time index
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-# Read the data from file using read_csv
-import pandas as pd
-import matplotlib.pyplot as plt
-# URLs for the datasets
-climate_url = "https://raw.githubusercontent.com/endri81/DataVisualization/refs/heads/main/data/climate_change.csv"
-# Load datasets
-climate_change = pd.read_csv(climate_url, parse_dates=["date"], index_col="date")
-```
-
-
-## Plot time-series data
-
-To plot time-series data, we use the Axes object plot command. 
-
-The first argument to this method are the values for the x-axis and the second argument are the values for the y-axis.
-
-
-## Plot time-series data
-
-This exercise provides data stored in a DataFrame called climate_change. 
-
-This variable has a time-index with the dates of measurements and two data columns: "co2" and "relative_temp".
-
-
-## Plot time-series data
-
-In this case, the index of the DataFrame would be used as the x-axis values and we will plot the values stored in the "relative_temp" column as the y-axis values. 
-
-We will also properly label the x-axis and y-axis.
-
-
-## Plot time-series data
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-import matplotlib.pyplot as plt
-fig, ax = plt.subplots()
-
-# Add the time-series for "relative_temp" to the plot
-ax.plot(climate_change.index, climate_change['relative_temp'])
-```
-
-## Plot time-series data
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-# Set the x-axis label
-ax.set_xlabel('Time')
-
-# Set the y-axis label 
-ax.set_ylabel('Relative temperature (Celsius)')
-
-# Show the figure
-plt.show()
-```
-
-## Plot time-series data
-
-![](../images/im233.png)
-
-## Using a time index to zoom in
-
-When a time-series is represented with a time index, we can use this index for the x-axis when plotting. 
-
-We can also select a range of dates to zoom in on a particular period within the time-series using pandas’ indexing facilities. 
-
-## Using a time index to zoom in
-
-In this exercise, you will select a portion of a time-series dataset and you will plot that period.
-
-The data to use is stored in a DataFrame called climate_change, which has a time-index with dates of measurements and two data columns: "co2" and "relative_temp".
-
-
-## Using a time index to zoom in
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-import matplotlib.pyplot as plt
-
-# Use plt.subplots to create fig and ax
-fig, ax = plt.subplots()
-
-# Create variable seventies with data from "1970-01-01" to "1979-12-31"
-seventies = climate_change["1970-01-01":"1979-12-31"]
-```
-
-
-## Using a time index to zoom in
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-# Add the time-series for "co2" data from seventies to the plot
-ax.plot(seventies.index, seventies["co2"])
-
-# Show the figure
-plt.show()
-```
-
-## Using a time index to zoom in
-
-![](../images/im234.png)
-
-## Plotting two variables
-
-If you want to plot two time-series variables that were recorded at the same times, you can add both of them to the same subplot.
-
-If the variables have very different scales, you’ll want to make sure that you plot them in different twin Axes objects. 
-
-
-## Plotting two variables
-
-These objects can share one axis (for example, the time, or x-axis) while not sharing the other (the y-axis).
-
-To create a twin Axes object that shares the x-axis, we use the twinx method.
-
-
-## Plotting two variables
-
-In this exercise, you’ll have access to a DataFrame that has the climate_change data loaded into it. 
-
-This DataFrame was loaded with the "date" column set as a DateTimeIndex, and it has a column called "co2" with carbon dioxide measurements and a column called "relative_temp" with temperature measurements.
-
-
-## Plotting two variables
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-import matplotlib.pyplot as plt
-
-# Initalize a Figure and Axes
-fig, ax = plt.subplots()
-
-# Plot the CO2 variable in blue
-ax.plot(climate_change.index, climate_change["co2"], color='blue')
-```
-
-
-
-
-## Plotting two variables
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-# Create a twin Axes that shares the x-axis
-ax2 = ax.twinx()
-
-# Plot the relative temperature in red
-ax2.plot(climate_change.index, climate_change["relative_temp"], color='red')
-
-plt.show()
-```
-
-## Plotting two variables
-
-![](../images/im235.png)
-
-
-## Defining a function that plots time-series data
-
-Once you realize that a particular section of code that you have written is useful, it is a good idea to define a function that saves that section of code for you, rather than copying it to other parts of your program where you would like to use this code.
-
-
-## Defining a function that plots time-series data
-
-Here, we will define a function that takes inputs such as a time variable and some other variable and plots them as x and y inputs. 
-
-Then, it sets the labels on the x- and y-axis and sets the colors of the y-axis label, the y-axis ticks and the tick labels.
-
-## Defining a function that plots time-series data
-
-
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-# Define a function called plot_timeseries
-def plot_timeseries(axes, x, y, color, xlabel, ylabel):
-
-  # Plot the inputs x,y in the provided color
-  axes.plot(x, y, color=color)
-
-  # Set the x-axis label
-  axes.set_xlabel(xlabel)
-```
-
-
-## Defining a function that plots time-series data
-
-
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-
-  # Set the y-axis label
-  axes.set_ylabel(ylabel, color=color)
-
-  # Set the colors tick params for y-axis
-  axes.tick_params('y', colors=color)
-```
-
-
-## Using a plotting function
-
-Defining functions allows us to reuse the same code without having to repeat all of it. Programmers sometimes say “Don’t repeat yourself”.
-
-
-
-## Using a plotting function
-
-In the previous exercise, you defined a function called plot_timeseries:
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-plot_timeseries(axes, x, y, color, xlabel, ylabel)
-```
-
-that takes an Axes object (as the argument axes), time-series data (as x and y arguments) the name of a color (as a string, provided as the color argument) and x-axis and y-axis labels (as xlabel and ylabel arguments). 
-
-
-## Using a plotting function
-
-In this exercise, the function plot_timeseries is already defined and provided to you.
-
-Use this function to plot the climate_change time-series data, provided as a pandas DataFrame object that has a DateTimeIndex with the dates of the measurements and co2 and relative_temp columns.
-
-## Using a plotting function
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-fig, ax = plt.subplots()
-
-# Plot the CO2 levels time-series in blue
-plot_timeseries(ax, climate_change.index, climate_change["co2"], 'blue', "Time (years)", "CO2 levels")
-
-# Create a twin Axes object that shares the x-axis
-ax2 = ax.twinx()
-```
-
-
-## Using a plotting function
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-# Plot the relative temperature data in red
-plot_timeseries(ax2, climate_change.index, climate_change['relative_temp'], 'red', "Time (years)", "Relative temperature (Celsius)")
-
-plt.show()
-```
-
-
-## Using a plotting function
-
-![](../images/im236.png)
-
-## Annotating a plot of time-series data
-
-Annotating a plot allows us to highlight interesting information in the plot. 
-
-For example, in describing the climate change dataset, we might want to point to the date at which the relative temperature first exceeded 1 degree Celsius.
-
-
-## Annotating a plot of time-series data
-
-For this, we will use the annotate method of the Axes object. 
-
-In this exercise, you will have the DataFrame called climate_change loaded into memory. 
-
-Using the Axes methods, plot only the relative temperature column as a function of dates, and annotate the data.
-
-## Annotating a plot of time-series data
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-fig, ax = plt.subplots()
-
-# Plot the relative temperature data
-ax.plot(climate_change.index, climate_change['relative_temp'])
-
-# Annotate the date at which temperatures exceeded 1 degree
-ax.annotate(">1 degree", xy=(pd.Timestamp('2015-10-06'), 1))
-
-plt.show()
-```
-
-
-## Annotating a plot of time-series data
-
-![](../images/im237.png)
-
-
-## Plotting time-series: putting it all together
-
-In this exercise, you will plot two time-series with different scales on the same Axes, and annotate the data from one of these series.
-
-The CO2/temperatures data is provided as a DataFrame called climate_change. 
-
-
-## Plotting time-series: putting it all together
-
-You should also use the function that we have defined before, called plot_timeseries, which takes an Axes object (as the axes argument) plots a time-series (provided as x and y arguments), sets the labels for the x-axis and y-axis and sets the color for the data, and for the y tick/axis labels:
-
-
-## Plotting time-series: putting it all together
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-plot_timeseries(axes, x, y, color, xlabel, ylabel)
-```
-
-
-## Plotting time-series: putting it all together
-
-Then, you will annotate with text an important time-point in the data: on 2015-10-06, when the temperature first rose to above 1 degree over the average.
-
-## Plotting time-series: putting it all together
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-
-fig, ax = plt.subplots()
-
-# Plot the CO2 levels time-series in blue
-plot_timeseries(ax, climate_change.index, climate_change["co2"], 'blue', "Time (years)", "CO2 levels")
-
-# Create an Axes object that shares the x-axis
-ax2 = ax.twinx()
-```
-
-## Plotting time-series: putting it all together
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-
-# Plot the relative temperature data in red
-plot_timeseries(ax2, climate_change.index, climate_change['relative_temp'], 'red', "Time (years)", "Relative temp (Celsius)")
-
-# Annotate the point with relative temperature >1 degree
-ax2.annotate(">1 degree", xy=(pd.Timestamp('2015-10-06'), 1), xytext=(pd.Timestamp('2008-10-06'), -0.2), arrowprops={'arrowstyle':'->', 'color':'gray'})
-
-plt.show()
-```
-
-## Plotting time-series: putting it all together
-
-![](../images/im239.png)
-
-
-# Quantitative comparisons and statistical visualizations
-
-## Bar chart
-
-Bar charts visualize data that is organized according to categories as a series of bars, where the height of each bar represents the values of the data in this category.
-
-
-## Bar chart
-
-For example, in this exercise, you will visualize the number of gold medals won by each country in the provided medals DataFrame. 
-
-The DataFrame contains the countries as the index, and a column called "Gold" that contains the number of gold medals won by each country, according to their rows.
-
-## Bar chart
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-import pandas as pd
+import seaborn as sns
 import matplotlib.pyplot as plt
 
 # URL for the dataset
-medals_url = "https://raw.githubusercontent.com/endri81/DataVisualization/refs/heads/main/data/medals_by_country_2016.csv"
+url = "https://raw.githubusercontent.com/endri81/DataVisualization/refs/heads/main/data/student-alcohol-consumption.csv"
 
-# Load dataset
-medals = pd.read_csv(medals_url)
-
-# Set 'Country' as index if it's not already
-if "Country" in medals.columns:
-    medals.set_index("Country", inplace=True)
-
-
-
+# Load the dataset
+student_data = pd.read_csv(url)
 ```
 
-## Bar chart
+## Customizing bar plots
+
+Let’s compare the average final grade among students in each category using a bar plot.
+
+## Customizing bar plots
+
+Use sns.catplot() to create a bar plot with "study_time" on the x-axis and final grade ("G3") on the y-axis, using the student_data DataFrame.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}
 
 ```python
-# Create figure and axis
-fig, ax = plt.subplots()
+# Drop missing values in final grade
+student_data = student_data.dropna(subset=[final_grade_col])
 
-# Plot a bar chart of gold medals as a function of country
-ax.bar(medals.index, medals["Gold"])
+# Convert study_time to categorical if needed
+student_data[study_time_col] = student_data[study_time_col].astype(str)
 
-# Set the x-axis tick labels to the country names
-ax.set_xticks(range(len(medals.index)))  # Set tick positions
-ax.set_xticklabels(medals.index, rotation=90)  # Set tick labels
+# Set seaborn context
+sns.set_context("paper", font_scale=0.8)
 
-# Set the y-axis label
-ax.set_ylabel("Number of Gold Medals")
+# Create bar plot
+sns.catplot(x=study_time_col, y=final_grade_col, 
+            data=student_data, kind="bar")
 
-# Display the plot
-plt.show()
-```
-
-## Bar chart
-
-![](../images/im240.png)
-
-
-## Stacked bar chart
-
-A stacked bar chart contains bars, where the height of each bar represents values. 
-
-In addition, stacked on top of the first variable may be another variable. 
-
-## Stacked bar chart
-
-The additional height of this bar represents the value of this variable. And you can add more bars on top of that.
-
-In this exercise, you will have access to a DataFrame called medals that contains an index that holds the names of different countries, and three columns: "Gold", "Silver" and "Bronze". 
-
-
-## Stacked bar chart
-
-You will also have a Figure, fig, and Axes, ax, that you can add data to.
-
-You will create a stacked bar chart that shows the number of gold, silver, and bronze medals won by each country, and you will add labels and create a legend that indicates which bars represent which medals.
-
-## Stacked bar chart
-
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-fig, ax = plt.subplots()
-
-# Add bars for "Gold" with the label "Gold"
-ax.bar(medals.index, medals["Gold"], label="Gold")
-
-# Stack bars for "Silver" on top with label "Silver"
-ax.bar(medals.index, medals["Silver"], bottom=medals["Gold"], label="Silver")
-```
-
-
-## Stacked bar chart
-
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-# Stack bars for "Bronze" on top of that with label "Bronze"
-ax.bar(medals.index, medals["Bronze"], bottom=medals["Gold"] + medals["Silver"], label="Bronze")
-
-# Display the legend
-ax.legend()
-
+# Show the plot
 plt.show()
 ```
 
 
-## Stacked bar chart
+## Customizing bar plots
 
 
-![](../images/im241.png)
-
-## Creating histograms
-
-Histograms show the full distribution of a variable. 
-
-In this exercise, we will display the distribution of weights of medalists in gymnastics and in rowing in the 2016 Olympic games for a comparison between them.
+![](../images/im283.png)
 
 
-## Creating histograms
 
-You will have two DataFrames to use. 
+## Customizing bar plots
 
-The first is called mens_rowing and includes information about the medalists in the men’s rowing events. 
+Using the order parameter and the category_order list that is provided, rearrange the bars so that they are in order from lowest study time to highest.
 
-The other is called mens_gymnastics and includes information about medalists in all of the Gymnastics events.
+\AddToHookNext{env/Highlighting/begin}{\tiny}
 
-## Creating histograms
+```python
+# List of categories from lowest to highest
+category_order = ["<2 hours", 
+                  "2 to 5 hours", 
+                  "5 to 10 hours", 
+                  ">10 hours"]
+
+# Rearrange the categories
+sns.catplot(x="study_time", y="G3",
+            data=student_data,
+            kind="bar",
+            order=category_order)
+```
+
+
+## Customizing bar plots
+
+
+![](../images/im283.png)
+
+## Customizing bar plots
+
+Update the plot so that it no longer displays confidence intervals.
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# List of categories from lowest to highest
+category_order = ["<2 hours", 
+                  "2 to 5 hours", 
+                  "5 to 10 hours", 
+                  ">10 hours"]
+
+# Create bar plot with the correct parameter
+sns.catplot(x=study_time_col, y=final_grade_col, 
+            data=student_data, kind="bar", errorbar=None)
+
+# Show the plot
+plt.show()
+```
+
+
+## Customizing bar plots
+
+
+![](../images/im284.png)
+
+
+
+## Create and interpret a box plot
+
+Let’s continue using the student_data dataset. 
+
+In an earlier exercise, we explored the relationship between studying and final grade by using a bar plot to compare the average final grade ("G3") among students in different categories of "study_time".
+
+
+## Create and interpret a box plot
+
+In this exercise, we’ll try using a box plot look at this relationship instead. 
+
+As a reminder, to create a box plot you’ll need to use the catplot() function and specify the name of the categorical variable to put on the x-axis (x=____), the name of the quantitative variable to summarize on the y-axis (y=____), the pandas DataFrame to use (data=____), and the type of plot (kind="box").
+
+## Create and interpret a box plot
+
+Use sns.catplot() and the student_data DataFrame to create a box plot with "study_time" on the x-axis and "G3" on the y-axis. 
+
+Set the ordering of the categories to study_time_order.
+
+
+## Create and interpret a box plot
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+## Create and interpret a box plot
+
+# Specify the category ordering
+study_time_order = ["<2 hours", "2 to 5 hours", 
+                    "5 to 10 hours", ">10 hours"]
+
+# Create a box plot and set the order of the categories
+sns.catplot(x="study_time", y="G3",
+            data=student_data,
+            kind="box",
+            order=study_time_order)
+```
+
+
+
+## Create and interpret a box plot
+
+![](../images/im285.png)
+
+
+## Omitting outliers
+
+Now let’s use the student_data dataset to compare the distribution of final grades ("G3") between students who have internet access at home and those who don’t. 
+
+To do this, we’ll use the "internet" variable, which is a binary (yes/no) indicator of whether the student has internet access at home.
+
+## Omitting outliers
+
+Since internet may be less accessible in rural areas, we’ll add subgroups based on where the student lives. 
+
+For this, we can use the "location" variable, which is an indicator of whether a student lives in an urban (“Urban”) or rural (“Rural”) location.
+
+## Omitting outliers
+
+Use sns.catplot() to create a box plot with the student_data DataFrame, putting "internet" on the x-axis and "G3" on the y-axis.
+
+Add subgroups so each box plot is colored based on "location".
+
+Do not display the outliers.
+
+
+## Omitting outliers
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Create a box plot with subgroups and omit the outliers
+sns.catplot(x="internet", y="G3",
+            data=student_data,
+            kind="box",
+            hue="location",
+            flierprops={"marker": ""})  
+```
+
+
+
+## Omitting outliers
+
+![](../images/im286.png)
+
+
+## Adjusting the whiskers
+
+In the lesson we saw that there are multiple ways to define the whiskers in a box plot. 
+
+In this set of exercises, we’ll continue to use the student_data dataset to compare the distribution of final grades ("G3") between students who are in a romantic relationship and those that are not. 
+
+
+## Adjusting the whiskers
+
+We’ll use the "romantic" variable, which is a yes/no indicator of whether the student is in a romantic relationship.
+
+Let’s create a box plot to look at this relationship and try different ways to define the whiskers.
+
+
+## Adjusting the whiskers
+
+Adjust the code to make the box plot whiskers to extend to 0.5 * IQR. Recall: the IQR is the interquartile range.
+
+Change the code to set the whiskers to extend to the 5th and 95th percentiles.
+
+Change the code to set the whiskers to extend to the min and max values.
+
+## Adjusting the whiskers
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Set the whiskers to 0.5 * IQR
+sns.catplot(x="romantic", y="G3",
+            data=student_data,
+            kind="box",
+            whis=0.5)
+```
+
+
+## Adjusting the whiskers
+
+![](../images/im287.png)
+
+
+
+## Adjusting the whiskers
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Extend the whiskers to the 5th and 95th percentile
+sns.catplot(x="romantic", y="G3",
+            data=student_data,
+            kind="box",
+            whis=[5, 95])
+```
+
+
+## Adjusting the whiskers
+
+![](../images/im288.png)
+
+
+
+## Adjusting the whiskers
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Set the whiskers at the min and max values
+sns.catplot(x="romantic", y="G3",
+            data=student_data,
+            kind="box",
+            whis=[0, 100])
+```
+
+
+## Adjusting the whiskers
+
+![](../images/im289.png)
+
+
+
+## Customizing point plots
+
+Let’s continue to look at data from students in secondary school, this time using a point plot to answer the question: does the quality of the student’s family relationship influence the number of absences the student has in school? 
+
+
+## Customizing point plots
+
+Here, we’ll use the "famrel" variable, which describes the quality of a student’s family relationship from 1 (very bad) to 5 (very good).
+
+
+## Customizing point plots
+
+As a reminder, to create a point plot, use the catplot() function and specify the name of the categorical variable to put on the x-axis (x=____), the name of the quantitative variable to summarize on the y-axis (y=____), the pandas DataFrame to use (data=____), and the type of categorical plot (kind="point").
+
+## Customizing point plots
+
+Use sns.catplot() and the student_data DataFrame to create a point plot with "famrel" on the x-axis and number of absences ("absences") on the y-axis.
+
+Add “caps” to the end of the confidence intervals with size 0.2.
+
+Remove the lines joining the points in each category.
+
+
+
+## Customizing point plots
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Create a point plot of family relationship vs. absences
+sns.catplot(x="famrel", y="absences",
+            data=student_data,
+            kind="point")
+```
+
+
+## Customizing point plots
+
+
+![](../images/im290.png)
+
+
+## Customizing point plots
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Add caps to the confidence interval
+sns.catplot(x="famrel", y="absences",
+            data=student_data,
+            kind="point",
+            capsize=0.2)
+```
+
+## Customizing point plots
+
+![](../images/im291.png)
+
+## Customizing point plots
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Remove the lines joining the points
+sns.catplot(x="famrel", y="absences",
+            data=student_data,
+            kind="point",
+            capsize=0.2,
+            join=False)
+```
+
+
+## Customizing point plots
+
+![](../images/im292.png)
+
+
+
+## Point plots with subgroups
+
+Let’s continue exploring the dataset of students in secondary school. 
+
+This time, we’ll ask the question: is being in a romantic relationship associated with higher or lower school attendance? 
+
+
+## Point plots with subgroups
+
+
+And does this association differ by which school the students attend? Let’s find out using a point plot.
+
+## Point plots with subgroups
+
+Use sns.catplot() and the student_data DataFrame to create a point plot with relationship status ("romantic") on the x-axis and number of absences ("absences") on the y-axis. 
+
+
+## Point plots with subgroups
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+
+```
+
+
+## Customizing point plots
+
+![](../images/im292.png)
+
+
+## Point plots with subgroups
+
+Color the points based on the school that they attend ("school").
+
+
+## Point plots with subgroups
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Create a point plot that uses color to create subgroups
+sns.catplot(x="romantic", y="absences",
+            data=student_data,
+            kind="point",
+            hue="school")
+```
+
+
+## Customizing point plots
+
+![](../images/im293.png)
+
+
+
+
+## Point plots with subgroups
+
+Turn off the confidence intervals for the plot.
+
+## Point plots with subgroups
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Turn off the confidence intervals for this plot
+sns.catplot(x="romantic", y="absences",
+            data=student_data,
+            kind="point",
+            hue="school",
+            ci=None)
+```
+
+
+## Customizing point plots
+
+![](../images/im294.png)
+
+
+## Point plots with subgroups
+
+Since there may be outliers of students with many absences, use the median function that we’ve imported from numpy to display the median number of absences instead of the average.
+
+
+
+## Point plots with subgroups
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Import median function from numpy
+from numpy import median
+
+# Plot the median number of absences instead of the mean
+sns.catplot(x="romantic", y="absences",
+            data=student_data,
+            kind="point",
+            hue="school",
+            ci=None,
+            estimator=median)
+```
+
+
+## Customizing point plots
+
+![](../images/im295.png)
+
+
+# Customizing Seaborn Plots
+
+
+## Changing style and palette
+
+Let’s return to our dataset containing the results of a survey given to young people about their habits and preferences. 
+
+
+## Changing style and palette
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+advice_mapping = {
+    1.0: "Never",
+    2.0: "Rarely",
+    3.0: "Sometimes",
+    4.0: "Often",
+    5.0: "Always",
+    np.nan: np.nan  # Keeping NaN as it is
+}
+survey_data["Parents Advice"] = survey_data["Parents' advice"].map(advice_mapping)
+```
+
+
+
+## Changing style and palette
+
+Now let’s change the style and palette to make this plot easier to interpret.
+
+
+## Changing style and palette
+
+Set the style to "whitegrid" to help the audience determine the number of responses in each category.
+
+
+## Changing style and palette
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Set the style to "whitegrid"
+sns.set_style("whitegrid")
+
+# Create a count plot of survey responses
+category_order = ["Never", "Rarely", "Sometimes", 
+                  "Often", "Always"]
+
+sns.catplot(x="Parents Advice", 
+            data=survey_data, 
+            kind="count", 
+            order=category_order)
+```
+
+
+## Changing style and palette
+
+![](../images/im296.png)
+
+
+
+## Changing style and palette
+
+Set the color palette to the sequential palette named "Purples".
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Set the color palette to "Purples"
+sns.set_style("whitegrid")
+sns.set_palette("Purples")
+
+# Create a count plot of survey responses
+category_order = ["Never", "Rarely", "Sometimes", 
+                  "Often", "Always"]
+
+sns.catplot(x="Parents Advice", 
+            data=survey_data, 
+            kind="count", 
+            order=category_order)
+```
+
+
+## Changing style and palette
+
+![](../images/im297.png)
+
+
+
+## Changing style and palette
+
+Change the color palette to the diverging palette named "RdBu".
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Change the color palette to "RdBu"
+sns.set_style("whitegrid")
+sns.set_palette("RdBu")
+
+# Create a count plot of survey responses
+category_order = ["Never", "Rarely", "Sometimes", 
+                  "Often", "Always"]
+
+sns.catplot(x="Parents Advice", 
+            data=survey_data, 
+            kind="count", 
+            order=category_order)
+```
+
+
+## Changing style and palette
+
+![](../images/im298.png)
+
+
+
+##  Changing the scale
+
+In this exercise, we’ll continue to look at the dataset containing responses from a survey of young people. 
+
+
+
+##  Changing the scale
+
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}
 
 ```python
 import pandas as pd
+import seaborn as sns
 import matplotlib.pyplot as plt
 
-# URL for the dataset
-summer_medals_url = "https://raw.githubusercontent.com/endri81/DataVisualization/refs/heads/main/data/summer2016.csv"
+# Corrected dataset URL
+url = "https://raw.githubusercontent.com/endri81/DataVisualization/main/data/young-people-survey-responses.csv"
 
-# Load dataset
-summer_2016_medals = pd.read_csv(summer_medals_url)
+# Load the dataset
+survey_data = pd.read_csv(url)
 
-# Set 'Country' as index if it's not already
-if "Country" in medals.columns:
-    medals.set_index("Country", inplace=True)
+
+# Define correct column names
+siblings_col = "Siblings"  # Matches dataset
+lonely_col = "Loneliness"  # Corrected from "Feels Lonely"
 
 ```
 
 
 
+##  Changing the scale
+
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}
 
 ```python
-mens_rowing = summer_2016_medals[(summer_2016_medals['Sport'] == 'Rowing') & (summer_2016_medals['Sex'] == 'M')]
-mens_gymnastics = summer_2016_medals[(summer_2016_medals['Sport'] == 'Gymnastics') & (summer_2016_medals['Sex'] == 'M')]
-fig, ax = plt.subplots()
-# Plot a histogram of "Weight" for mens_rowing
-ax.hist(mens_rowing["Weight"])
+# Drop missing values in Loneliness
+survey_data = survey_data.dropna(subset=[lonely_col])
+
+# Convert Loneliness to numeric if necessary
+survey_data[lonely_col] = pd.to_numeric(survey_data[lonely_col], errors="coerce")
+
+# Convert Siblings to categorical if necessary
+survey_data[siblings_col] = survey_data[siblings_col].astype(str)
 ```
 
 
 
-## Creating histograms
+
+
+
+##  Changing the scale
+
+Does the percentage of people reporting that they feel lonely vary depending on how many siblings they have? 
+
+
+##  Changing the scale
+
+Let’s find out using a bar plot, while also exploring Seaborn’s four different plot scales (“contexts”).
+
+##  Changing the scale
+
+Set the scale (“context”) to "paper", which is the smallest of the scale options.
+
+##  Changing the scale
+
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}
 
 ```python
-# Compare to histogram of "Weight" for mens_gymnastics
-ax.hist(mens_gymnastics["Weight"])
+# Set seaborn context
+sns.set_context("paper")
 
-# Set the x-axis label to "Weight (kg)"
-ax.set_xlabel("Weight (kg)")
+# Create bar plot using the correct column name
+sns.catplot(x=siblings_col, y=lonely_col, 
+            data=survey_data, kind="bar", errorbar=None)
 
-# Set the y-axis label to "# of observations"
-ax.set_ylabel("# of observations")
+# Show the plot
+plt.show()
 
+```
+
+##  Changing the scale
+
+![](../images/im299.png)
+
+
+
+##  Changing the scale
+
+Change the context to "notebook" to increase the scale.
+
+
+##  Changing the scale
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Set seaborn context
+sns.set_context("notebook")
+
+# Create bar plot using the correct column name
+sns.catplot(x=siblings_col, y=lonely_col, 
+            data=survey_data, kind="bar", errorbar=None)
+
+# Show the plot
+plt.show()
+
+```
+
+##  Changing the scale
+
+![](../images/im300.png)
+
+
+##  Changing the scale
+
+Change the context to "talk" to increase the scale.
+
+
+##  Changing the scale
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Set seaborn context
+sns.set_context("talk")
+
+# Create bar plot using the correct column name
+sns.catplot(x=siblings_col, y=lonely_col, 
+            data=survey_data, kind="bar", errorbar=None)
+
+# Show the plot
+plt.show()
+
+```
+
+##  Changing the scale
+
+![](../images/im301.png)
+
+##  Changing the scale
+
+
+Change the context to "poster", which is the largest scale available.
+
+
+##  Changing the scale
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Set seaborn context
+sns.set_context("poster")
+
+# Create bar plot using the correct column name
+sns.catplot(x=siblings_col, y=lonely_col, 
+            data=survey_data, kind="bar", errorbar=None)
+
+# Show the plot
+plt.show()
+
+```
+
+##  Changing the scale
+
+![](../images/im302.png)
+
+
+## Using a custom palette
+
+So far, we’ve looked at several things in the dataset of survey responses from young people, including their internet usage, how often they listen to their parents, and how many of them report feeling lonely. 
+
+
+## Using a custom palette
+
+However, one thing we haven’t done is a basic summary of the type of people answering this survey, including their age and gender. 
+
+Providing these basic summaries is always a good practice when dealing with an unfamiliar dataset.
+
+
+## Using a custom palette
+
+The code provided will create a box plot showing the distribution of ages for male versus female respondents. Let’s adjust the code to customize the appearance, this time using a custom color palette.
+
+
+## Using a custom palette
+
+Set the style to "darkgrid".
+
+Set a custom color palette with the hex color codes "#39A7D0" and "#36ADA4".
+
+
+## Using a custom palette
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Set the style to "darkgrid"
+sns.set_style("darkgrid")
+
+# Set a custom color palette
+sns.set_palette(["#39A7D0", "#36ADA4"])
+
+# Create the box plot of age distribution by gender
+sns.catplot(x="Gender", y="Age", 
+            data=survey_data, kind="box")
+
+```
+
+## Using a custom palette
+
+![](../images/im303.png)
+
+## FacetGrids vs. AxesSubplots
+
+In the recent lesson, we learned that Seaborn plot functions create two different types of objects: FacetGrid objects and AxesSubplot objects. 
+
+## FacetGrids vs. AxesSubplots
+
+The method for adding a title to your plot will differ depending on the type of object it is.
+
+## FacetGrids vs. AxesSubplots
+
+In the code provided, we’ve used relplot() with the miles per gallon dataset to create a scatter plot showing the relationship between a car’s weight and its horsepower. 
+
+This scatter plot is assigned to the variable name g. Let’s identify which type of object it is.
+
+## FacetGrids vs. AxesSubplots
+
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Create scatter plot
+g = sns.relplot(x="weight", 
+                y="horsepower", 
+                data=mpg,
+                kind="scatter")
+
+# Identify plot type
+type_of_g = type(g)
+
+# Print type
+plt.close()  # added/edited
+print(type_of_g)
+
+```
+
+## FacetGrids vs. AxesSubplots
+
+![](../images/im304.png)
+
+
+## Adding a title to a FacetGrid object
+
+In the previous exercise, we used relplot() with the miles per gallon dataset to create a scatter plot showing the relationship between a car’s weight and its horsepower. 
+
+This created a FacetGrid object. Now that we know what type of object it is, let’s add a title to this plot.
+
+## Adding a title to a FacetGrid object
+
+Add the following title to this plot: "Car Weight vs. Horsepower".
+
+
+## Adding a title to a FacetGrid object
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Create scatter plot
+g = sns.relplot(x="weight", 
+                y="horsepower", 
+                data=mpg,
+                kind="scatter")
+
+# Add a title "Car Weight vs. Horsepower"
+g.fig.suptitle("Car Weight vs. Horsepower")
+
+# Show plot
+plt.show()
+
+```
+
+## Adding a title to a FacetGrid object
+
+![](../images/im305.png)
+
+## Adding a title and axis labels
+
+Let’s continue to look at the miles per gallon dataset. 
+
+This time we’ll create a line plot to answer the question: 
+
+## Adding a title and axis labels
+
+How does the average miles per gallon achieved by cars change over time for each of the three places of origin? 
+
+To improve the readability of this plot, we’ll add a title and more informative axis labels.
+
+
+## Adding a title and axis labels
+
+In the code provided, we create the line plot using the lineplot() function. 
+
+Note that lineplot() does not support the creation of subplots, so it returns an AxesSubplot object instead of an FacetGrid object.
+
+
+## Adding a title and axis labels
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+mpg_mean = mpg.groupby(["model_year", "origin"]).agg(mpg_mean=("mpg", "mean")).reset_index()
+# Create line plot
+g = sns.lineplot(x="model_year", y="mpg_mean", 
+                 data=mpg_mean,
+                 hue="origin")
+
+# Add a title "Average MPG Over Time"
+g.set_title("Average MPG Over Time")
+
+# Show plot
 plt.show()
 ```
 
-## Creating histograms
+## Adding a title and axis labels
 
-![](../images/im242.png)
+![](../images/im306.png)
 
-
-## “Step” histogram
-
-Histograms allow us to see the distributions of the data in different groups in our data. 
-
-In this exercise, you will select groups from the Summer 2016 Olympic Games medalist dataset to compare the height of medalist athletes in two different sports.
-
-
-## “Step” histogram
-
-The data is stored in a pandas DataFrame object called summer_2016_medals that has a column “Height”. 
-
-In addition, you are provided a pandas GroupBy object that has been grouped by the sport.
-
-
-## “Step” histogram
-
-In this exercise, you will visualize and label the histograms of two sports: “Gymnastics” and “Rowing” and see the marked difference between medalists in these two sports.
-
-## “Step” histogram
+## Adding a title and axis labels
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}
 
 ```python
-fig, ax = plt.subplots()
+# Create line plot
+g = sns.lineplot(x="model_year", y="mpg_mean", 
+                 data=mpg_mean,
+                 hue="origin")
 
-# Plot a histogram of "Weight" for mens_rowing
-ax.hist(mens_rowing["Weight"], histtype='step', label="Rowing", bins=5)
-## (array([ 3., 18.,  4., 44., 15.]), array([ 55.,  66.,  77.,  88.,  99., 110.]), [<matplotlib.patches.Polygon object at 0x73f36d1f8d70>])
-```
+# Add a title "Average MPG Over Time"
+g.set_title("Average MPG Over Time")
 
-## “Step” histogram
+# Add x-axis and y-axis labels
+g.set(xlabel="Car Model Year", 
+      ylabel="Average MPG")
 
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-# Compare to histogram of "Weight" for mens_gymnastics
-ax.hist(mens_gymnastics["Weight"], histtype='step', label="Gymnastics", bins=5)
-## (array([10., 10., 10.,  5.,  1.]), array([51., 56., 61., 66., 71., 76.]), [<matplotlib.patches.Polygon object at 0x73f36d21b1a0>])
-ax.set_xlabel("Weight (kg)")
-ax.set_ylabel("# of observations")
-
-# Add the legend and show the Figure
-ax.legend()
+# Show plot
 plt.show()
 ```
 
-## “Step” histogram
+## Adding a title and axis labels
 
-![](../images/im243.png)
+![](../images/im307.png)
+
+## Rotating x-tick labels
+
+In this exercise, we’ll continue looking at the miles per gallon dataset. 
+
+In the code provided, we create a point plot that displays the average acceleration for cars in each of the three places of origin. 
+
+## Rotating x-tick labels
+
+Note that the "acceleration" variable is the time to accelerate from 0 to 60 miles per hour, in seconds. Higher values indicate slower acceleration.
+
+Let’s use this plot to practice rotating the x-tick labels. 
 
 
+## Rotating x-tick labels
 
-## Adding error-bars to a bar chart
+Recall that the function to rotate x-tick labels is a standalone Matplotlib function and not a function applied to the plot object itself.
 
-Statistical plotting techniques add quantitative information for comparisons into the visualization. 
+## Rotating x-tick labels
 
-For example, in this exercise, we will add error bars that quantify not only the difference in the means of the height of medalists in the 2016 Olympic Games, but also the standard deviation of each of these groups, as a way to assess whether the difference is substantial relative to the variability within each group.
-
-## Adding error-bars to a bar chart
-
-For the purpose of this exercise, you will have two DataFrames: mens_rowing holds data about the medalists in the rowing events and mens_gymnastics will hold information about the medalists in the gymnastics events.
-
-## Adding error-bars to a bar chart
+Rotate the x-tick labels 90 degrees.
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}
 
 ```python
-fig, ax = plt.subplots()
 
-# Add a bar for the rowing "Height" column mean/std
-ax.bar("Rowing", mens_rowing["Height"].mean(), yerr=mens_rowing["Height"].std())
+# Create point plot
+sns.catplot(x="origin", 
+            y="acceleration", 
+            data=mpg, 
+            kind="point", 
+            join=False, 
+            capsize=0.1)
 
-# Add a bar for the gymnastics "Height" column mean/std
-ax.bar("Gymnastics", mens_gymnastics["Height"].mean(), yerr=mens_gymnastics["Height"].std())
+```
 
-# Label the y-axis
-ax.set_ylabel("Height (cm)")
+## Rotating x-tick labels
 
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Rotate x-tick labels
+plt.xticks(rotation=90)
+## ([0, 1, 2], [Text(0, 0, 'usa'), Text(1, 0, 'japan'), Text(2, 0, 'europe')])
+# Show plot
 plt.show()
 ```
 
-## Adding error-bars to a bar chart
+## Rotating x-tick labels
 
-![](../images/im244.png)
+![](../images/im308.png)
 
+## Box plot with subgroups
 
-## Adding error-bars to a plot
+In this exercise, we’ll look at the dataset containing responses from a survey given to young people. 
 
-Adding error-bars to a plot is done by using the errorbar method of the Axes object.
-
-## Adding error-bars to a plot
-
-Here, you have two DataFrames loaded: seattle_weather has data about the weather in Seattle and austin_weather has data about the weather in Austin. 
-
-Each DataFrame has a column "MONTH" that has the names of the months, a column "MLY-TAVG-NORMAL" that has the average temperature in each month and a column "MLY-TAVG-STDDEV" that has the standard deviation of the temperatures across years.
+One of the questions asked of the young people was: “Are you interested in having pets?” 
 
 
-## Adding error-bars to a plot
+## Box plot with subgroups
 
-In the exercise, you will plot the mean temperature across months and add the standard deviation at each point as y errorbars.
+Let’s explore whether the distribution of ages of those answering “yes” tends to be higher or lower than those answering “no”, controlling for gender.
 
-## Adding error-bars to a plot
+## Box plot with subgroups
+
+Set the color palette to "Blues".
+
+
+## Box plot with subgroups
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}
 
 ```python
-fig, ax = plt.subplots()
+survey_data = pd.read_csv("survey_data.csv")
+# Set palette to "Blues"
+sns.set_palette("Blues")
+```
 
-# Add the Seattle temperature data in each month with standard deviation error bars
-ax.errorbar(seattle_weather["MONTH"], seattle_weather["MLY-TAVG-NORMAL"], yerr=seattle_weather["MLY-TAVG-STDDEV"])
 
-# Add the Austin temperature data in each month with standard deviation error bars
-ax.errorbar(austin_weather["MONTH"], austin_weather["MLY-TAVG-NORMAL"], yerr=austin_weather["MLY-TAVG-STDDEV"])
+## Box plot with subgroups
 
-# Set the y-axis label
-ax.set_ylabel("Temperature (Fahrenheit)")
+Add subgroups to color the box plots based on "Interested in Pets".
 
+
+## Box plot with subgroups
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Adjust to add subgroups based on "Interested in Pets"
+g = sns.catplot(x="Gender",
+                y="Age", data=survey_data, 
+                kind="box", hue="Pets")
+```
+
+## Box plot with subgroups
+
+![](../images/im309.png)
+
+## Box plot with subgroups
+
+Set the title of the FacetGrid object g to "Age of Those Interested in Pets vs. Not".
+
+
+## Box plot with subgroups
+
+\AddToHookNext{env/Highlighting/begin}{\tiny}
+
+```python
+# Set title to "Age of Those Interested in Pets vs. Not"
+g.fig.suptitle("Age of Those Interested in Pets vs. Not")
+
+# Show plot
 plt.show()
 ```
 
+## Box plot with subgroups
+
+![](../images/im310.png)
 
 
-## Creating boxplots
+## Bar plot with subgroups and subplots
 
-Boxplots provide additional information about the distribution of the data that they represent. 
+In this exercise, we’ll return to our young people survey dataset and investigate whether the proportion of people who like techno music ("Likes Techno") varies by their gender ("Gender") or where they live ("Village - town"). 
 
-They tell us what the median of the distribution is, what the inter-quartile range is and also what the expected range of approximately 99% of the data should be. Outliers beyond this range are particularly highlighted.
+## Bar plot with subgroups and subplots
 
+This exercise will give us an opportunity to practice the many things we’ve learned throughout this course!
 
-## Creating boxplots
+## Bar plot with subgroups and subplots
 
-In this exercise, you will use the data about medalist heights that you previously visualized as histograms, and as bar charts with error bars, and you will visualize it as boxplots.
+Set the figure style to "dark".
 
-## Creating boxplots
+Adjust the bar plot code to add subplots based on "Gender", arranged in columns.
 
-Again, you will have the mens_rowing and mens_gymnastics DataFrames available to you, and both of these DataFrames have columns called "Height" that you will compare.
+Add the title "Percentage of Young People Who Like Techno" to this FacetGrid plot.
 
-## Creating boxplots
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-fig, ax = plt.subplots()
-
-# Add a boxplot for the "Height" column in the DataFrames
-ax.boxplot([mens_rowing["Height"], mens_gymnastics["Height"]])
-
-# Add x-axis tick labels:
-ax.set_xticklabels(["Rowing", "Gymnastics"])
-
-# Add a y-axis label
-ax.set_ylabel("Height (cm)")
-
-plt.show()
-```
-
-## Creating boxplots
-
-![](../images/im246.png)
+Label the x-axis "Location of Residence" and y-axis "% Who Like Techno".
 
 
-## Simple scatter plot
-
-Scatter are a bi-variate visualization technique. They plot each record in the data as a point. 
-
-The location of each point is determined by the value of two variables: the first variable determines the distance along the x-axis and the second variable determines the height along the y-axis.
-
-## Simple scatter plot
-
-In this exercise, you will create a scatter plot of the climate_change data. 
-
-This DataFrame, which is already loaded, has a column "co2" that indicates the measurements of carbon dioxide every month and another column, "relative_temp" that indicates the temperature measured at the same time.
-
-## Simple scatter plot
+## Bar plot with subgroups and subplots
 
 \AddToHookNext{env/Highlighting/begin}{\tiny}
 
 ```python
-fig, ax = plt.subplots()
+# Set the figure style to "dark"
+sns.set_style("dark")
 
-# Add data: "co2" on x-axis, "relative_temp" on y-axis
-ax.scatter(climate_change["co2"], climate_change["relative_temp"])
+# Adjust to add subplots per gender
+g = sns.catplot(x="Village - town", y="Likes Techno", 
+                data=survey_data, kind="bar",
+                col="Gender")
 
-# Set the x-axis label to "CO2 (ppm)"
-ax.set_xlabel("CO2 (ppm)")
-
-# Set the y-axis label to "Relative temperature (C)"
-ax.set_ylabel("Relative temperature (C)")
-
-plt.show()
+# Add title and axis labels
+g.fig.suptitle("Percentage of Young People Who Like Techno", y=1.02)
+g.set(xlabel="Location of Residence", 
+      ylabel="% Who Like Techno")
 ```
 
-## Simple scatter plot
+## Box plot with subgroups
 
-![](../images/im247.png)
-
-
-## Encoding time by color
-
-The screen only has two dimensions, but we can encode another dimension in the scatter plot using color. 
-
-Here, we will visualize the climate_change dataset, plotting a scatter plot of the "co2" column, on the x-axis, against the "relative_temp" column, on the y-axis. 
-
-
-## Encoding time by color
-
-We will encode time using the color dimension, with earlier times appearing as darker shades of blue and later times appearing as brighter shades of yellow.
-
-## Encoding time by color
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-fig, ax = plt.subplots()
-
-# Add data: "co2", "relative_temp" as x-y, index as color
-ax.scatter(climate_change["co2"], climate_change["relative_temp"], c=climate_change.index)
-
-# Set the x-axis label to "CO2 (ppm)"
-ax.set_xlabel("CO2 (ppm)")
-
-# Set the y-axis label to "Relative temperature (C)"
-ax.set_ylabel("Relative temperature (C)")
-
-plt.show()
-```
-
-## Encoding time by color
-
-![](../images/im248)
-
-
-# Sharing visualizations with others
-
-## Switching between styles
-
-Selecting a style to use affects all of the visualizations that are created after this style is selected.
-
-Here, you will practice plotting data in two different styles. 
-
-## Switching between styles
-
-The data you will use is the same weather data we used in the first lesson: you will have available to you the DataFrame seattle_weather and the DataFrame austin_weather, both with records of the average temperature in every month.
-
-## Switching between styles
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-# Use the "ggplot" style and create new Figure/Axes
-plt.style.use('ggplot')
-fig, ax = plt.subplots()
-ax.plot(seattle_weather["MONTH"], seattle_weather["MLY-TAVG-NORMAL"])
-plt.show()
-```
-
-## Switching between styles
-
-![](../images/im249.png)
-
-## Switching between styles
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-# Use the "Solarize_Light2" style and create new Figure/Axes
-plt.style.use('Solarize_Light2')
-fig, ax = plt.subplots()
-ax.plot(austin_weather["MONTH"], austin_weather["MLY-TAVG-NORMAL"])
-plt.show()
-```
-
-
-## Switching between styles
-
-![](../images/im250.png)
-
-## Saving a file several times
-
-If you want to share your visualizations with others, you will need to save them into files. Matplotlib provides as way to do that, through the savefig method of the Figure object. 
-
-## Saving a file several times
-
-In this exercise, you will save a figure several times. 
-
-Each time setting the parameters to something slightly different. 
-
-
-
-## Saving a file several times
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-plt.style.use("default")
-fig, ax = plt.subplots()
-ax.bar(medals.index, medals["Gold"])
-ax.set_xticklabels(medals.index, rotation=90)
-ax.set_ylabel("Number of medals")
-
-# Show the figure
-plt.show()
-```
-
-## Saving a file several times
-
-![](../images/im251.png)
-
-
-# Save as a PNG file
-
-## Save as a PNG file
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-fig.savefig('my_figure.png')
-
-# Save as a PNG file with 300 dpi
-fig.savefig('my_figure_300dpi.png', dpi=300)
-```
-
-
-## Save a figure with different sizes
-
-Before saving your visualization, you might want to also set the size that the figure will have on the page. 
-
-To do so, you can use the Figure object’s set_size_inches method. This method takes a sequence of two values. 
-
-
-## Save a figure with different sizes
-
-
-The first sets the width and the second sets the height of the figure.
-
-Here, you will again have a Figure object called fig already provided (you can run plt.show if you want to see its contents). 
-
-
-
-## Save a figure with different sizes
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-# Set figure dimensions and save as a PNG
-fig.set_size_inches([3, 5])
-fig.savefig('figure_3_5.png')
-# Set figure dimensions and save as a PNG
-fig.set_size_inches([5, 3])
-fig.savefig('figure_5_3.png')
-```
-
-
-
-## Unique values of a column
-
-One of the main strengths of Matplotlib is that it can be automated to adapt to the data that it receives as input.
-
-For example, if you receive data that has an unknown number of categories, you can still create a bar plot that has bars for each category.
-
-
-## Unique values of a column
-
-In this exercise and the next, you will be visualizing the weight of athletes in the 2016 summer Olympic Games again, from a dataset that has some unknown number of branches of sports in it. 
-
-
-## Unique values of a column
-
-This will be loaded into memory as a pandas DataFrame object called summer_2016_medals, which has a column called "Sport" that tells you to which branch of sport each row corresponds. 
-
-There is also a "Weight" column that tells you the weight of each athlete.
-
-In this exercise, we will extract the unique values of the "Sport" column
-
-## Unique values of a column
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-# Extract the "Sport" column
-sports_column = summer_2016_medals["Sport"]
-
-# Find the unique values of the "Sport" column
-sports = sports_column.unique()
-
-# Print out the unique sports values
-print(sports)
-```
-
-
-
-## Automate your visualization
-
-One of the main strengths of Matplotlib is that it can be automated to adapt to the data that it receives as input. 
-
-For example, if you receive data that has an unknown number of categories, you can still create a bar plot that has bars for each category.
-
-
-## Automate your visualization
-
-This is what you will do in this exercise. 
-
-You will be visualizing data about medal winners in the 2016 summer Olympic Games again, but this time you will have a dataset that has some unknown number of branches of sports in it. 
-
-## Automate your visualization
-
-This will be loaded into memory as a pandas DataFrame object called summer_2016_medals, which has a column called "Sport" that tells you to which branch of sport each row corresponds. 
-
-There is also a "Weight" column that tells you the weight of each athlete.
-
-## Automate your visualization
-
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-fig, ax = plt.subplots()
-
-# Loop over the different sports branches
-for sport in sports:
-  # Extract the rows only for this sport
-  sport_df = summer_2016_medals[summer_2016_medals["Sport"] == sport]
-  # Add a bar for the "Weight" mean with std y error bar
-  ax.bar(sport, sport_df["Weight"].mean(), yerr=sport_df["Weight"].std())
-```
-
-## Automate your visualization
-
-\AddToHookNext{env/Highlighting/begin}{\tiny}
-
-```python
-ax.set_ylabel("Weight")
-ax.set_xticklabels(sports, rotation=90)
-
-# Save the figure to file
-fig.savefig("sports_weights.png")
-```
-
-
-## Automate your visualization
-
-
-
-![](../images/im252.png)
+![](../images/im311.png)
