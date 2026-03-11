@@ -1,0 +1,523 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codeblue}{HTML}{1565C0}
+
+\lstdefinestyle{rstyle}{
+  language=R, backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,
+  stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,
+  breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=2,
+  morekeywords={library,ggplot,aes,geom_point,geom_line,geom_col,geom_smooth,
+    geom_histogram,geom_boxplot,scale_color_manual,scale_x_log10,
+    facet_wrap,theme_minimal,theme,element_text,labs,coord_flip}
+}
+\lstdefinestyle{pythonstyle}{
+  language=Python, backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,
+  stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,
+  breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=4,
+  morekeywords={import,from,as,pd,plt,sns,np,fig,ax,ggplot,geom_point,
+    geom_line,geom_col,geom_smooth,aes,theme_minimal,labs,facet_wrap}
+}
+
+\title{Wilkinson's Grammar of Graphics: Theory}
+\subtitle{Workshop 2 --- Module 1}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% ================================================================
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item The problem with chart catalogues
+    \item Wilkinson's seven-layer specification
+    \item The algebra of graphics: data $\times$ aesthetics $\times$ geometry
+    \item Layered construction: building plots incrementally
+    \item Wilkinson (1999) vs Wickham (2010): theory to implementation
+  \end{enumerate}
+  \begin{exampleblock}{Learning Outcome}
+    You will understand the Grammar of Graphics as a \emph{compositional
+    system} rather than a chart catalogue, and be able to decompose any
+    chart into its constituent layers.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\section{The Problem with Chart Catalogues}
+% ================================================================
+
+\begin{frame}{Traditional Approach: Memorise Chart Types}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w02m01/traditional_vs_grammar}
+  \end{center}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Why Catalogues Fail}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{The catalogue approach:}
+      \begin{itemize}
+        \item Finite list of named chart types
+        \item Each type has its own API/function
+        \item Novel combinations require new types
+        \item No systematic way to modify one aspect
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{The grammar approach:}
+      \begin{itemize}
+        \item Small set of composable components
+        \item Components combine freely with ``+''
+        \item Novel charts emerge naturally
+        \item Change one layer without rebuilding
+      \end{itemize}
+    \end{column}
+  \end{columns}
+
+  \vspace{6pt}
+  \begin{exampleblock}{Data Insight}
+    A grammar generates an \emph{infinite} set of charts from a finite
+    set of rules --- exactly as a natural language grammar generates
+    infinite sentences from finite vocabulary and syntax.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\section{The Seven Layers}
+% ================================================================
+
+\begin{frame}{Wilkinson's Seven-Layer Specification}
+  \begin{center}
+    \includegraphics[width=0.78\textwidth]{figures_w02m01/seven_layers}
+  \end{center}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Layer 1: Data + Aesthetics}
+  \begin{columns}[T]
+    \begin{column}{0.55\textwidth}
+      The foundation: map \textbf{data variables} to \textbf{visual channels}.
+
+      \vspace{4pt}
+      \centering
+      \begin{tabular}{ll}
+        \toprule
+        \textbf{Variable} & \textbf{Channel} \\
+        \midrule
+        GDP          & x position \\
+        Life Expectancy & y position \\
+        Continent    & colour (hue) \\
+        Population   & size \\
+        Year         & animation frame \\
+        \bottomrule
+      \end{tabular}
+    \end{column}
+    \begin{column}{0.42\textwidth}
+      \begin{alertblock}{Pro-Tip}
+        The aesthetic mapping is the single
+        most important decision. A chart is
+        only as good as its variable-to-channel
+        assignment. Revisit Cleveland \& McGill
+        (W01-M03) to choose the best channel.
+      \end{alertblock}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Layer 2: Geometries}
+  \textbf{Geometries} are the visual marks that represent data:
+
+  \vspace{4pt}
+  \centering
+  \begin{tabular}{llp{4.5cm}}
+    \toprule
+    \textbf{Geom} & \textbf{Mark} & \textbf{Best For} \\
+    \midrule
+    \texttt{geom\_point}     & Circle/dot    & Relationships (scatter) \\
+    \texttt{geom\_line}      & Connected line & Temporal trends \\
+    \texttt{geom\_col/bar}   & Rectangle     & Comparisons \\
+    \texttt{geom\_histogram} & Binned rect.  & Distributions \\
+    \texttt{geom\_boxplot}   & Box + whisker & Group summaries \\
+    \texttt{geom\_area}      & Filled region & Cumulative / stacked \\
+    \texttt{geom\_tile}      & Coloured cell & Heatmaps \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{6pt}
+  \begin{exampleblock}{Data Insight}
+    The geometry is \emph{not} the chart type --- it is one layer of the
+    chart. Multiple geometries can be stacked: \texttt{geom\_point() +
+    geom\_smooth()} is two layers on one axes.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Same Data, Different Geometry}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w02m01/same_data_diff_geom}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    The data and aesthetic mapping are identical across all three panels.
+    Only the geometry changes. This is the power of the grammar: swap one
+    layer without rewriting anything else.
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Layers 3--5: Scales, Statistics, Facets}
+  \begin{columns}[T]
+    \begin{column}{0.32\textwidth}
+      \textbf{3. Scales}
+
+      Map data values to visual
+      properties:
+
+      \begin{itemize}
+        \item Continuous $\rightarrow$ position
+        \item Discrete $\rightarrow$ colour hue
+        \item Log transform
+        \item Date formatting
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.32\textwidth}
+      \textbf{4. Statistics}
+
+      Transform data before
+      rendering:
+
+      \begin{itemize}
+        \item \texttt{stat\_bin} (histogram)
+        \item \texttt{stat\_smooth} (LOESS)
+        \item \texttt{stat\_summary} (mean)
+        \item \texttt{stat\_count} (bar)
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.32\textwidth}
+      \textbf{5. Facets}
+
+      Split data into panels
+      by a categorical variable:
+
+      \begin{itemize}
+        \item \texttt{facet\_wrap}
+        \item \texttt{facet\_grid}
+        \item Shared or free scales
+        \item Tufte's small multiples
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Layers 6--7: Coordinates \& Themes}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{6. Coordinate System}
+
+      Defines the geometry of the plane:
+
+      \begin{itemize}
+        \item \texttt{coord\_cartesian} (default)
+        \item \texttt{coord\_flip} (swap x/y)
+        \item \texttt{coord\_polar} (pie, coxcomb)
+        \item \texttt{coord\_sf} (map projection)
+      \end{itemize}
+
+      \vspace{4pt}
+      {\small A bar chart in Cartesian is bars;
+      the same bar chart in polar is a pie chart.
+      Only the coordinate system changed.}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{7. Theme}
+
+      Controls all non-data visual elements:
+
+      \begin{itemize}
+        \item Fonts: family, size, weight
+        \item Backgrounds: panel, plot, strip
+        \item Gridlines: major, minor
+        \item Legend: position, box, key
+      \end{itemize}
+
+      \vspace{4pt}
+      {\small Themes are separable from the data
+      encoding --- change the theme without
+      touching the analysis.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Same Data, Different Aesthetic Strategy}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w02m01/same_data_diff_aes}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    Colour and faceting are both valid ways to encode a grouping
+    variable. Colour keeps all data on one panel (good for $\leq$3
+    groups); faceting separates panels (better for $>$3 groups or
+    when groups overlap heavily).
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\section{The Algebra of Graphics}
+% ================================================================
+
+\begin{frame}{Data $\times$ Aesthetics $\times$ Geometry = Chart}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w02m01/algebra}
+  \end{center}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Wilkinson's Specification Pipeline}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w02m01/specification_pipeline}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    Wilkinson's pipeline is a formal specification: Variables $\rightarrow$
+    Algebra $\rightarrow$ Scales $\rightarrow$ Statistics $\rightarrow$
+    Geometry $\rightarrow$ Coordinates $\rightarrow$ Aesthetics (rendering).
+    Each step is independent and can be modified without affecting the others.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\section{Layered Construction}
+% ================================================================
+
+\begin{frame}{Building a Plot Layer by Layer}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w02m01/layering}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    Start with data + axes (see the variable ranges), add geometry
+    (see the data), add statistics (see the pattern), then polish with
+    labels and theme. This ``progressive reveal'' mirrors the design
+    process from W01-M06.
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Layered Construction in R (ggplot2)}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+library(ggplot2)
+
+# Layer 1: data + aesthetics
+ggplot(mpg,
+  aes(x = displ, y = hwy,
+      color = class)) +
+
+# Layer 2: geometry
+  geom_point(size = 2,
+             alpha = 0.6) +
+
+# Layer 3: statistic
+  geom_smooth(method = "lm",
+              se = TRUE,
+              color = "grey40") +
+
+# Layer 4: scale
+  scale_color_brewer(
+    palette = "Set2") +
+
+# Layer 5: labels + theme
+  labs(title = "Displacement vs MPG",
+       x = "Engine (L)",
+       y = "Highway MPG") +
+  theme_minimal(base_size = 11)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_w02m01/r_layered}
+
+      \vspace{4pt}
+      {\small Each \texttt{+} adds one layer.
+      The order of layers determines
+      the drawing order (first layer
+      drawn first, behind later layers).}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Layered Construction in Python (plotnine)}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+from plotnine import *
+import pandas as pd
+
+# plotnine uses identical syntax
+# to R's ggplot2
+
+(
+  ggplot(mpg,
+    aes(x="displ", y="hwy",
+        color="class"))
+
+  # Layer 2: geometry
+  + geom_point(size=2, alpha=0.6)
+
+  # Layer 3: statistic
+  + geom_smooth(method="lm",
+                se=True,
+                color="grey")
+
+  # Layer 4: scale
+  + scale_color_brewer(
+      type="qual",
+      palette="Set2")
+
+  # Layer 5: labels + theme
+  + labs(title="Displacement vs MPG",
+         x="Engine (L)",
+         y="Highway MPG")
+  + theme_minimal()
+)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_w02m01/py_plotnine}
+
+      \vspace{4pt}
+      {\small \texttt{plotnine} is a near-exact
+      port of ggplot2 to Python. The
+      only syntax difference: strings
+      for column names instead of bare
+      symbols, and \texttt{+} at the start
+      of each line (Python line
+      continuation).}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\section{Wilkinson vs Wickham}
+% ================================================================
+
+\begin{frame}{Theory (1999) vs Implementation (2010)}
+  \begin{center}
+    \includegraphics[width=0.85\textwidth]{figures_w02m01/wilkinson_vs_wickham}
+  \end{center}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Wickham's Key Contributions}
+  Wickham's 2010 paper and the \texttt{ggplot2} package extended
+  Wilkinson's theory with four practical innovations:
+
+  \begin{enumerate}
+    \item \textbf{Layered architecture}: multiple geom/stat pairs stacked
+          on a single axes via \texttt{+}, each with its own aesthetic
+          mapping if needed
+    \item \textbf{Position adjustments}: \texttt{dodge}, \texttt{stack},
+          \texttt{fill}, \texttt{jitter} --- modify the placement of
+          marks without changing the geometry
+    \item \textbf{Default statistics}: each geom has a default stat
+          (\texttt{geom\_bar} defaults to \texttt{stat\_count}), reducing
+          boilerplate
+    \item \textbf{Theme system}: a complete separation of data encoding
+          from visual styling, enabling one-line theme swaps
+  \end{enumerate}
+
+  \begin{alertblock}{Pro-Tip}
+    Read Wickham (2010) as the ``user manual'' for the grammar. Read
+    Wilkinson (1999/2005) for the ``why'' behind the design.
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\section{Synthesis}
+% ================================================================
+
+\begin{frame}{Decomposing Any Chart into Grammar Components}
+  \textbf{Exercise}: decompose a grouped bar chart into its layers.
+
+  \vspace{4pt}
+  \centering
+  \begin{tabular}{ll}
+    \toprule
+    \textbf{Layer} & \textbf{Specification} \\
+    \midrule
+    Data        & sales data frame (product, quarter, revenue) \\
+    Aesthetics  & x = quarter, y = revenue, fill = product \\
+    Geometry    & \texttt{geom\_col(position = "dodge")} \\
+    Scale       & \texttt{scale\_fill\_brewer(palette = "Set2")} \\
+    Statistics  & identity (raw values, no transformation) \\
+    Facets      & none (single panel) \\
+    Coordinates & Cartesian (default) \\
+    Theme       & \texttt{theme\_minimal()} \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{6pt}
+  {\small Changing any single row produces a different chart. Change
+  geometry to \texttt{geom\_line()} $\rightarrow$ line chart. Change
+  coordinates to \texttt{coord\_polar()} $\rightarrow$ radial bar.
+  Change facets to \texttt{facet\_wrap(\textasciitilde{}product)}
+  $\rightarrow$ small multiples.}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Key Takeaways}
+  \begin{enumerate}
+    \item The Grammar of Graphics replaces a \textbf{chart catalogue}
+          with a \textbf{compositional system}: data + aesthetics +
+          geometry + scales + statistics + facets + coordinates + theme.
+    \item The \textbf{algebra} Data $\times$ Aesthetics $\times$ Geometry
+          generates infinite chart types from finite components.
+    \item \textbf{Layered construction} builds plots incrementally:
+          each \texttt{+} adds one component. Start with data, end with theme.
+    \item The same data and aesthetics with a \textbf{different geometry}
+          produce a different chart --- swap one layer, keep the rest.
+    \item \textbf{ggplot2} (R) and \textbf{plotnine} (Python) implement
+          the grammar with near-identical syntax.
+  \end{enumerate}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Essential Readings for This Module}
+  \begin{itemize}
+    \item Wilkinson, L. (2005). \emph{The Grammar of Graphics}, 2nd ed.,
+          Chapters 1--2 (Introduction, How to Make a Pie).
+    \item Wickham, H. (2010). ``A Layered Grammar of Graphics.''
+          \emph{Journal of Computational and Graphical Statistics}, 19(1), 3--28.
+    \item Wickham, H. (2016). \emph{ggplot2: Elegant Graphics for Data
+          Analysis}, 2nd ed., Chapter 1 (Getting Started).
+    \item Wilke, C.~O. (2019). \emph{Fundamentals of Data Visualization},
+          Chapter 2 (Visualizing Data: Mapping Data onto Aesthetics).
+  \end{itemize}
+
+  \vspace{6pt}
+  \textbf{Next Module}: Wickham's Layered Grammar \& ggplot2 (W02-M02)
+\end{frame}
+
+\end{document}
