@@ -1,0 +1,887 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{tikz}
+
+% ── Listing styles ──────────────────────────────────────────────
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codepurple}{HTML}{7B1FA2}
+\definecolor{codeblue}{HTML}{1565C0}
+
+\lstdefinestyle{rstyle}{
+  language=R,
+  backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,
+  stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{codegray!30},
+  showstringspaces=false,
+  tabsize=2,
+  morekeywords={library,ggplot,aes,geom_bar,geom_col,geom_text,geom_point,
+    coord_flip,theme_tufte,theme_minimal,labs,scale_y_continuous,
+    element_blank,element_line,fct_reorder,mutate}
+}
+
+\lstdefinestyle{pythonstyle}{
+  language=Python,
+  backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,
+  stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{codegray!30},
+  showstringspaces=false,
+  tabsize=4,
+  morekeywords={import,from,as,pd,plt,sns,np,fig,ax,set_visible}
+}
+
+% ── Metadata ────────────────────────────────────────────────────
+\title{Tufte's Principles of Graphical Excellence}
+\subtitle{Workshop 1 --- Module 2}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+
+\begin{document}
+
+% ================================================================
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% ================================================================
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item The data-ink ratio: theory and application
+    \item Chartjunk: a taxonomy of visual noise
+    \item The lie factor: graphical integrity
+    \item Small multiples and sparklines
+    \item Integration of text, numbers, and graphics
+  \end{enumerate}
+
+  \begin{exampleblock}{Learning Outcome}
+    You will be able to evaluate any chart against Tufte's core
+    principles and systematically improve its data-ink ratio.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\section{The Data-Ink Ratio}
+% ================================================================
+
+\begin{frame}{Tufte's Central Principle}
+  \begin{center}
+    \includegraphics[width=0.85\textwidth]{figures_m02/data_ink_formula}
+  \end{center}
+
+  \vspace{4pt}
+  Two operational corollaries:
+  \begin{enumerate}
+    \item Above all else, \textbf{show the data}.
+    \item Erase non-data ink, within reason.
+  \end{enumerate}
+
+  \vspace{4pt}
+  \emph{Source: Tufte, E.~R. (1983). The Visual Display of Quantitative
+  Information, pp.~93--96.}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Progressive Data-Ink Maximisation}
+  \begin{center}
+    \includegraphics[width=\textwidth]{figures_m02/data_ink_steps}
+  \end{center}
+
+  \begin{alertblock}{Pro-Tip}
+    Apply the ``eraser'' iteratively: remove one element, check if
+    anything is lost. If not, it was non-data ink.
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{The Range-Frame: Tufte's Axis Innovation}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m02/range_frame}
+  \end{center}
+
+  \begin{exampleblock}{Data Insight}
+    In a range-frame the axis line extends only from the data minimum to
+    the data maximum. The axis itself becomes a data display showing
+    range, not an arbitrary container.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Data-Ink Reduction in R}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+library(ggplot2)
+library(ggthemes) # theme_tufte()
+
+# Standard ggplot bar chart
+p <- ggplot(mpg_counts,
+       aes(x = fct_reorder(class, n),
+           y = n)) +
+  geom_col(fill = "#1565C0",
+           width = 0.6) +
+  geom_text(aes(label = n),
+            hjust = -0.2,
+            size = 3) +
+  coord_flip() +
+  # Apply Tufte theme: removes
+  # gridlines, axis ticks, borders
+  theme_tufte(base_size = 11) +
+  labs(x = NULL, y = "Count",
+       title = "Vehicle Class")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_m02/r_data_ink}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Data-Ink Reduction in Python}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots()
+ax.barh(cats, vals,
+        color="#2E7D32",
+        height=0.5)
+
+# Direct labels — no legend needed
+for i, v in enumerate(vals):
+    ax.text(v + 0.8, i, str(v),
+            va="center", fontsize=8)
+
+# Tufte-style spine removal
+ax.spines["top"].set_visible(False)
+ax.spines["right"].set_visible(False)
+ax.spines["left"].set_visible(False)
+ax.tick_params(left=False)
+ax.grid(axis="x", alpha=0.15)
+
+ax.set_xlabel("Count")
+plt.tight_layout()
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_m02/py_data_ink}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\section{Chartjunk}
+% ================================================================
+
+\begin{frame}{Tufte's Chartjunk Taxonomy}
+  Chartjunk consists of visual elements that do not convey data:
+  \begin{enumerate}
+    \item \textbf{Moir\'{e} vibration} --- dense hatching patterns that
+          flicker and distract the eye
+    \item \textbf{The grid} --- heavy gridlines that compete with data
+          marks for visual attention
+    \item \textbf{The duck} --- decorative images and clip-art that
+          overwhelm the actual data
+  \end{enumerate}
+
+  \vspace{6pt}
+  \emph{``Chartjunk does not achieve the goals of its propagators.
+  The overwhelming fact of data graphics is that they stand or fall
+  on their content.''} --- Tufte (1983), p.~121
+\end{frame}
+
+% ================================================================
+\begin{frame}{Moir\'{e} Vibration}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{figures_m02/moire}
+  \end{center}
+
+  \begin{alertblock}{Pro-Tip}
+    Never use crosshatching to distinguish categories. Distinct hues at
+    moderate saturation are perceptually superior and accessible.
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{The Duck: Decoration vs.\ Data}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{figures_m02/duck_vs_data}
+  \end{center}
+
+  \begin{exampleblock}{Data Insight}
+    Tufte borrows ``the duck'' from architecture (Venturi et al., 1972):
+    a building shaped like a duck to advertise a duck shop. In data
+    graphics the decoration becomes the message, displacing the data.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{The 3-D Pie: Chartjunk in Action}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \includegraphics[width=\textwidth]{figures_m02/chartjunk_3d_pie}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \includegraphics[width=\textwidth]{figures_m02/chartjunk_fixed}
+    \end{column}
+  \end{columns}
+
+  \vspace{4pt}
+  Problems with 3-D pies:
+  \begin{itemize}
+    \item Perspective distorts angular area (rear slices appear smaller)
+    \item Shadow and explosion add non-data ink
+    \item Humans compare lengths far better than angles
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Removing Chartjunk in R}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+# BEFORE: default bar with grid
+ggplot(df, aes(x = cat, y = val)) +
+  geom_bar(stat = "identity",
+           fill = "skyblue",
+           color = "black")
+  # heavy gridlines by default
+
+# AFTER: Tufte-style cleanup
+ggplot(df, aes(x = fct_reorder(cat,
+               val), y = val)) +
+  geom_col(fill = "#1565C0",
+           width = 0.6) +
+  coord_flip() +
+  theme_minimal() +
+  theme(
+    panel.grid.major.y =
+      element_blank(),
+    panel.grid.minor =
+      element_blank()
+  )
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_m02/r_data_ink}
+
+      \vspace{4pt}
+      {\small Key changes:
+      flip to horizontal,
+      remove y-grid,
+      direct-label bars.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Removing Chartjunk in Python}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+# BEFORE: default matplotlib bar
+fig, ax = plt.subplots()
+ax.bar(cats, vals)
+# black border, grey background
+
+# AFTER: systematic cleanup
+fig, ax = plt.subplots()
+ax.barh(cats, vals,
+        color="#2E7D32", height=0.5)
+
+# Remove 3 of 4 spines
+for sp in ["top","right","left"]:
+    ax.spines[sp].set_visible(False)
+
+# Replace y-axis with direct labels
+ax.tick_params(left=False)
+for i, v in enumerate(vals):
+    ax.text(v+0.8, i, str(v),
+            va="center")
+
+ax.grid(axis="x", alpha=0.15)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_m02/py_data_ink}
+
+      \vspace{4pt}
+      {\small Python requires explicit
+      spine removal; R's \texttt{theme\_tufte()}
+      handles it declaratively.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\section{Graphical Integrity}
+% ================================================================
+
+\begin{frame}{The Lie Factor}
+  \begin{center}
+    \Large
+    $\displaystyle \text{Lie Factor} = \frac{\text{Size of effect in graphic}}{\text{Size of effect in data}}$
+  \end{center}
+
+  \vspace{6pt}
+  \begin{itemize}
+    \item Lie factor = 1.0 means the visual change matches the data change
+    \item Values outside $[0.95,\; 1.05]$ signal distortion
+    \item Most common sources: truncated axes, area-encoded bars,
+          perspective projections
+  \end{itemize}
+
+  \begin{alertblock}{Pro-Tip}
+    Calculate the lie factor explicitly: measure the percentage change in
+    the visual encoding (height, area, position) and divide by the
+    percentage change in the data. Report it alongside your chart.
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Lie Factor: Detailed Example}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m02/lie_factor_detail}
+  \end{center}
+
+  \begin{exampleblock}{Data Insight}
+    When bubble \emph{area} encodes a 7.5\% increase but the
+    \emph{visual} impression suggests 150\% growth, the lie factor is
+    $150/7.5 = 20$. Bar charts from zero keep the lie factor near 1.0.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Truncated Axes: The Most Common Lie}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{figures_m02/truncated_axis}
+  \end{center}
+
+  \begin{itemize}
+    \item A 2.8\% revenue increase appears ``dramatic'' on a truncated axis
+    \item The same data on a zero-based axis reveals stability
+    \item Context determines when a non-zero baseline is legitimate
+          (e.g., temperature anomalies)
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Detecting Lie Factors in R}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+# Compute lie factor for a chart
+# where bar heights represent values
+
+data_effect <- (new_val - old_val) /
+               old_val * 100
+
+# Measure visual effect:
+# pixel height of new bar vs old bar
+visual_effect <-
+  (new_px - old_px) / old_px * 100
+
+lie_factor <- visual_effect /
+              data_effect
+
+cat("Data change:", data_effect, "%")
+cat("Visual change:",
+    visual_effect, "%")
+cat("Lie factor:", lie_factor)
+
+# Rule of thumb:
+# 0.95 <= lie_factor <= 1.05
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \textbf{Worked example:}
+
+      \begin{tabular}{lr}
+        \toprule
+        Metric & Value \\
+        \midrule
+        Old value    & \$982M \\
+        New value    & \$1,010M \\
+        Data $\Delta$    & 2.85\% \\
+        \midrule
+        Old bar (px) & 10 px \\
+        New bar (px) & 50 px \\
+        Visual $\Delta$  & 400\% \\
+        \midrule
+        \textbf{Lie Factor} & \textbf{140.4} \\
+        \bottomrule
+      \end{tabular}
+
+      \vspace{6pt}
+      {\small Truncating the y-axis from 975
+      inflated a 2.85\% change to 400\%.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Fixing Lie Factors in Python}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+import matplotlib.pyplot as plt
+
+quarters = ["Q1","Q2","Q3","Q4"]
+revenue = [982, 995, 1003, 1010]
+
+fig, ax = plt.subplots()
+
+# FIX 1: start y-axis from zero
+ax.bar(quarters, revenue,
+       color="#1565C0", width=0.5)
+ax.set_ylim(0, 1200)
+
+# FIX 2: add direct labels
+for i, v in enumerate(revenue):
+    ax.text(i, v + 15, f"${v}M",
+            ha="center", fontsize=8)
+
+# FIX 3: remove non-data ink
+ax.spines["top"].set_visible(False)
+ax.spines["right"].set_visible(False)
+
+ax.set_ylabel("Revenue ($M)")
+plt.tight_layout()
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \textbf{Three-step fix:}
+
+      \begin{enumerate}
+        \item Set \texttt{ylim(0, max)} to anchor
+              the baseline at zero
+        \item Add direct value labels so readers
+              do not estimate from the axis
+        \item Remove non-data spines to maximise
+              the data-ink ratio
+      \end{enumerate}
+
+      \vspace{4pt}
+      {\small Result: lie factor drops from
+      $\sim$140 to $\sim$1.0.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\section{Small Multiples \& Sparklines}
+% ================================================================
+
+\begin{frame}{Small Multiples}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m02/small_multiples}
+  \end{center}
+
+  \begin{exampleblock}{Data Insight}
+    By repeating the same design structure across panels, the viewer's
+    eye is trained once and then compares freely. The design drops out;
+    variation in the data emerges.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Small Multiples in R}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+# facet_wrap creates small multiples
+ggplot(df, aes(x = month,
+               y = revenue)) +
+  geom_line(color = "#1565C0",
+            linewidth = 0.8) +
+  geom_area(fill = "#1565C0",
+            alpha = 0.08) +
+  facet_wrap(~region, ncol = 3,
+             scales = "fixed") +
+  theme_minimal(base_size = 9) +
+  theme(
+    strip.text =
+      element_text(face = "bold"),
+    panel.grid.minor =
+      element_blank()
+  ) +
+  labs(x = NULL, y = "Revenue ($K)")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \textbf{Design rules:}
+
+      \begin{itemize}
+        \item Use \texttt{scales = "fixed"} so
+              panels share the same y-axis
+        \item Facet label replaces a legend
+        \item Minimal grid: y-axis only
+        \item Consistent colour across panels
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Small Multiples in Python}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+import matplotlib.pyplot as plt
+
+fig, axes = plt.subplots(
+    2, 3, figsize=(10, 5),
+    sharey=True  # fixed y-scale
+)
+
+for ax, region in zip(
+    axes.flatten(), regions):
+
+    ax.plot(months, data[region],
+            color="#1565C0", lw=1.5)
+    ax.fill_between(
+        months, data[region],
+        alpha=0.08, color="#1565C0")
+    ax.set_title(region,
+                 fontsize=9,
+                 fontweight="bold")
+
+    # Tufte cleanup
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+plt.tight_layout()
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \textbf{Python equivalent:}
+
+      \begin{itemize}
+        \item \texttt{sharey=True} ensures shared
+              scale (like \texttt{scales="fixed"})
+        \item Loop over axes and data
+        \item Spine removal must be explicit
+              per subplot
+        \item \texttt{tight\_layout()} prevents
+              label overlap
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Sparklines: Word-Sized Graphics}
+  \begin{center}
+    \includegraphics[width=0.75\textwidth]{figures_m02/sparklines}
+  \end{center}
+
+  \begin{exampleblock}{Data Insight}
+    Tufte introduced sparklines as ``intense, simple, word-sized
+    graphics'' (2006, p.~7). They embed temporal context directly in
+    text or tables, eliminating the need for separate chart real-estate.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Sparklines in R}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+# Using ggplot2 for sparkline panels
+library(ggplot2)
+
+ggplot(weekly_data,
+       aes(x = week, y = value)) +
+  geom_line(color = "#1565C0",
+            linewidth = 0.6) +
+  # Mark endpoints
+  geom_point(
+    data = endpoints,
+    aes(color = type),
+    size = 2) +
+  scale_color_manual(
+    values = c(min = "#E53935",
+               max = "#2E7D32",
+               end = "#1565C0")) +
+  facet_wrap(~metric, ncol = 1,
+             scales = "free_y") +
+  theme_void() +  # total erasure
+  theme(strip.text =
+    element_text(hjust = 0))
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \textbf{\texttt{theme\_void()}} erases:
+      \begin{itemize}
+        \item All axes and ticks
+        \item All gridlines
+        \item All background elements
+      \end{itemize}
+
+      \vspace{4pt}
+      Only the data line and three marker
+      points remain: minimum (red), maximum
+      (green), and current value (blue).
+
+      \vspace{4pt}
+      {\small Alternative: \texttt{sparkline}
+      package for inline HTML sparklines
+      in RMarkdown/Quarto.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Sparklines in Python}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+import matplotlib.pyplot as plt
+import numpy as np
+
+fig, axes = plt.subplots(
+    4, 1, figsize=(5, 4))
+
+for ax, metric in zip(
+    axes, metrics):
+    data = series[metric]
+
+    ax.plot(data, color="#1565C0",
+            linewidth=1.0)
+
+    # Mark min, max, endpoint
+    ax.plot(np.argmin(data),
+            data.min(), "o",
+            color="#E53935", ms=4)
+    ax.plot(np.argmax(data),
+            data.max(), "o",
+            color="#2E7D32", ms=4)
+
+    # Strip ALL non-data elements
+    ax.set_xticks([])
+    ax.set_yticks([])
+    for sp in ax.spines.values():
+        sp.set_visible(False)
+
+    ax.set_ylabel(metric,
+        rotation=0, labelpad=50)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \textbf{Design pattern:}
+
+      \begin{enumerate}
+        \item Plot the line (data only)
+        \item Add exactly 3 marker points
+        \item Remove \emph{all} spines, ticks,
+              gridlines
+        \item Use \texttt{set\_ylabel} with
+              \texttt{rotation=0} for row labels
+      \end{enumerate}
+
+      \vspace{4pt}
+      {\small Data-ink ratio approaches 1.0:
+      every pixel is either the trend line
+      or a key data point.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\section{Integration}
+% ================================================================
+
+\begin{frame}{Words and Graphics Belong Together}
+  \begin{center}
+    \includegraphics[width=0.82\textwidth]{figures_m02/annotated_scatter}
+  \end{center}
+
+  \begin{exampleblock}{Data Insight}
+    Tufte argues that segregating text from graphics is ``a legacy of
+    nineteenth-century engraving.'' Modern tools can seamlessly embed
+    annotations, callouts, and contextual labels directly onto the
+    data plane.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Annotation in R}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+ggplot(df, aes(x = spend,
+               y = roi)) +
+  geom_point(alpha = 0.5) +
+
+  # Direct annotation
+  annotate("text",
+    x = 85, y = 65,
+    label = "Top performer",
+    fontface = "bold",
+    color = "#2E7D32",
+    size = 3) +
+
+  # Arrow pointing to data
+  annotate("segment",
+    x = 83, xend = 78,
+    y = 63, yend = 58,
+    arrow = arrow(length =
+      unit(0.2, "cm")),
+    color = "#2E7D32") +
+
+  # ggrepel for non-overlapping
+  # geom_text_repel(aes(label))
+
+  theme_minimal()
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \textbf{R annotation toolkit:}
+
+      \begin{itemize}
+        \item \texttt{annotate("text")} for
+              free-floating labels
+        \item \texttt{annotate("segment")} for
+              arrows and connectors
+        \item \texttt{ggrepel} package for
+              automatic label placement
+        \item \texttt{ggtext} for markdown-
+              formatted annotations
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Annotation in Python}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+fig, ax = plt.subplots()
+ax.scatter(spend, roi, alpha=0.5)
+
+# Annotate with arrow
+ax.annotate(
+    "Top performer\nROI=65%",
+    xy=(78, 58),       # data point
+    xytext=(85, 68),   # label pos
+    fontsize=8,
+    fontweight="bold",
+    color="#2E7D32",
+    arrowprops=dict(
+        arrowstyle="->",
+        color="#2E7D32",
+        linewidth=1.2
+    )
+)
+
+# Text box with background
+ax.text(20, 55,
+    "Quadrant analysis",
+    fontsize=8,
+    bbox=dict(
+        boxstyle="round",
+        facecolor="#E3F2FD",
+        alpha=0.8))
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \textbf{Python annotation toolkit:}
+
+      \begin{itemize}
+        \item \texttt{ax.annotate()} with
+              \texttt{arrowprops} for arrows
+        \item \texttt{ax.text()} with \texttt{bbox}
+              for text boxes
+        \item \texttt{adjustText} package for
+              automatic repulsion
+        \item \texttt{FancyArrowPatch} for custom
+              arrow styles
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\section{Synthesis}
+% ================================================================
+
+\begin{frame}{Tufte's Five Core Principles --- Summary}
+  \begin{center}
+    \includegraphics[width=0.82\textwidth]{figures_m02/tufte_summary}
+  \end{center}
+\end{frame}
+
+% ================================================================
+\begin{frame}{The Checklist Applied}
+  For every chart you produce, ask:
+  \begin{enumerate}
+    \item \textbf{Data-Ink}: Can I remove any element without losing
+          information?
+    \item \textbf{Chartjunk}: Are there 3-D effects, moir\'{e} patterns,
+          or decorative elements?
+    \item \textbf{Lie Factor}: Does the visual change proportionally
+          match the data change?
+    \item \textbf{Comparison}: Would small multiples reveal more than
+          a single cluttered panel?
+  \end{enumerate}
+
+  \begin{alertblock}{Pro-Tip}
+    ``Above all else, show the data'' does not mean ``show
+    \emph{only} the data.'' Annotations, labels, and titles are
+    data-adjacent ink that aids interpretation.
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Key Takeaways}
+  \begin{enumerate}
+    \item The \textbf{data-ink ratio} provides a quantitative target:
+          maximise data ink, erase decoration.
+    \item \textbf{Chartjunk} --- moir\'{e}, ducks, heavy grids ---
+          actively harms comprehension.
+    \item The \textbf{lie factor} is a measurable diagnostic: values
+          outside $[0.95, 1.05]$ indicate deception.
+    \item \textbf{Small multiples} and \textbf{sparklines} are Tufte's
+          most practical inventions --- both available natively in
+          R (\texttt{facet\_wrap}, \texttt{theme\_void}) and Python
+          (\texttt{subplots}, spine removal).
+  \end{enumerate}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Essential Readings for This Module}
+  \begin{itemize}
+    \item Tufte, E.~R. (1983). \emph{The Visual Display of Quantitative
+          Information}, Chapters 4--6 (Data-ink, Chartjunk, Data Density).
+    \item Tufte, E.~R. (2006). \emph{Beautiful Evidence}, Chapter 2
+          (Sparklines).
+    \item Wainer, H. (1984). ``How to Display Data Badly,''
+          \emph{The American Statistician}, 38(2), 137--147.
+    \item Few, S. (2004). ``Tapping the Power of Visual Perception,''
+          \emph{Intelligent Enterprise}.
+  \end{itemize}
+
+  \vspace{6pt}
+  \textbf{Next Module}: Visual Perception \& Pre-Attentive Attributes (W01-M03)
+\end{frame}
+
+\end{document}

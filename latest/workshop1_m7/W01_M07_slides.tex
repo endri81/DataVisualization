@@ -1,0 +1,476 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codeblue}{HTML}{1565C0}
+
+\lstdefinestyle{rstyle}{
+  language=R, backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,
+  stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,
+  breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=2,
+  morekeywords={library,ggplot,aes,geom_col,geom_text,geom_line,geom_point,
+    coord_flip,theme_minimal,theme,element_text,element_blank,labs,
+    fct_reorder,scale_fill_manual,facet_wrap,mutate}
+}
+\lstdefinestyle{pythonstyle}{
+  language=Python, backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,
+  stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,
+  breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=4,
+  morekeywords={import,from,as,pd,plt,sns,np,fig,ax}
+}
+
+\title{Critique \& Redesign Workshop}
+\subtitle{Workshop 1 --- Module 7}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% ================================================================
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item The four-quadrant critique framework
+    \item Five canonical redesign case studies
+    \item The redesign workflow: identify → diagnose → fix → validate
+    \item Peer review protocol for visualization
+  \end{enumerate}
+  \begin{exampleblock}{Learning Outcome}
+    You will be able to systematically critique any chart against four
+    quality dimensions and execute a principled redesign using the
+    techniques from Modules 1--6.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\section{The Critique Framework}
+% ================================================================
+
+\begin{frame}{Four Quadrants of Critique}
+  \begin{center}
+    \includegraphics[width=0.82\textwidth]{figures_m07/critique_framework}
+  \end{center}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Using the Framework}
+  \centering
+  \begin{tabular}{lp{4cm}l}
+    \toprule
+    \textbf{Quadrant} & \textbf{Key Question} & \textbf{Module Ref.} \\
+    \midrule
+    Data Integrity    & Does it honestly represent the data? & M01, M02 \\
+    Visual Encoding   & Is each variable on the best channel? & M03, M04 \\
+    Design Craft      & Is the typography/colour/whitespace clean? & M04, M05 \\
+    Communication     & Does the audience get the message? & M05, M06 \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{8pt}
+  \begin{alertblock}{Pro-Tip}
+    Critique the chart, not the author. Use the framework as an objective
+    diagnostic tool: ``The lie factor is 3.5 because the axis starts at
+    95'' is specific and constructive; ``this chart is bad'' is not.
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\section{Five Redesign Case Studies}
+% ================================================================
+
+\begin{frame}{The Redesign Workflow}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m07/redesign_workflow}
+  \end{center}
+  \vspace{4pt}
+  Every redesign follows five steps: identify the problem, diagnose
+  which quadrant it belongs to, sketch an alternative, implement in
+  code, and validate with a peer.
+\end{frame}
+
+% ================================================================
+\begin{frame}{Redesign 1: 3-D Pie $\rightarrow$ Horizontal Bar}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m07/redesign_pie}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    \textbf{Diagnosis}: Encoding (angle) + Craft (chartjunk: shadow, explosion). \\
+    \textbf{Fix}: Replace angle with position (horizontal bar), sort by value,
+    add direct labels, remove all decoration.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Redesign 1 in R}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+library(tidyverse)
+
+df <- tibble(
+  dept = c("Marketing","Engineering",
+    "Sales","Support","R&D","HR",
+    "Legal"),
+  pct = c(22, 28, 18, 12, 10, 6, 4)
+) |>
+  mutate(dept = fct_reorder(dept, pct))
+
+ggplot(df, aes(x = dept, y = pct)) +
+  geom_col(fill = "#1565C0",
+           width = 0.55) +
+  geom_text(aes(label = paste0(
+    pct, "%")),
+    hjust = -0.2, size = 3,
+    fontface = "bold") +
+  coord_flip() +
+  theme_minimal() +
+  theme(panel.grid.major.y =
+    element_blank()) +
+  labs(x = NULL,
+    y = "Budget Share (%)",
+    title = "Engineering Leads
+             at 28%")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_m07/r_redesign}
+
+      \vspace{4pt}
+      {\small Key moves:
+      \texttt{fct\_reorder()} sorts by value;
+      \texttt{coord\_flip()} makes bars horizontal;
+      \texttt{geom\_text()} adds direct labels.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Redesign 1 in Python}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+import matplotlib.pyplot as plt
+import numpy as np
+
+depts = ["HR","Legal","R&D",
+  "Support","Sales","Marketing",
+  "Engineering"]
+pcts = [6, 4, 10, 12, 18, 22, 28]
+
+# Sort ascending for barh
+idx = np.argsort(pcts)
+s_d = [depts[i] for i in idx]
+s_p = [pcts[i] for i in idx]
+
+fig, ax = plt.subplots()
+colors = ["#1565C0"] * 7
+colors[-1] = "#E53935"  # accent
+ax.barh(s_d, s_p,
+    color=colors, height=0.55)
+for i, v in enumerate(s_p):
+    ax.text(v + 0.3, i, f"{v}%",
+        va="center", fontsize=9,
+        fontweight="bold")
+
+# Tufte cleanup
+for sp in ["top","right","left"]:
+    ax.spines[sp].set_visible(False)
+ax.set_xticks([])
+ax.tick_params(left=False)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_m07/r_redesign}
+
+      \vspace{4pt}
+      {\small Python equivalent: sort with
+      \texttt{np.argsort()}, use
+      \texttt{ax.barh()}, remove spines
+      explicitly.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Redesign 2: Dual Y-Axis $\rightarrow$ Indexed Lines}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m07/redesign_dual_axis}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    \textbf{Diagnosis}: Integrity (implied false correlation). \\
+    \textbf{Fix}: Index both series to 100 at month 1 so they share a
+    common scale. Relative change becomes directly comparable.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Redesign 2 in R}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+# Index to 100 at first period
+df_indexed <- df |>
+  group_by(metric) |>
+  mutate(
+    index = value / first(value) * 100
+  )
+
+ggplot(df_indexed,
+  aes(x = month, y = index,
+      color = metric)) +
+  geom_line(linewidth = 1.2) +
+  geom_hline(yintercept = 100,
+    linetype = "dashed",
+    color = "grey60") +
+
+  # Direct labels at endpoint
+  geom_text(
+    data = df_indexed |>
+      filter(month == max(month)),
+    aes(label = metric),
+    nudge_x = 0.5, size = 3,
+    fontface = "bold") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(y = "Index (M1 = 100)")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_m07/py_redesign}
+
+      \vspace{4pt}
+      {\small Indexing formula:
+      $\text{index}_t = \frac{v_t}{v_1} \times 100$
+
+      The reference line at 100 anchors
+      ``no change'' visually.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Redesign 2 in Python}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+# Index to 100 at month 1
+rev_idx = revenue / revenue[0] * 100
+usr_idx = users / users[0] * 100
+
+fig, ax = plt.subplots()
+ax.plot(months, rev_idx,
+    color="#1565C0", lw=2)
+ax.plot(months, usr_idx,
+    color="#E53935", lw=2)
+
+# Reference line
+ax.axhline(y=100, color="#888",
+    lw=0.8, linestyle="--")
+
+# Direct labels
+ax.text(12.2, rev_idx[-1],
+    "Revenue", fontsize=8,
+    fontweight="bold",
+    color="#1565C0", va="center")
+ax.text(12.2, usr_idx[-1],
+    "Users", fontsize=8,
+    fontweight="bold",
+    color="#E53935", va="center")
+
+ax.set_xlim(1, 14)
+ax.set_ylabel("Index (M1=100)")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_m07/py_redesign}
+
+      \vspace{4pt}
+      {\small NumPy vectorised indexing
+      replaces the \texttt{group\_by} +
+      \texttt{mutate} pattern in R.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Redesign 3: Spaghetti Lines $\rightarrow$ Small Multiples}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m07/redesign_spaghetti}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    \textbf{Diagnosis}: Encoding (6 overlapping lines → conjunction search). \\
+    \textbf{Fix}: \texttt{facet\_wrap()} / \texttt{subplots(sharey=True)}
+    separates series by proximity (Gestalt). Shared y-scale ensures
+    fair cross-panel comparison.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Redesign 4: Rainbow Scatter $\rightarrow$ Grey + Accent}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m07/redesign_scatter}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    \textbf{Diagnosis}: Encoding (5 hues, no hierarchy) + Communication
+    (no focal point). \\
+    \textbf{Fix}: Grey all non-focal points, accent the target category,
+    add a regression line for the focus group only.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Redesign 5: Truncated Axis $\rightarrow$ Honest Baseline}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m07/redesign_truncated}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    \textbf{Diagnosis}: Integrity (lie factor $\approx$ 17). \\
+    \textbf{Fix}: Start y-axis at zero, add a dashed reference line at the
+    first-period value, and label each bar directly. The visual impression
+    shifts from ``massive growth'' to ``steady improvement.''
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\section{Peer Review Protocol}
+% ================================================================
+
+\begin{frame}{The Five-Step Peer Review}
+  \begin{center}
+    \includegraphics[width=0.78\textwidth]{figures_m07/peer_review}
+  \end{center}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Giving Constructive Feedback}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{Structure (SBI Model):}
+      \begin{itemize}
+        \item \textbf{S}ituation: ``In the Q3 report chart\ldots''
+        \item \textbf{B}ehavior: ``\ldots the y-axis starts at 95,
+              creating a lie factor of $\sim$17.''
+        \item \textbf{I}mpact: ``This makes a 3\% change look like
+              a 50\% change to leadership.''
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Always include:}
+      \begin{itemize}
+        \item Which quadrant the issue falls in
+        \item A specific, measurable diagnostic
+              (lie factor, channel ranking)
+        \item A concrete alternative (``try a
+              zero-based axis with direct labels'')
+      \end{itemize}
+    \end{column}
+  \end{columns}
+
+  \vspace{6pt}
+  \begin{alertblock}{Pro-Tip}
+    Lead with what works well before identifying problems. Frame
+    improvements as ``what if'' alternatives, not ``you should'' commands.
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{In-Class Exercise: Critique \& Redesign}
+  \textbf{Instructions (20 minutes):}
+  \begin{enumerate}
+    \item Form pairs. Each person shows one chart from their own work
+          or a published source.
+    \item Apply the \textbf{five-step peer review} protocol.
+    \item For each chart, identify:
+          \begin{itemize}
+            \item The \textbf{strongest} quadrant (what works)
+            \item The \textbf{weakest} quadrant (what needs improvement)
+          \end{itemize}
+    \item Sketch a redesign on paper (3 minutes per chart).
+    \item Share one redesign with the class (2 minutes per pair).
+  \end{enumerate}
+
+  \vspace{4pt}
+  \begin{exampleblock}{Data Insight}
+    The ability to critique constructively is the single most transferable
+    skill from a visualization course. It applies to every chart you
+    encounter for the rest of your career.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\section{Synthesis}
+% ================================================================
+
+\begin{frame}{Five Redesign Patterns --- Summary}
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Problem} & \textbf{Quadrant} & \textbf{Fix} \\
+    \midrule
+    3-D pie chart       & Encoding + Craft & Horizontal bar \\
+    Dual y-axis         & Integrity        & Indexed lines \\
+    Spaghetti lines     & Encoding         & Small multiples \\
+    Rainbow scatter     & Encoding + Comm. & Grey + accent \\
+    Truncated axis      & Integrity        & Zero baseline \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{8pt}
+  Each pattern maps directly to a principle from Modules 1--6.
+  The critique framework provides the diagnostic; the redesign
+  implements the cure.
+\end{frame}
+
+% ================================================================
+\begin{frame}{Key Takeaways}
+  \begin{enumerate}
+    \item The \textbf{four-quadrant framework} (integrity, encoding, craft,
+          communication) provides a systematic, non-subjective critique
+          language.
+    \item Every redesign follows: \textbf{identify → diagnose → sketch →
+          code → validate}.
+    \item Five high-frequency problems have canonical fixes: pie → bar,
+          dual axis → index, spaghetti → facets, rainbow → grey-accent,
+          truncated → zero-based.
+    \item \textbf{Peer review} using the SBI model (Situation, Behaviour,
+          Impact) ensures feedback is specific and constructive.
+  \end{enumerate}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Essential Readings for This Module}
+  \begin{itemize}
+    \item Knaflic, C.~N. (2015). \emph{Storytelling with Data},
+          Chapter 3 (Clutter Is Your Enemy).
+    \item Schwabish, J. (2021). \emph{Better Data Visualizations},
+          Chapters 7--8 (Redesign Gallery).
+    \item Wainer, H. (1984). ``How to Display Data Badly.''
+          \emph{The American Statistician}, 38(2), 137--147.
+    \item Kirk, A. (2019). \emph{Data Visualisation}, Chapter 9
+          (Interactivity and Annotation).
+  \end{itemize}
+
+  \vspace{6pt}
+  \textbf{Next Module}: R Environment Setup \& Base Graphics (W01-M08)
+\end{frame}
+
+\end{document}

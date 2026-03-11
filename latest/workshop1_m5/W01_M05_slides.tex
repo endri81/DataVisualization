@@ -1,0 +1,620 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codeblue}{HTML}{1565C0}
+
+\lstdefinestyle{rstyle}{
+  language=R, backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,
+  stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,
+  breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=2,
+  morekeywords={library,ggplot,aes,geom_line,geom_text,geom_col,
+    theme,element_text,element_blank,labs,annotate,ggsave,
+    plot_annotation,patchwork,coord_flip,margin}
+}
+\lstdefinestyle{pythonstyle}{
+  language=Python, backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,
+  stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,
+  breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=4,
+  morekeywords={import,from,as,pd,plt,sns,np,fig,ax,GridSpec}
+}
+
+\title{Typography, Layout \& Composition}
+\subtitle{Workshop 1 --- Module 5}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% ================================================================
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item Typographic hierarchy: title, subtitle, body, caption
+    \item Font selection for data visualization
+    \item Whitespace, margins, and breathing room
+    \item Grid systems and multi-panel composition
+    \item Direct labelling, annotation, and export formats
+  \end{enumerate}
+  \begin{exampleblock}{Learning Outcome}
+    You will be able to construct professional chart layouts with
+    clear typographic hierarchy, purposeful whitespace, and
+    publication-ready export settings.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\section{Typographic Hierarchy}
+% ================================================================
+
+\begin{frame}{The Five Levels of Chart Typography}
+  \begin{center}
+    \includegraphics[width=0.85\textwidth]{figures_m05/type_hierarchy}
+  \end{center}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Sizing Rules}
+  \centering
+  \begin{tabular}{llrl}
+    \toprule
+    \textbf{Element} & \textbf{Weight} & \textbf{Size} & \textbf{Purpose} \\
+    \midrule
+    Title    & Bold    & 16--20 pt & The ``headline'' of the chart \\
+    Subtitle & Regular & 11--13 pt & Context, time range, units \\
+    Axis labels & Regular & 10--11 pt & Variable names \\
+    Tick labels & Regular & 8--10 pt  & Scale values \\
+    Annotation  & Regular & 8--9 pt  & Direct labels on data \\
+    Caption  & Italic  & 7--8 pt  & Source, notes, caveats \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{6pt}
+  \begin{alertblock}{Pro-Tip}
+    Maintain a \textbf{minimum 1.2$\times$ ratio} between adjacent
+    hierarchy levels. If your title is 16pt, the subtitle should be
+    $\leq$ 13pt and axis labels $\leq$ 11pt.
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Font Selection}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m05/font_pairing}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    Sans-serif typefaces (Fira Sans, Helvetica, Arial) render crisply at
+    small sizes on screens and are the default choice for all chart text.
+    Reserve serif for reports; monospace for code and aligned numbers.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Setting Fonts in R}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+library(ggplot2)
+
+# Global font via theme
+ggplot(df, aes(x, y)) +
+  geom_point() +
+  theme_minimal(
+    base_size = 11,
+    base_family = "Fira Sans"
+  ) +
+  theme(
+    plot.title = element_text(
+      size = 16,
+      face = "bold",
+      margin = margin(b = 8)),
+    plot.subtitle = element_text(
+      size = 11,
+      color = "grey50"),
+    plot.caption = element_text(
+      size = 8,
+      face = "italic",
+      hjust = 0)
+  ) +
+  labs(
+    title = "Main Title",
+    subtitle = "Context line",
+    caption = "Source: ...")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \textbf{R font workflow:}
+
+      \begin{itemize}
+        \item \texttt{base\_family} sets the
+              default for all text
+        \item \texttt{element\_text()} overrides
+              individual elements
+        \item \texttt{showtext::font\_add\_google()}
+              loads Google Fonts
+        \item \texttt{ragg} package renders
+              custom fonts in PNG/PDF
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Setting Fonts in Python}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+import matplotlib.pyplot as plt
+
+# Global rcParams
+plt.rcParams.update({
+    "font.family": "sans-serif",
+    "font.sans-serif": [
+        "Fira Sans", "Helvetica",
+        "Arial"],
+    "font.size": 11,
+    "axes.titlesize": 14,
+    "axes.titleweight": "bold",
+    "axes.labelsize": 11,
+    "xtick.labelsize": 9,
+    "ytick.labelsize": 9,
+})
+
+fig, ax = plt.subplots()
+ax.set_title("Main Title",
+    fontsize=16, fontweight="bold")
+# Subtitle via fig.text or
+# ax.text below title
+fig.text(0.5, 0.92,
+    "Context line",
+    ha="center", fontsize=11,
+    color="grey")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \textbf{Python font workflow:}
+
+      \begin{itemize}
+        \item \texttt{rcParams} sets global
+              defaults for all plots
+        \item \texttt{fontweight}, \texttt{fontsize}
+              override per-element
+        \item For Google Fonts: download
+              \texttt{.ttf} and register via
+              \texttt{font\_manager.fontManager.addfont()}
+        \item \texttt{fig.text()} places text in
+              figure coordinates
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\section{Whitespace \& Margins}
+% ================================================================
+
+\begin{frame}{Whitespace Is Structure, Not Waste}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m05/whitespace}
+  \end{center}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Margin Guidelines}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{Internal margins:}
+      \begin{itemize}
+        \item Title $\rightarrow$ plot area: 8--12 pt
+        \item Plot area $\rightarrow$ axis labels: 6--8 pt
+        \item Between facet panels: 8--10 pt
+        \item Legend $\rightarrow$ plot edge: 6 pt
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{External margins:}
+      \begin{itemize}
+        \item Document margin: 0.5--1.0 inch
+        \item Chart inset from text: 12--18 pt
+        \item Between stacked charts: 18--24 pt
+        \item Caption below chart: 4--6 pt
+      \end{itemize}
+    \end{column}
+  \end{columns}
+
+  \vspace{6pt}
+  \begin{alertblock}{Pro-Tip}
+    In R use \texttt{theme(plot.margin = margin(t, r, b, l))}. In Python
+    use \texttt{plt.tight\_layout(pad=2.0)} or \texttt{plt.subplots\_adjust()}.
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\section{Alignment \& Direct Labelling}
+% ================================================================
+
+\begin{frame}{Alignment: Numbers Right-Align}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m05/alignment}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    Right-aligning numeric labels on the same column ensures that the
+    digits align vertically, making magnitude comparison effortless.
+    Centred numbers scatter the digits, forcing serial reading.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Direct Labelling vs Legend}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m05/direct_label}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    A legend forces the eye to shuttle between the chart and the legend
+    box. Direct labels at line endpoints (or on bars) eliminate this
+    cognitive overhead. Use \texttt{ggrepel} in R or \texttt{adjustText}
+    in Python to prevent label overlap.
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Direct Labelling in R}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+library(ggplot2)
+library(ggrepel)
+
+ggplot(df, aes(x = month,
+               y = revenue,
+               color = product)) +
+  geom_line(linewidth = 1) +
+
+  # Direct label at last point
+  geom_text_repel(
+    data = df |>
+      filter(month == max(month)),
+    aes(label = product),
+    nudge_x = 0.5,
+    size = 3,
+    fontface = "bold",
+    direction = "y") +
+
+  # Remove legend (redundant)
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(x = "Month",
+       y = "Revenue ($K)")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \textbf{\texttt{ggrepel} features:}
+
+      \begin{itemize}
+        \item Automatic collision avoidance
+        \item Connector lines from label to
+              data point
+        \item \texttt{direction = "y"} constrains
+              repulsion to vertical axis
+        \item Works with \texttt{geom\_text\_repel}
+              and \texttt{geom\_label\_repel}
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Direct Labelling in Python}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+import matplotlib.pyplot as plt
+# pip install adjustText
+from adjustText import adjust_text
+
+fig, ax = plt.subplots()
+
+for name, data in series.items():
+    ax.plot(months, data,
+        color=colors[name], lw=2)
+
+    # Direct label at endpoint
+    ax.text(
+        months[-1] + 0.3,
+        data[-1],
+        name,
+        fontsize=8,
+        fontweight="bold",
+        color=colors[name],
+        va="center")
+
+# Auto-adjust overlapping labels
+# texts = [ax.text(...) for ...]
+# adjust_text(texts)
+
+ax.set_xlim(1, max(months) + 3)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \textbf{Python pattern:}
+
+      \begin{enumerate}
+        \item Place labels at line endpoints
+              via \texttt{ax.text()}
+        \item Extend \texttt{xlim} to accommodate
+              label width
+        \item Use \texttt{adjustText} for
+              automatic collision avoidance
+        \item Match label colour to line colour
+              for visual linking
+      \end{enumerate}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\section{Annotation Patterns}
+% ================================================================
+
+\begin{frame}{Three Annotation Patterns}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m05/annotation_patterns}
+  \end{center}
+  \begin{itemize}
+    \item \textbf{Callout}: arrow + text box pointing to a specific event
+    \item \textbf{Context band}: shaded region highlighting a time period
+    \item \textbf{Reference line}: dashed horizontal for mean / target / benchmark
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\section{Grid Systems \& Composition}
+% ================================================================
+
+\begin{frame}{Layout Patterns}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m05/grid_layouts}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    Single-chart layouts suit presentation slides. Two-column layouts
+    support comparison (before/after, R vs Python). Dashboard grids
+    (KPI row + chart grid) are standard in analytical reports.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Multi-Panel Composition}
+  \begin{center}
+    \includegraphics[width=0.85\textwidth]{figures_m05/multipanel}
+  \end{center}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Multi-Panel in R: patchwork}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+library(patchwork)
+
+# Compose with operators
+# | = side by side
+# / = stacked
+layout <- (p1 | p2 | p3) / p4
+
+# Annotate the composite
+layout +
+  plot_annotation(
+    title = "Quarterly Report",
+    subtitle = "Revenue metrics",
+    tag_levels = "a"  # (a),(b)...
+  ) +
+  plot_layout(
+    heights = c(1, 1.5)  # bottom
+                          # panel wider
+  )
+
+# Alternative: cowplot
+# library(cowplot)
+# plot_grid(p1, p2, p3, p4,
+#   ncol = 2, labels = "AUTO")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \textbf{patchwork operators:}
+
+      \begin{itemize}
+        \item \texttt{p1 | p2}: side by side
+        \item \texttt{p1 / p2}: stacked
+        \item \texttt{(p1 | p2) / p3}: row + row
+        \item \texttt{plot\_layout(widths=)}: control
+              relative panel sizes
+        \item \texttt{tag\_levels}: auto-label
+              panels (a), (b), (c)\ldots
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Multi-Panel in Python: GridSpec}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+from matplotlib.gridspec import (
+    GridSpec)
+
+fig = plt.figure(figsize=(8, 5))
+gs = GridSpec(2, 3, figure=fig,
+    hspace=0.35, wspace=0.3)
+
+# Top row: 3 equal panels
+ax1 = fig.add_subplot(gs[0, 0])
+ax2 = fig.add_subplot(gs[0, 1])
+ax3 = fig.add_subplot(gs[0, 2])
+
+# Bottom: full-width panel
+ax4 = fig.add_subplot(gs[1, :])
+
+# Panel labels
+for i, ax in enumerate(
+    [ax1, ax2, ax3, ax4]):
+    ax.text(0.02, 0.95,
+        f"({chr(97+i)})",
+        transform=ax.transAxes,
+        fontsize=9,
+        fontweight="bold",
+        va="top")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \textbf{GridSpec features:}
+
+      \begin{itemize}
+        \item Arbitrary row/column spans via
+              slice notation (\texttt{gs[1, :]})
+        \item \texttt{hspace}, \texttt{wspace}
+              control inter-panel margins
+        \item \texttt{height\_ratios},
+              \texttt{width\_ratios} for unequal
+              panels
+        \item \texttt{fig.add\_subplot()} places
+              axes on the grid
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\section{Aspect Ratio \& Export}
+% ================================================================
+
+\begin{frame}{Aspect Ratio: Banking to 45 Degrees}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m05/aspect_ratio}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    Cleveland (1993) showed that line chart slopes are most accurately
+    perceived when the average absolute slope is $\sim$45\textdegree.
+    A square aspect ratio compresses temporal trends; a wider panel
+    ``banks'' the slopes into the readable range.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Export Format Guide}
+  \begin{center}
+    \includegraphics[width=0.85\textwidth]{figures_m05/export_formats}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    Always export charts as \textbf{PDF or SVG} (vector) for
+    publications and presentations. Use PNG at $\geq$ 150 dpi only when
+    vector is not supported. Never use JPEG for charts --- lossy
+    compression creates artefacts around sharp edges and text.
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Export in R}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}[style=rstyle]
+# Vector (publication)
+ggsave("chart.pdf",
+  plot = p,
+  width = 7,   # inches
+  height = 5,
+  device = cairo_pdf)
+
+# Vector (web)
+ggsave("chart.svg",
+  plot = p,
+  width = 7, height = 5)
+
+# Raster (presentation)
+ggsave("chart.png",
+  plot = p,
+  width = 7, height = 5,
+  dpi = 300)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+# Vector (publication)
+fig.savefig("chart.pdf",
+    bbox_inches="tight")
+
+# Vector (web)
+fig.savefig("chart.svg",
+    bbox_inches="tight")
+
+# Raster (presentation)
+fig.savefig("chart.png",
+    dpi=300,
+    bbox_inches="tight")
+
+# NEVER: fig.savefig("chart.jpg")
+# JPEG = lossy artefacts
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\section{Synthesis}
+% ================================================================
+
+\begin{frame}{Key Takeaways}
+  \begin{enumerate}
+    \item \textbf{Typographic hierarchy} (title $>$ subtitle $>$ body
+          $>$ annotation $>$ caption) guides the reader's eye through
+          the chart. Maintain a 1.2$\times$ size ratio between levels.
+    \item \textbf{Sans-serif fonts} are the default for charts.
+          Use \texttt{base\_family} (R) or \texttt{rcParams} (Python).
+    \item \textbf{Whitespace} is structural, not decorative. Generous
+          margins reduce cognitive load.
+    \item \textbf{Direct labels} at data points eliminate the legend-shuttle
+          problem. Use \texttt{ggrepel} / \texttt{adjustText}.
+    \item \textbf{Multi-panel composition}: \texttt{patchwork} (R) and
+          \texttt{GridSpec} (Python) support arbitrary layouts.
+    \item \textbf{Export as vector} (PDF/SVG) for print; PNG at $\geq$ 300
+          dpi for raster contexts. Never JPEG for charts.
+  \end{enumerate}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Essential Readings for This Module}
+  \begin{itemize}
+    \item Butterick, M. (2015). \emph{Practical Typography}.
+          \texttt{https://practicaltypography.com}
+    \item Cleveland, W.~S. (1993). ``Banking to 45\textdegree.''
+          In: \emph{Visualizing Data}, Hobart Press.
+    \item Schwabish, J. (2021). \emph{Better Data Visualizations},
+          Chapters 3--4 (Layout and Labelling).
+    \item Wilke, C.~O. (2019). \emph{Fundamentals of Data Visualization},
+          Chapters 22--23 (Titles, Captions, Tables).
+  \end{itemize}
+
+  \vspace{6pt}
+  \textbf{Next Module}: The Design Process (W01-M06)
+\end{frame}
+
+\end{document}

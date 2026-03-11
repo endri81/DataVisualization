@@ -1,0 +1,516 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{tikz}
+
+% ── Listing styles ──────────────────────────────────────────────
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codeblue}{HTML}{1565C0}
+
+\lstdefinestyle{rstyle}{
+  language=R, backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,
+  stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,
+  breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=2,
+  morekeywords={library,ggplot,aes,geom_point,scale_color_manual,
+    scale_size_continuous,theme_minimal,labs,facet_wrap,annotate}
+}
+\lstdefinestyle{pythonstyle}{
+  language=Python, backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,
+  stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,
+  breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=4,
+  morekeywords={import,from,as,pd,plt,sns,np,fig,ax}
+}
+
+% ── Metadata ────────────────────────────────────────────────────
+\title{Visual Perception \& Pre-Attentive Attributes}
+\subtitle{Workshop 1 --- Module 3}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+
+\begin{document}
+
+% ================================================================
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% ================================================================
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item Pre-attentive visual attributes
+    \item Feature search vs.\ conjunction search
+    \item The Gestalt laws of perceptual grouping
+    \item Visual encoding channels and their effectiveness
+    \item Weber's law and just-noticeable differences
+  \end{enumerate}
+  \begin{exampleblock}{Learning Outcome}
+    You will be able to select visual encoding channels that exploit the
+    human visual system rather than fighting against it.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\section{Pre-Attentive Processing}
+% ================================================================
+
+\begin{frame}{What Is Pre-Attentive Processing?}
+  \begin{columns}[T]
+    \begin{column}{0.55\textwidth}
+      The visual cortex detects certain properties
+      \textbf{before conscious attention} engages:
+      \begin{itemize}
+        \item Processing time: $<$ 200--250 ms
+        \item Independent of the number of distractors
+        \item Driven by the \emph{primary visual cortex} (V1)
+        \item Requires a single distinguishing feature
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.42\textwidth}
+      \textbf{Four canonical channels:}
+      \begin{enumerate}
+        \item Color (hue)
+        \item Shape (form)
+        \item Size (length / area)
+        \item Orientation (angle)
+      \end{enumerate}
+    \end{column}
+  \end{columns}
+
+  \vspace{4pt}
+  \emph{Source: Healey, C.~G. \& Enns, J.~T. (2012). Attention and visual
+  memory in visualization and computer graphics. IEEE TVCG, 18(7).}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Pre-Attentive Pop-Out: Color}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m03/preattentive_color}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    Use colour sparingly: a single accent hue against a neutral field
+    produces instant pop-out. Using $>$ 5 hues destroys the effect.
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Pre-Attentive Pop-Out: Shape}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m03/preattentive_shape}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    Shape pop-out works only for simple, high-contrast distinctions
+    (circle vs.\ square). Subtle shape differences (pentagon vs.\ hexagon)
+    require serial scanning.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Pre-Attentive Pop-Out: Size \& Orientation}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \includegraphics[width=\textwidth]{figures_m03/preattentive_size}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \includegraphics[width=\textwidth]{figures_m03/preattentive_orientation}
+    \end{column}
+  \end{columns}
+  \vspace{4pt}
+  Both size and orientation support pre-attentive detection when the
+  difference is sufficiently large. \textbf{Weber's law} (later in this
+  module) quantifies ``sufficiently large.''
+\end{frame}
+
+% ================================================================
+\begin{frame}{Conjunction Search: When Pop-Out Fails}
+  \begin{center}
+    \includegraphics[width=0.65\textwidth]{figures_m03/conjunction}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    When the target is defined by a \emph{combination} of features (red
+    \textbf{AND} square), the visual system must search serially at
+    $\sim$50 ms per item. Avoid encoding critical distinctions as
+    conjunctions --- use a single unique channel instead.
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Implications for Chart Design}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{Do:}
+      \begin{itemize}
+        \item Encode the most important distinction using a single
+              pre-attentive channel (colour or position)
+        \item Limit categorical colours to 5--7 hues
+        \item Use size only for ordinal/quantitative data
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Don't:}
+      \begin{itemize}
+        \item Require viewers to distinguish targets by conjunctions
+              (e.g., ``find the red dashed line'')
+        \item Use shape alone for $>$ 4 categories
+        \item Vary orientation for nominal data
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\section{Gestalt Laws of Perceptual Grouping}
+% ================================================================
+
+\begin{frame}{Why Gestalt Matters for Visualization}
+  The Gestalt psychologists (Wertheimer, 1923) identified principles
+  by which the visual system organises stimuli into groups:
+  \begin{enumerate}
+    \item \textbf{Proximity} --- near elements form groups
+    \item \textbf{Similarity} --- like elements form groups
+    \item \textbf{Continuity} --- smooth paths preferred
+    \item \textbf{Closure} --- brain completes incomplete forms
+    \item \textbf{Enclosure} --- bounded regions create groups
+    \item \textbf{Connection} --- linked elements seen as related
+  \end{enumerate}
+  \vspace{4pt}
+  Every chart layout implicitly invokes these laws.
+  Effective design \emph{harnesses} them; poor design \emph{violates} them.
+\end{frame}
+
+% ================================================================
+\begin{frame}{Proximity}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m03/gestalt_proximity}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    Proximity is the strongest grouping cue. In bar charts, spacing
+    between groups must exceed spacing within groups, or the viewer
+    will misread the category structure.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Similarity}
+  \begin{center}
+    \includegraphics[width=0.6\textwidth]{figures_m03/gestalt_similarity}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    Despite equal spacing, the alternating colour/shape rows are
+    perceived as distinct horizontal groups. This is why colour legends
+    work: similar hues are read as ``the same category.''
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Continuity \& Closure}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m03/gestalt_continuity}
+  \end{center}
+  \begin{itemize}
+    \item \textbf{Continuity}: two intersecting sine waves are perceived as
+          two smooth paths, not four disjointed segments
+    \item \textbf{Closure}: the brain fills in missing arcs to perceive
+          complete circles
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Enclosure \& Connection}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m03/gestalt_enclosure}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    Use enclosure (shaded bands) to highlight groups in scatter plots.
+    Use connection (lines between points) to indicate temporal sequence
+    or paired comparisons. Both override proximity when present.
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Gestalt Summary Card}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{figures_m03/gestalt_summary}
+  \end{center}
+\end{frame}
+
+% ================================================================
+\section{Visual Encoding Channels}
+% ================================================================
+
+\begin{frame}{Cleveland \& McGill's Channel Ranking}
+  \begin{center}
+    \includegraphics[width=0.82\textwidth]{figures_m03/channel_ranking}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    Cleveland \& McGill (1984) showed experimentally that position
+    judgments are $\sim$2$\times$ more accurate than length judgments
+    and $\sim$5$\times$ more accurate than area judgments.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Weber's Law: Just-Noticeable Difference}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m03/weber}
+  \end{center}
+  \vspace{2pt}
+  \textbf{Weber's law}: $\Delta S / S = k$ (constant). The smallest
+  detectable change is a fixed \emph{proportion} of the stimulus, not a
+  fixed amount. Implication: small differences in area or colour
+  saturation are invisible; position differences are always detectable.
+\end{frame}
+
+% ================================================================
+\begin{frame}{Change Blindness}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m03/change_blindness}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    When comparing two views (before/after, Version A/B), viewers miss
+    subtle changes without direct annotation. Always highlight the
+    specific data points that changed using colour, annotation, or
+    connecting lines.
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Choosing Channels: A Decision Framework}
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Data Type} & \textbf{Best Channel} & \textbf{Avoid} \\
+    \midrule
+    Quantitative   & Position, length       & Area, colour saturation \\
+    Ordinal        & Position, size, saturation & Shape \\
+    Nominal ($\leq$7) & Colour hue, shape    & Position (wastes axis) \\
+    Nominal ($>$7)    & Faceting (small mult.)  & Colour (too many hues) \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{8pt}
+  \begin{exampleblock}{Data Insight}
+    Map the most important variable to the most effective channel.
+    Secondary variables get secondary channels. Never encode the same
+    variable redundantly on two channels unless deliberately reinforcing.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\section{Encoding Channels in Code}
+% ================================================================
+
+\begin{frame}[fragile]{Multi-Channel Encoding in R}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+library(ggplot2)
+
+# Four simultaneous channels:
+# x = position (spend)
+# y = position (ROI)
+# color = category (nominal)
+# size = budget (quantitative)
+
+ggplot(df, aes(
+    x = spend,
+    y = roi,
+    color = category,
+    size = budget)) +
+  geom_point(alpha = 0.6) +
+  scale_color_manual(
+    values = c(A = "#1565C0",
+               B = "#E53935",
+               C = "#2E7D32")) +
+  scale_size_continuous(
+    range = c(2, 10)) +
+  theme_minimal() +
+  labs(title = "4-Channel Plot")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_m03/encoding_r}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Multi-Channel Encoding in Python}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# seaborn handles channels via
+# hue, size, style parameters
+
+sns.scatterplot(
+    data=df,
+    x="spend",
+    y="roi",
+    hue="category",   # color
+    size="budget",     # size
+    alpha=0.6,
+    palette={
+        "A": "#1f77b4",
+        "B": "#d62728",
+        "C": "#2ca02c"},
+    sizes=(30, 250),
+)
+
+plt.title("4-Channel Plot")
+plt.tight_layout()
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_m03/encoding_py}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Gestalt-Aware Layout in R}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+# Proximity: use faceting to
+# separate groups spatially
+ggplot(df, aes(x = x, y = y)) +
+  geom_point(aes(color = group),
+             size = 2, alpha = 0.6) +
+  facet_wrap(~group, ncol = 3) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+# Enclosure: add shaded band
+ggplot(df, aes(x = date, y = val)) +
+  annotate("rect",
+    xmin = as.Date("2023-03-01"),
+    xmax = as.Date("2023-06-01"),
+    ymin = -Inf, ymax = Inf,
+    fill = "#E3F2FD", alpha = 0.5) +
+  geom_line(color = "#1565C0") +
+  theme_minimal()
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \textbf{Design patterns:}
+
+      \begin{itemize}
+        \item \textbf{Proximity} $\rightarrow$ faceting
+              separates groups physically
+        \item \textbf{Enclosure} $\rightarrow$ \texttt{annotate("rect")}
+              highlights a time period
+        \item \textbf{Connection} $\rightarrow$ \texttt{geom\_line}
+              links sequential points
+        \item \textbf{Similarity} $\rightarrow$ consistent
+              colour palette
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Gestalt-Aware Layout in Python}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+import matplotlib.pyplot as plt
+
+fig, axes = plt.subplots(1, 3,
+    sharey=True, figsize=(10, 3))
+
+# Proximity via subplots
+for ax, grp in zip(axes, groups):
+    sub = df[df["group"] == grp]
+    ax.scatter(sub["x"], sub["y"],
+        c="#1565C0", s=25, alpha=0.6)
+    ax.set_title(grp)
+
+# Enclosure via axvspan
+fig, ax = plt.subplots()
+ax.axvspan("2023-03", "2023-06",
+    color="#E3F2FD", alpha=0.5)
+ax.plot(dates, values,
+    color="#1565C0")
+
+# Connection via plot()
+ax.plot(x, y, "o-",
+    color="#E53935", lw=1.5)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \textbf{Python equivalents:}
+
+      \begin{itemize}
+        \item \textbf{Proximity} $\rightarrow$ \texttt{subplots}
+              with shared axes
+        \item \textbf{Enclosure} $\rightarrow$ \texttt{ax.axvspan()}
+              for shaded bands
+        \item \textbf{Connection} $\rightarrow$ \texttt{plot("o-")}
+              links markers
+        \item \textbf{Similarity} $\rightarrow$ palette dict
+              for consistent colours
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\section{Synthesis}
+% ================================================================
+
+\begin{frame}{Key Takeaways}
+  \begin{enumerate}
+    \item \textbf{Pre-attentive attributes} (colour, shape, size,
+          orientation) are detected in $<$ 200 ms --- use them for the
+          most critical data distinction.
+    \item \textbf{Conjunction search} is slow ($\sim$50 ms/item) ---
+          never require viewers to combine two features to find a target.
+    \item \textbf{Gestalt laws} (proximity, similarity, continuity,
+          closure, enclosure, connection) govern how elements are grouped
+          --- harness them or suffer misreadings.
+    \item \textbf{Channel effectiveness} (Cleveland \& McGill, 1984):
+          position $>$ length $>$ angle $>$ area $>$ colour --- map the
+          most important variable to the best channel.
+    \item \textbf{Weber's law}: the just-noticeable difference is
+          proportional to the stimulus. Small data differences require
+          high-precision channels (position), not low-precision ones
+          (area, saturation).
+  \end{enumerate}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Essential Readings for This Module}
+  \begin{itemize}
+    \item Cleveland, W.~S. \& McGill, R. (1984). ``Graphical Perception:
+          Theory, Experimentation, and Application.'' \emph{JASA}, 79(387).
+    \item Healey, C.~G. \& Enns, J.~T. (2012). ``Attention and Visual
+          Memory in Visualization.'' \emph{IEEE TVCG}, 18(7).
+    \item Ware, C. (2021). \emph{Information Visualization: Perception
+          for Design}, 4th ed., Chapters 1--5.
+    \item Few, S. (2012). \emph{Show Me the Numbers}, Chapters 4--5.
+    \item Munzner, T. (2014). \emph{Visualization Analysis and Design},
+          Chapter 5 (Marks and Channels).
+  \end{itemize}
+
+  \vspace{6pt}
+  \textbf{Next Module}: Color Theory \& Accessibility (W01-M04)
+\end{frame}
+
+\end{document}

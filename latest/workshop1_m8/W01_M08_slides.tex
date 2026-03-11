@@ -1,0 +1,545 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codeblue}{HTML}{1565C0}
+
+\lstdefinestyle{rstyle}{
+  language=R, backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,
+  stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,
+  breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=2,
+  morekeywords={library,install.packages,read_csv,glimpse,head,str,summary,
+    plot,hist,barplot,boxplot,par,mfrow,col,main,xlab,ylab,pch,cex,lwd,
+    abline,legend,text,lines,points,title,axis,data.frame,c,seq,rep,
+    factor,as.Date,class,typeof,is.numeric,pipe,filter,mutate,select,
+    group_by,summarise,arrange,tibble,ggplot,aes,geom_point,theme_minimal}
+}
+\lstdefinestyle{bashstyle}{
+  language=bash, backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,
+  commentstyle=\color{codegray}\itshape,
+  breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false,
+}
+
+\title{R Environment Setup \& Base Graphics}
+\subtitle{Workshop 1 --- Module 8}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% ================================================================
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item Installing R and RStudio
+    \item The tidyverse ecosystem
+    \item R data types and structures for visualization
+    \item Base R graphics: \texttt{plot()}, \texttt{hist()}, \texttt{barplot()}, \texttt{boxplot()}
+    \item The \texttt{par()} system and multi-panel layouts
+    \item Base R vs ggplot2: when to use each
+  \end{enumerate}
+  \begin{exampleblock}{Learning Outcome}
+    You will have a functioning R environment and be able to produce
+    all four fundamental chart types using base R graphics, preparing
+    the ground for ggplot2 in Workshop 2.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\section{R \& RStudio Setup}
+% ================================================================
+
+\begin{frame}[fragile]{Installation Checklist}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{Step 1: Install R}
+\begin{lstlisting}[style=bashstyle]
+# macOS (Homebrew)
+brew install r
+
+# Ubuntu / Debian
+sudo apt install r-base
+
+# Windows
+# Download from https://cran.r-project.org
+\end{lstlisting}
+      \vspace{4pt}
+      \textbf{Step 2: Install RStudio}\\
+      {\small Download from \texttt{posit.co/download/rstudio-desktop}}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Step 3: Install core packages}
+\begin{lstlisting}[style=rstyle]
+# One command installs 8+ packages
+install.packages("tidyverse")
+
+# Additional viz packages
+install.packages(c(
+  "viridis",
+  "RColorBrewer",
+  "ggthemes",
+  "patchwork",
+  "ggrepel",
+  "scales"
+))
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}{The RStudio IDE}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{figures_m08/rstudio_layout}
+  \end{center}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{RStudio Keyboard Shortcuts}
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Action} & \textbf{macOS} & \textbf{Windows} \\
+    \midrule
+    Run current line     & Cmd+Enter       & Ctrl+Enter \\
+    Run entire script    & Cmd+Shift+Enter & Ctrl+Shift+Enter \\
+    Insert pipe \texttt{|>} & Cmd+Shift+M  & Ctrl+Shift+M \\
+    Insert assignment \texttt{<-} & Option+- & Alt+- \\
+    Comment/uncomment    & Cmd+Shift+C     & Ctrl+Shift+C \\
+    New R script         & Cmd+Shift+N     & Ctrl+Shift+N \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{6pt}
+  \begin{alertblock}{Pro-Tip}
+    Use \texttt{Cmd+Shift+M} / \texttt{Ctrl+Shift+M} to insert the pipe
+    operator instantly. This single shortcut will save hours over a term.
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\section{The tidyverse Ecosystem}
+% ================================================================
+
+\begin{frame}{tidyverse: One \texttt{library()} Call, Eight Packages}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{figures_m08/tidyverse_ecosystem}
+  \end{center}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{The Pipe: Left-to-Right Data Flow}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_m08/pipe_workflow}
+  \end{center}
+  \vspace{2pt}
+\begin{lstlisting}[style=rstyle]
+# Traditional (nested, reads inside-out):
+summarise(group_by(filter(data, Type == "Free"), Category), n = n())
+
+# Pipe (linear, reads left-to-right):
+data |>
+  filter(Type == "Free") |>
+  group_by(Category) |>
+  summarise(n = n())
+\end{lstlisting}
+\end{frame}
+
+% ================================================================
+\section{R Data Types}
+% ================================================================
+
+\begin{frame}{Data Types for Visualization}
+  \begin{center}
+    \includegraphics[width=0.82\textwidth]{figures_m08/data_types}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    Use \texttt{class(x)} to check a variable's type, and
+    \texttt{str(df)} to see all column types in a data frame.
+    Type mismatches (e.g., numbers stored as characters) are the most
+    common source of plotting errors.
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Vectors, Data Frames, Tibbles}
+\begin{lstlisting}[style=rstyle]
+# Vector: 1-dimensional, single type
+x <- c(10, 20, 30, 40, 50)
+class(x)  # "numeric"
+
+# Data frame: 2D table (base R)
+df <- data.frame(
+  name = c("Alice", "Bob", "Carol"),
+  score = c(88, 92, 75),
+  grade = factor(c("A", "A", "B"))
+)
+
+# Tibble: modern data frame (tidyverse)
+library(tibble)
+tb <- tibble(
+  name  = c("Alice", "Bob", "Carol"),
+  score = c(88, 92, 75),
+  grade = factor(c("A", "A", "B"))
+)
+
+# Key difference: tibbles print compactly
+# and never convert strings to factors
+print(tb)
+\end{lstlisting}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Loading and Inspecting Data}
+\begin{lstlisting}[style=rstyle]
+library(readr)
+
+# Read CSV (tidyverse — fast, type-guessing)
+apps <- read_csv("googleplaystore.csv")
+
+# Quick inspection
+dim(apps)        # rows x columns
+glimpse(apps)    # compact column view
+head(apps, 5)    # first 5 rows
+summary(apps)    # five-number summaries
+
+# Check for problems
+problems(apps)   # parsing issues
+sum(is.na(apps)) # total missing values
+
+# Useful for viz planning:
+# - How many rows? (affects point density)
+# - Column types? (determines chart choice)
+# - Missing values? (need filtering/imputation)
+\end{lstlisting}
+\end{frame}
+
+% ================================================================
+\section{Base R Graphics}
+% ================================================================
+
+\begin{frame}{The Four Fundamental Chart Types}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{figures_m08/par_system}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    Base R produces functional charts instantly with zero package
+    dependencies. These four functions --- \texttt{plot()}, \texttt{hist()},
+    \texttt{barplot()}, \texttt{boxplot()} --- cover 80\% of exploratory
+    visualization needs.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Scatterplot: \texttt{plot(x, y)}}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+# Minimal call
+plot(mpg$displ, mpg$hwy)
+
+# With customisation
+plot(mpg$displ, mpg$hwy,
+  main = "Engine vs Fuel Economy",
+  xlab = "Displacement (L)",
+  ylab = "Highway MPG",
+  pch  = 16,       # solid circle
+  col  = "steelblue",
+  cex  = 0.8)      # point size
+
+# Add regression line
+abline(
+  lm(hwy ~ displ, data = mpg),
+  col = "red", lwd = 2)
+
+# Add legend
+legend("topright",
+  legend = "OLS fit",
+  col = "red", lwd = 2)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_m08/base_scatter}
+
+      \vspace{4pt}
+      {\small Key parameters:
+      \texttt{pch} = point shape (16 = filled),
+      \texttt{col} = colour,
+      \texttt{cex} = size multiplier,
+      \texttt{lwd} = line width.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Histogram: \texttt{hist(x)}}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+# Minimal call
+hist(apps$Rating)
+
+# With customisation
+hist(apps$Rating,
+  breaks = 30,          # bin count
+  col    = "lightblue",
+  border = "white",
+  main   = "App Rating Distribution",
+  xlab   = "Rating (1-5)",
+  ylab   = "Frequency",
+  las    = 1)           # horizontal labels
+
+# Add density curve overlay
+lines(density(apps$Rating,
+  na.rm = TRUE),
+  col = "red", lwd = 2)
+
+# Add vertical mean line
+abline(v = mean(apps$Rating,
+  na.rm = TRUE),
+  col = "blue", lwd = 2,
+  lty = 2)  # dashed
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_m08/base_hist}
+
+      \vspace{4pt}
+      {\small Key parameters:
+      \texttt{breaks} = number of bins,
+      \texttt{border} = bar edge colour,
+      \texttt{las = 1} = horizontal tick
+      labels.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Bar Chart: \texttt{barplot()}}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+# Count categories
+counts <- table(apps$Type)
+
+# Minimal bar chart
+barplot(counts)
+
+# Customised horizontal bar
+barplot(sort(counts),
+  horiz   = TRUE,
+  col     = "steelblue",
+  border  = NA,
+  main    = "Apps by Type",
+  xlab    = "Count",
+  las     = 1,
+  cex.names = 0.8)
+
+# Grouped bar chart
+barplot(
+  matrix(c(30, 50, 20, 40), nrow = 2),
+  beside = TRUE,
+  col = c("steelblue", "coral"),
+  names.arg = c("Cat A", "Cat B"),
+  legend.text = c("Free", "Paid"))
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_m08/base_bar}
+
+      \vspace{4pt}
+      {\small Key parameters:
+      \texttt{horiz = TRUE} flips to horizontal,
+      \texttt{beside = TRUE} groups bars
+      side by side (vs.\ stacked),
+      \texttt{border = NA} removes bar edges.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Box Plot: \texttt{boxplot()}}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+# Formula syntax: y ~ group
+boxplot(Rating ~ Type, data = apps,
+  main   = "Rating by App Type",
+  ylab   = "Rating",
+  col    = c("lightblue", "salmon"),
+  border = "grey40",
+  notch  = TRUE,   # CI for median
+  las    = 1)
+
+# Add mean points
+means <- tapply(apps$Rating,
+  apps$Type, mean, na.rm = TRUE)
+points(1:2, means,
+  pch = 18, col = "red", cex = 1.5)
+
+# Horizontal boxplot
+boxplot(Rating ~ Type, data = apps,
+  horizontal = TRUE)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_m08/base_box}
+
+      \vspace{4pt}
+      {\small The formula \texttt{y \textasciitilde{} group}
+      is R's standard interface for
+      conditioning: ``y split by group.''
+      Used in boxplot, lm, aov, etc.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\section{The par() System}
+% ================================================================
+
+\begin{frame}[fragile]{Multi-Panel Layouts with \texttt{par(mfrow)}}
+\begin{lstlisting}[style=rstyle]
+# Set up 2x2 grid (fills row by row)
+par(mfrow = c(2, 2))
+
+# Panel 1: scatter
+plot(mpg$displ, mpg$hwy, pch = 16, cex = 0.6,
+     main = "Scatter", xlab = "Displacement", ylab = "MPG")
+
+# Panel 2: histogram
+hist(mpg$hwy, breaks = 20, col = "lightblue", border = "white",
+     main = "Distribution", xlab = "Highway MPG")
+
+# Panel 3: bar chart
+barplot(table(mpg$class), col = "steelblue", border = NA,
+        main = "Vehicle Class", las = 2, cex.names = 0.7)
+
+# Panel 4: boxplot
+boxplot(hwy ~ cyl, data = mpg, col = "lightblue",
+        main = "MPG by Cylinders", xlab = "Cylinders", ylab = "MPG")
+
+# Reset to single plot
+par(mfrow = c(1, 1))
+\end{lstlisting}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Customising \texttt{par()} Parameters}
+  \centering
+  \begin{tabular}{lp{5.5cm}}
+    \toprule
+    \textbf{Parameter} & \textbf{Effect} \\
+    \midrule
+    \texttt{mfrow = c(r, c)} & Grid with r rows, c columns \\
+    \texttt{mar = c(b, l, t, r)} & Margins in lines (bottom, left, top, right) \\
+    \texttt{mgp = c(3, 1, 0)} & Axis title, labels, line positions \\
+    \texttt{cex.main = 1.2} & Title size multiplier \\
+    \texttt{cex.axis = 0.8} & Tick label size multiplier \\
+    \texttt{bg = "white"} & Background colour \\
+    \texttt{las = 1} & Horizontal tick labels \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{6pt}
+  \begin{alertblock}{Pro-Tip}
+    Always save and restore \texttt{par()}: \\
+    \texttt{old\_par <- par(mfrow = c(2,2))} \\
+    \texttt{\# ... plots ...} \\
+    \texttt{par(old\_par)}
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\section{Base R vs ggplot2}
+% ================================================================
+
+\begin{frame}{When to Use Each}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m08/base_vs_ggplot}
+  \end{center}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Base R vs ggplot2: Decision Guide}
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Criterion} & \textbf{Base R} & \textbf{ggplot2} \\
+    \midrule
+    Speed to first plot & Fastest (1 line) & Slightly more setup \\
+    Customisation      & Manual, verbose    & Declarative, layered \\
+    Faceting           & \texttt{par(mfrow)} & \texttt{facet\_wrap()} \\
+    Themes             & Manual \texttt{par()} & \texttt{theme\_*()} library \\
+    Colour scales      & Manual vectors     & \texttt{scale\_*} functions \\
+    Publication quality & Requires effort   & Near-ready by default \\
+    Learning curve     & Shallow start      & Steeper, but compounds \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{6pt}
+  \begin{exampleblock}{Data Insight}
+    Use \textbf{base R} for quick exploratory checks (``what does this
+    variable look like?''). Use \textbf{ggplot2} for anything that will
+    be seen by others. We cover ggplot2 in depth in Workshop 2.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\section{Synthesis}
+% ================================================================
+
+\begin{frame}{Key Takeaways}
+  \begin{enumerate}
+    \item \textbf{RStudio} is the standard IDE: learn the four panes and
+          the pipe shortcut (\texttt{Cmd/Ctrl+Shift+M}).
+    \item \textbf{tidyverse} loads eight essential packages with one
+          \texttt{library()} call. Master \texttt{readr} + \texttt{dplyr}
+          + \texttt{ggplot2} first.
+    \item \textbf{Data types} determine chart choices: check with
+          \texttt{class()} and \texttt{str()} before plotting.
+    \item \textbf{Base R graphics} (\texttt{plot}, \texttt{hist},
+          \texttt{barplot}, \texttt{boxplot}) produce instant exploratory
+          charts with zero dependencies.
+    \item \textbf{par(mfrow)} creates multi-panel layouts; always save
+          and restore \texttt{par()} settings.
+    \item Base R is for \textbf{exploration}; ggplot2 (Workshop 2) is for
+          \textbf{explanation and publication}.
+  \end{enumerate}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Essential Readings for This Module}
+  \begin{itemize}
+    \item Wickham, H. \& Grolemund, G. (2023). \emph{R for Data Science},
+          2nd ed., Chapters 1--3 (Setup, Workflow, Data Transformation).
+          \texttt{https://r4ds.hadley.nz}
+    \item Murrell, P. (2018). \emph{R Graphics}, 3rd ed., Chapters 1--3
+          (Base Graphics System).
+    \item Peng, R.~D. (2016). \emph{Exploratory Data Analysis with R},
+          Chapters 4--6 (Plotting Systems).
+  \end{itemize}
+
+  \vspace{6pt}
+  \textbf{Next Module}: Python Environment Setup \& Matplotlib Basics (W01-M09)
+\end{frame}
+
+\end{document}

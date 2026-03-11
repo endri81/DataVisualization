@@ -1,0 +1,610 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codeblue}{HTML}{1565C0}
+
+\lstdefinestyle{pythonstyle}{
+  language=Python, backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,
+  stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,
+  breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=4,
+  morekeywords={import,from,as,pd,plt,sns,np,fig,ax,subplots,savefig,
+    scatter,hist,barh,boxplot,set_xlabel,set_ylabel,set_title,
+    spines,set_visible,tick_params,tight_layout,DataFrame,
+    read_csv,head,info,describe,dtypes,shape,isna,sum,
+    value_counts,groupby,agg,sort_values,reset_index}
+}
+\lstdefinestyle{bashstyle}{
+  language=bash, backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,
+  commentstyle=\color{codegray}\itshape,
+  breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false,
+}
+
+\title{Python Environment Setup \& Matplotlib Basics}
+\subtitle{Workshop 1 --- Module 9}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% ================================================================
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item Installing Python, JupyterLab, and core packages
+    \item The Python data science stack: NumPy, pandas, matplotlib, seaborn
+    \item pandas data types and the DataFrame inspection workflow
+    \item Matplotlib architecture: Figure $\rightarrow$ Axes $\rightarrow$ Artists
+    \item The four fundamental chart types: scatter, histogram, bar, boxplot
+    \item pyplot vs Object-Oriented API
+  \end{enumerate}
+  \begin{exampleblock}{Learning Outcome}
+    You will have a functioning Python environment and be able to produce
+    all four fundamental chart types using matplotlib, preparing the
+    ground for seaborn/plotnine in Workshop 2.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\section{Python \& JupyterLab Setup}
+% ================================================================
+
+\begin{frame}[fragile]{Installation Checklist}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{Step 1: Install Python}
+\begin{lstlisting}[style=bashstyle]
+# Option A: Miniconda (recommended)
+# https://docs.conda.io/en/latest/
+conda create -n dataviz python=3.11
+conda activate dataviz
+
+# Option B: pip + venv
+python -m venv dataviz_env
+source dataviz_env/bin/activate
+\end{lstlisting}
+      \vspace{4pt}
+      \textbf{Step 2: Install JupyterLab}
+\begin{lstlisting}[style=bashstyle]
+pip install jupyterlab
+jupyter lab  # opens browser
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Step 3: Install core packages}
+\begin{lstlisting}[style=bashstyle]
+pip install \
+  numpy pandas \
+  matplotlib seaborn \
+  plotnine scipy \
+  openpyxl  # for Excel files
+\end{lstlisting}
+      \vspace{4pt}
+      \textbf{Verify installation:}
+\begin{lstlisting}[style=pythonstyle]
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+print(f"numpy:  {np.__version__}")
+print(f"pandas: {pd.__version__}")
+print(f"mpl:    {plt.matplotlib
+                    .__version__}")
+print(f"sns:    {sns.__version__}")
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}{The JupyterLab IDE}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{figures_m09/jupyter_layout}
+  \end{center}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{JupyterLab Keyboard Shortcuts}
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Action} & \textbf{Command Mode} & \textbf{Edit Mode} \\
+    \midrule
+    Run cell + next           & Shift+Enter & Shift+Enter \\
+    Run cell (stay)           & Ctrl+Enter  & Ctrl+Enter \\
+    Insert cell above         & A           & --- \\
+    Insert cell below         & B           & --- \\
+    Delete cell               & D, D        & --- \\
+    Switch to Markdown        & M           & --- \\
+    Switch to Code            & Y           & --- \\
+    Toggle line numbers       & L           & --- \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{6pt}
+  \begin{alertblock}{Pro-Tip}
+    Press \textbf{Escape} to enter Command Mode (blue sidebar),
+    \textbf{Enter} to enter Edit Mode (green sidebar). Most navigation
+    happens in Command Mode; typing happens in Edit Mode.
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\section{The Python Data Science Stack}
+% ================================================================
+
+\begin{frame}{Python Ecosystem Overview}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{figures_m09/python_stack}
+  \end{center}
+\end{frame}
+
+% ================================================================
+\begin{frame}{R $\leftrightarrow$ Python Package Equivalents}
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Task} & \textbf{R} & \textbf{Python} \\
+    \midrule
+    Data frames    & \texttt{tibble / data.frame}   & \texttt{pandas.DataFrame} \\
+    CSV import     & \texttt{readr::read\_csv}       & \texttt{pd.read\_csv} \\
+    Data wrangling & \texttt{dplyr}                  & \texttt{pandas} \\
+    Static plots   & \texttt{ggplot2}                & \texttt{matplotlib / seaborn} \\
+    GoG clone      & \texttt{ggplot2} (native)       & \texttt{plotnine} \\
+    Interactive    & \texttt{plotly / shiny}          & \texttt{plotly / dash} \\
+    Statistics     & built-in + \texttt{broom}       & \texttt{scipy / statsmodels} \\
+    ML             & \texttt{tidymodels}             & \texttt{scikit-learn} \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{6pt}
+  \begin{exampleblock}{Data Insight}
+    The ecosystems are deliberately parallel. Skills in one transfer to
+    the other with mostly syntactic differences.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\section{pandas Data Types}
+% ================================================================
+
+\begin{frame}{Data Types for Visualization}
+  \begin{center}
+    \includegraphics[width=0.82\textwidth]{figures_m09/pandas_types}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    Use \texttt{df.dtypes} to check all column types and \texttt{df.info()}
+    for a compact summary including non-null counts. Type mismatches
+    (e.g., numbers parsed as \texttt{object}) are the number-one cause
+    of plotting failures.
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Loading and Inspecting Data}
+\begin{lstlisting}[style=pythonstyle]
+import pandas as pd
+
+# Read CSV
+apps = pd.read_csv("googleplaystore.csv")
+
+# Quick inspection (parallel to R's glimpse/str/summary)
+print(apps.shape)         # (rows, cols)  — like dim()
+print(apps.dtypes)        # column types  — like str()
+print(apps.head())        # first 5 rows  — like head()
+print(apps.describe())    # summary stats — like summary()
+print(apps.info())        # types + nulls — like glimpse()
+
+# Missing values
+print(apps.isna().sum())  # per-column NA count
+
+# Useful for viz planning:
+# - How many rows? (affects point density / alpha)
+# - dtypes? (object = probably categorical or needs conversion)
+# - Nulls? (need dropna() or fillna() before plotting)
+\end{lstlisting}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Type Conversion Patterns}
+\begin{lstlisting}[style=pythonstyle]
+# String to numeric (like as.numeric() in R)
+apps["Reviews"] = pd.to_numeric(apps["Reviews"], errors="coerce")
+
+# String to datetime (like as.Date() in R)
+apps["Last Updated"] = pd.to_datetime(apps["Last Updated"],
+                                       format="%B %d, %Y",
+                                       errors="coerce")
+
+# String to categorical (like factor() in R)
+apps["Type"] = pd.Categorical(apps["Type"])
+
+# Ordered category (like ordered factor)
+rating_order = ["Everyone", "Teen", "Mature 17+"]
+apps["Content Rating"] = pd.Categorical(
+    apps["Content Rating"],
+    categories=rating_order,
+    ordered=True)
+
+# Verify
+print(apps.dtypes)
+\end{lstlisting}
+\end{frame}
+
+% ================================================================
+\section{Matplotlib Architecture}
+% ================================================================
+
+\begin{frame}{Figure $\rightarrow$ Axes $\rightarrow$ Artists}
+  \begin{center}
+    \includegraphics[width=0.85\textwidth]{figures_m09/mpl_architecture}
+  \end{center}
+\end{frame}
+
+% ================================================================
+\begin{frame}{pyplot vs Object-Oriented API}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m09/pyplot_vs_oo}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    The \textbf{pyplot} API (\texttt{plt.plot()}) uses an implicit state
+    machine modelled after MATLAB. The \textbf{OO} API (\texttt{ax.plot()})
+    gives explicit control over every figure element. This course uses
+    the OO API exclusively --- it is clearer, more composable, and the
+    only viable approach for multi-panel layouts.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{The OO Pattern: Your Template for Every Plot}
+\begin{lstlisting}[style=pythonstyle]
+import matplotlib.pyplot as plt
+
+# 1. Create figure and axes (ALWAYS start here)
+fig, ax = plt.subplots(figsize=(7, 5))
+
+# 2. Plot data onto the axes
+ax.scatter(x, y, s=30, c="#1565C0", alpha=0.6)
+
+# 3. Labels and title
+ax.set_xlabel("X Variable", fontsize=10)
+ax.set_ylabel("Y Variable", fontsize=10)
+ax.set_title("My Chart Title", fontsize=12, fontweight="bold")
+
+# 4. Tufte cleanup
+ax.spines["top"].set_visible(False)
+ax.spines["right"].set_visible(False)
+ax.tick_params(labelsize=8)
+
+# 5. Save (ALWAYS use bbox_inches="tight")
+plt.tight_layout()
+fig.savefig("chart.pdf", bbox_inches="tight")     # vector
+fig.savefig("chart.png", dpi=300, bbox_inches="tight")  # raster
+plt.close()  # free memory
+\end{lstlisting}
+\end{frame}
+
+% ================================================================
+\section{Four Fundamental Chart Types}
+% ================================================================
+
+\begin{frame}{The Four Charts in matplotlib}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{figures_m09/mpl_subplots}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    These four methods --- \texttt{ax.scatter()}, \texttt{ax.hist()},
+    \texttt{ax.barh()}, \texttt{ax.boxplot()} --- cover 80\% of
+    exploratory needs. Master these before moving to seaborn.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Scatterplot: \texttt{ax.scatter()}}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+fig, ax = plt.subplots(figsize=(5, 4))
+
+ax.scatter(x, y,
+    s=30,             # marker size
+    c="#1565C0",      # colour
+    alpha=0.6,        # transparency
+    edgecolors="white",
+    linewidth=0.3)
+
+# Add regression line
+m, b = np.polyfit(x, y, 1)
+xs = np.linspace(x.min(), x.max(), 50)
+ax.plot(xs, m*xs + b,
+    color="#E53935", lw=1.5,
+    linestyle="--")
+
+ax.set_xlabel("Displacement (L)")
+ax.set_ylabel("MPG")
+ax.set_title("Scatter + OLS Fit")
+ax.spines["top"].set_visible(False)
+ax.spines["right"].set_visible(False)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_m09/mpl_scatter}
+
+      \vspace{4pt}
+      {\small Key params:
+      \texttt{s} = size (area in pts\textsuperscript{2}),
+      \texttt{c} = colour (string or array),
+      \texttt{alpha} = transparency [0--1],
+      \texttt{edgecolors} = marker border.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Histogram: \texttt{ax.hist()}}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+fig, ax = plt.subplots(figsize=(5, 4))
+
+ax.hist(data,
+    bins=25,              # bin count
+    color="#1565C0",
+    edgecolor="white",
+    linewidth=0.5,
+    alpha=0.8)
+
+# Mean reference line
+mean_val = np.mean(data)
+ax.axvline(x=mean_val,
+    color="#E53935", lw=2,
+    linestyle="--")
+ax.text(mean_val + 1,
+    ax.get_ylim()[1] * 0.9,
+    f"Mean: {mean_val:.1f}",
+    fontsize=8, color="#E53935",
+    fontweight="bold")
+
+ax.set_xlabel("Value")
+ax.set_ylabel("Frequency")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_m09/mpl_hist}
+
+      \vspace{4pt}
+      {\small Key params:
+      \texttt{bins} = int or sequence,
+      \texttt{density=True} for PDF,
+      \texttt{histtype="step"} for unfilled,
+      \texttt{cumulative=True} for CDF.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Bar Chart: \texttt{ax.barh()}}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+fig, ax = plt.subplots(figsize=(5, 4))
+
+# Sort ascending for horizontal
+idx = np.argsort(vals)
+s_cats = [cats[i] for i in idx]
+s_vals = [vals[i] for i in idx]
+
+ax.barh(s_cats, s_vals,
+    color="#1565C0",
+    height=0.55,       # bar width
+    edgecolor="none")
+
+# Direct labels
+for i, v in enumerate(s_vals):
+    ax.text(v + 0.8, i, str(v),
+        va="center", fontsize=9,
+        fontweight="bold")
+
+# Tufte cleanup
+for sp in ["top","right","left"]:
+    ax.spines[sp].set_visible(False)
+ax.set_xticks([])
+ax.tick_params(left=False)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_m09/mpl_bar}
+
+      \vspace{4pt}
+      {\small Use \texttt{ax.barh()} (horizontal)
+      by default: labels are readable
+      without rotation. \texttt{ax.bar()} for
+      vertical only when x-axis is
+      temporal or ordinal.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Boxplot: \texttt{ax.boxplot()}}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+fig, ax = plt.subplots(figsize=(5, 4))
+
+bp = ax.boxplot(
+    [group_a, group_b, group_c],
+    labels=["A", "B", "C"],
+    patch_artist=True,  # fill boxes
+    widths=0.5,
+    notch=True)         # CI on median
+
+# Customise box colours
+fills = ["#E3F2FD","#E8F5E9","#FFF3E0"]
+edges = ["#1565C0","#2E7D32","#E65100"]
+for patch, fc, ec in zip(
+    bp["boxes"], fills, edges):
+    patch.set_facecolor(fc)
+    patch.set_edgecolor(ec)
+
+# Overlay mean points
+means = [np.mean(d) for d in data]
+ax.scatter(range(1, 4), means,
+    c="#E53935", s=50, zorder=5,
+    marker="D", edgecolors="white")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_m09/mpl_box}
+
+      \vspace{4pt}
+      {\small Key params:
+      \texttt{patch\_artist=True} enables
+      fill colour;
+      \texttt{notch=True} adds median CI;
+      \texttt{whis=1.5} (default) controls
+      whisker extent;
+      use \texttt{vert=False} for horizontal.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\section{Multi-Panel Layouts}
+% ================================================================
+
+\begin{frame}[fragile]{\texttt{plt.subplots(rows, cols)}}
+\begin{lstlisting}[style=pythonstyle]
+# Create 2x2 grid (equivalent to R's par(mfrow = c(2,2)))
+fig, axes = plt.subplots(2, 2, figsize=(8, 6))
+
+# Access each axes by index
+axes[0, 0].scatter(x, y, s=20, c="#1565C0")
+axes[0, 0].set_title("(a) Scatter")
+
+axes[0, 1].hist(data, bins=20, color="#2E7D32")
+axes[0, 1].set_title("(b) Histogram")
+
+axes[1, 0].barh(cats, vals, color="#E65100", height=0.5)
+axes[1, 0].set_title("(c) Bar Chart")
+
+axes[1, 1].boxplot(groups, patch_artist=True)
+axes[1, 1].set_title("(d) Boxplot")
+
+# Tufte cleanup on all panels
+for ax in axes.flatten():
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.tick_params(labelsize=7)
+
+plt.tight_layout()  # prevent label overlap
+fig.savefig("multipanel.pdf", bbox_inches="tight")
+\end{lstlisting}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Advanced: \texttt{GridSpec} for Unequal Panels}
+\begin{lstlisting}[style=pythonstyle]
+from matplotlib.gridspec import GridSpec
+
+fig = plt.figure(figsize=(10, 6))
+gs = GridSpec(2, 3, figure=fig,
+    hspace=0.4, wspace=0.3,
+    height_ratios=[1, 1.5])
+
+# Top row: three equal panels
+ax1 = fig.add_subplot(gs[0, 0])  # row 0, col 0
+ax2 = fig.add_subplot(gs[0, 1])  # row 0, col 1
+ax3 = fig.add_subplot(gs[0, 2])  # row 0, col 2
+
+# Bottom row: one full-width panel
+ax4 = fig.add_subplot(gs[1, :])  # row 1, ALL cols
+
+# Shared y-axis: sharey=ax1
+ax5 = fig.add_subplot(gs[0, 2], sharey=ax1)
+\end{lstlisting}
+
+  \begin{alertblock}{Pro-Tip}
+    \texttt{GridSpec} is the Python equivalent of R's \texttt{patchwork}
+    package. Use it for any layout that is not a regular grid.
+    Slice notation (\texttt{gs[1, :]}) spans multiple columns.
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\section{Synthesis}
+% ================================================================
+
+\begin{frame}{R vs Python: Side-by-Side Cheat Sheet}
+  \centering
+  {\small
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Operation} & \textbf{R (base)} & \textbf{Python (matplotlib)} \\
+    \midrule
+    Scatter   & \texttt{plot(x, y)}             & \texttt{ax.scatter(x, y)} \\
+    Histogram & \texttt{hist(x)}                & \texttt{ax.hist(x)} \\
+    Bar chart & \texttt{barplot(table(x))}      & \texttt{ax.barh(cats, vals)} \\
+    Boxplot   & \texttt{boxplot(y \textasciitilde{} g)} & \texttt{ax.boxplot([g1, g2])} \\
+    Multi-panel & \texttt{par(mfrow=c(2,2))}    & \texttt{plt.subplots(2, 2)} \\
+    Save plot & \texttt{png(); ...; dev.off()}  & \texttt{fig.savefig("f.png")} \\
+    Reg.\ line & \texttt{abline(lm(y\textasciitilde{}x))} & \texttt{ax.plot(xs, m*xs+b)} \\
+    Ref.\ line & \texttt{abline(h=v)}           & \texttt{ax.axhline(y=v)} \\
+    \bottomrule
+  \end{tabular}}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Key Takeaways}
+  \begin{enumerate}
+    \item \textbf{Miniconda + JupyterLab} is the recommended Python
+          setup. Learn Shift+Enter and Command/Edit mode switching.
+    \item \textbf{pandas} is the Python equivalent of tibble + dplyr.
+          Use \texttt{df.dtypes} and \texttt{df.info()} before plotting.
+    \item Matplotlib has \textbf{three layers}: Figure (canvas), Axes
+          (plot area), Artists (data marks). Always think in this hierarchy.
+    \item Use the \textbf{OO API} (\texttt{fig, ax = plt.subplots()})
+          exclusively --- it is explicit, composable, and scalable.
+    \item Master four methods: \texttt{ax.scatter()}, \texttt{ax.hist()},
+          \texttt{ax.barh()}, \texttt{ax.boxplot()}.
+    \item \texttt{plt.subplots(r, c)} for regular grids;
+          \texttt{GridSpec} for unequal panels.
+  \end{enumerate}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Essential Readings for This Module}
+  \begin{itemize}
+    \item VanderPlas, J. (2016). \emph{Python Data Science Handbook},
+          Chapter 4 (Visualization with Matplotlib).
+          \texttt{https://jakevdp.github.io/PythonDataScienceHandbook/}
+    \item McKinney, W. (2022). \emph{Python for Data Analysis}, 3rd ed.,
+          Chapters 4--5 (NumPy, pandas) and Chapter 9 (Plotting).
+    \item Matplotlib official tutorials:
+          \texttt{https://matplotlib.org/stable/tutorials/}
+  \end{itemize}
+
+  \vspace{6pt}
+  \textbf{Next Module}: Comparative Lab --- First Plots in R vs Python (W01-M10)
+\end{frame}
+
+\end{document}

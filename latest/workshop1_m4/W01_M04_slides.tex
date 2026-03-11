@@ -1,0 +1,606 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codeblue}{HTML}{1565C0}
+
+\lstdefinestyle{rstyle}{
+  language=R, backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,
+  stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,
+  breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=2,
+  morekeywords={library,ggplot,aes,geom_point,geom_tile,geom_col,
+    scale_fill_viridis_c,scale_color_brewer,scale_fill_manual,
+    theme_minimal,labs,coord_flip}
+}
+\lstdefinestyle{pythonstyle}{
+  language=Python, backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,
+  stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,
+  breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=4,
+  morekeywords={import,from,as,pd,plt,sns,np,fig,ax}
+}
+
+\title{Color Theory \& Accessibility}
+\subtitle{Workshop 1 --- Module 4}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% ================================================================
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item The three dimensions of colour: hue, saturation, lightness
+    \item Palette typology: sequential, diverging, qualitative
+    \item Perceptual uniformity and the viridis family
+    \item Colour vision deficiency and accessible design
+    \item WCAG contrast standards and the grey-plus-accent strategy
+  \end{enumerate}
+  \begin{exampleblock}{Learning Outcome}
+    You will be able to select, justify, and implement colour palettes
+    that are perceptually accurate, colourblind-safe, and WCAG-compliant.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\section{The Three Dimensions of Colour}
+% ================================================================
+
+\begin{frame}{Hue, Saturation, Lightness}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_m04/hsl}
+  \end{center}
+  \begin{itemize}
+    \item \textbf{Hue}: the colour name (red, blue, green) --- categorical channel
+    \item \textbf{Saturation}: vividness vs.\ grey --- ordinal / emphasis channel
+    \item \textbf{Lightness}: dark to bright --- sequential / quantitative channel
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Mapping Data to Colour Dimensions}
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Data Type} & \textbf{Use} & \textbf{Avoid} \\
+    \midrule
+    Nominal (categories) & Hue differences          & Lightness gradient \\
+    Ordinal (rank)       & Lightness / saturation   & Hue rainbow \\
+    Quantitative (value) & Lightness gradient       & Discrete hues \\
+    Diverging ($\pm$)    & Two-hue + neutral centre & Single hue \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{8pt}
+  \begin{alertblock}{Pro-Tip}
+    The single most common colour error is using a \textbf{rainbow} (hue
+    variation) for quantitative data. Rainbow palettes create false
+    perceptual boundaries where the data are smooth.
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\section{Palette Types}
+% ================================================================
+
+\begin{frame}{Sequential, Diverging, Qualitative}
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{figures_m04/palette_types}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    Choosing the wrong palette type is a semantic error: a diverging
+    palette implies a meaningful midpoint; a qualitative palette implies
+    no ordering. Match the palette structure to the data structure.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{ColorBrewer: Empirically Tested Palettes}
+  \begin{center}
+    \includegraphics[width=0.85\textwidth]{figures_m04/colorbrewer}
+  \end{center}
+  \begin{itemize}
+    \item Brewer (2003) tested palettes for cartographic legibility
+    \item Three families: sequential, diverging, qualitative
+    \item Each family rated for print, photocopy, LCD, and colourblind safety
+    \item Interactive tool: \texttt{https://colorbrewer2.org}
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\begin{frame}{The Palette Decision Tree}
+  \begin{center}
+    \includegraphics[width=0.85\textwidth]{figures_m04/decision_tree}
+  \end{center}
+\end{frame}
+
+% ================================================================
+\section{Perceptual Uniformity}
+% ================================================================
+
+\begin{frame}{Why Rainbow Fails}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m04/rainbow_vs_viridis}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    Rainbow (jet) creates false contour bands at yellow and cyan where
+    the human visual system perceives abrupt lightness jumps. Viridis
+    changes lightness monotonically, so equal data steps produce equal
+    perceptual steps.
+  \end{alertblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{The Viridis Family}
+  \begin{center}
+    \includegraphics[width=0.85\textwidth]{figures_m04/viridis_family}
+  \end{center}
+  \begin{itemize}
+    \item Designed by van der Walt \& Smith (2015) for matplotlib
+    \item Perceptually uniform in both colour and greyscale
+    \item Safe for deuteranopia, protanopia, and tritanopia
+    \item Available in R (\texttt{viridis}) and Python (\texttt{plt.cm.viridis})
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Sequential Palette in R}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+library(ggplot2)
+library(viridis)
+
+# Heatmap with perceptually
+# uniform sequential palette
+ggplot(df, aes(x = week,
+               y = day,
+               fill = value)) +
+  geom_tile(color = "white",
+            linewidth = 0.3) +
+  scale_fill_viridis_c(
+    option = "D",     # viridis
+    direction = 1) +
+  theme_minimal(base_size = 9) +
+  labs(title = "Weekly Heatmap",
+       fill = "Value")
+
+# Alternatives:
+# option = "A" (magma)
+# option = "B" (inferno)
+# option = "C" (plasma)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_m04/heatmap_r}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Sequential Palette in Python}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+import matplotlib.pyplot as plt
+import numpy as np
+
+data = np.random.uniform(
+    10, 90, (6, 8))
+
+fig, ax = plt.subplots()
+im = ax.imshow(
+    data,
+    cmap="viridis",  # default
+    aspect="auto")
+
+plt.colorbar(im, ax=ax,
+    shrink=0.8, label="Value")
+
+ax.set_title("Weekly Heatmap")
+plt.tight_layout()
+
+# Alternatives:
+# cmap="magma"
+# cmap="plasma"
+# cmap="inferno"
+# cmap="cividis" (colourblind)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_m04/heatmap_py}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Diverging Palette in R}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+# Diverging: centred on zero
+# Two hues + white midpoint
+ggplot(df, aes(x = x, y = y,
+               color = deviation)) +
+  geom_point(size = 2.5) +
+  scale_color_gradient2(
+    low = "#2166AC",    # blue
+    mid = "white",      # neutral
+    high = "#B2182B",   # red
+    midpoint = 0,
+    limits = c(-1, 1)) +
+  theme_minimal() +
+  labs(color = "Deviation")
+
+# ColorBrewer alternative:
+# scale_color_distiller(
+#   palette = "RdBu",
+#   direction = -1)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_m04/diverging_map}
+
+      \vspace{4pt}
+      {\small The midpoint (white) must align
+      with the meaningful centre of the data
+      (usually zero or the mean).}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Diverging Palette in Python}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots()
+
+sc = ax.scatter(
+    x, y, c=deviation,
+    cmap="RdBu_r",      # diverging
+    vmin=-1, vmax=1,     # centre=0
+    s=60,
+    edgecolors="white",
+    linewidth=0.5)
+
+plt.colorbar(sc, ax=ax,
+    label="Deviation from Mean")
+
+# TwoSlopeNorm for off-centre
+from matplotlib.colors import (
+    TwoSlopeNorm)
+norm = TwoSlopeNorm(
+    vmin=-2, vcenter=0, vmax=5)
+# Pass norm=norm to scatter()
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \textbf{Key parameters:}
+
+      \begin{itemize}
+        \item \texttt{vmin}, \texttt{vmax}: symmetric
+              around zero
+        \item \texttt{TwoSlopeNorm}: for asymmetric
+              ranges (e.g., $-2$ to $+5$)
+        \item Suffix \texttt{\_r}: reverses the
+              colourmap direction
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\section{Colour Vision Deficiency}
+% ================================================================
+
+\begin{frame}{8\% of Males Have Colour Vision Deficiency}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m04/colorblind_sim}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    Deuteranopia (red--green deficiency) affects $\sim$8\% of males and
+    $\sim$0.5\% of females. Red and green bars become nearly
+    indistinguishable. Always simulate CVD before publishing.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Accessible Design Strategies}
+  \begin{enumerate}
+    \item Use \textbf{viridis} or \textbf{cividis} for sequential data ---
+          both are colourblind-safe by construction
+    \item Supplement colour with a \textbf{second channel}: shape, pattern,
+          direct label, or line style
+    \item Simulate CVD using tools:
+          \begin{itemize}
+            \item R: \texttt{colorspace::deutan()}, \texttt{protan()}, \texttt{tritan()}
+            \item Python: \texttt{colorspacious} package
+            \item Web: \texttt{https://www.color-blindness.com/coblis/}
+          \end{itemize}
+    \item Limit qualitative palettes to $\leq$ 7 hues --- CVD simulation
+          degrades rapidly beyond this
+  \end{enumerate}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{CVD Simulation in R}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+library(colorspace)
+
+# Create a plot
+p <- ggplot(df, aes(x, y,
+    color = category)) +
+  geom_point(size = 3) +
+  scale_color_manual(
+    values = c("A" = "#E53935",
+               "B" = "#2E7D32",
+               "C" = "#1565C0"))
+
+# Simulate deuteranopia
+protan(p)   # protanopia
+deutan(p)   # deuteranopia
+tritan(p)   # tritanopia
+
+# Better: use safe palettes
+p + scale_color_viridis_d()
+# or
+p + scale_color_brewer(
+    palette = "Set2")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \textbf{Workflow:}
+
+      \begin{enumerate}
+        \item Build chart with default palette
+        \item Run \texttt{deutan(p)} to simulate
+        \item If categories merge, switch to
+              a colourblind-safe palette
+        \item Add a redundant channel (shape)
+              as insurance
+      \end{enumerate}
+
+      \vspace{4pt}
+      {\small The \texttt{colorspace} package also
+      provides \texttt{hcl\_palettes()} for
+      systematic palette exploration.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{CVD Simulation in Python}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+# pip install colorspacious
+from colorspacious import cspace_convert
+import numpy as np
+
+def simulate_cvd(rgb_array,
+                 deficiency="deuteranomaly",
+                 severity=100):
+    """Simulate colour vision
+    deficiency on an RGB image."""
+    # Convert to CVD space
+    cvd = cspace_convert(
+        rgb_array,
+        {"name": "sRGB1",
+         "CVD": {
+           "type": deficiency,
+           "severity": severity}},
+        "sRGB1")
+    return np.clip(cvd, 0, 1)
+
+# Alternative: use cividis cmap
+# plt.scatter(x, y, c=z,
+#     cmap="cividis")
+# cividis designed for CVD safety
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \textbf{Quick alternatives:}
+
+      \begin{itemize}
+        \item \texttt{cmap="cividis"} is optimised
+              for deuteranopia and protanopia
+        \item Seaborn's \texttt{palette="colorblind"}
+              provides a 6-colour safe set
+        \item Add markers: \texttt{style="category"}
+              in \texttt{sns.scatterplot()}
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\section{Contrast \& the Grey-Accent Strategy}
+% ================================================================
+
+\begin{frame}{WCAG 2.1 Contrast Requirements}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m04/wcag_contrast}
+  \end{center}
+  \begin{itemize}
+    \item \textbf{AA}: contrast ratio $\geq$ 4.5:1 for normal text,
+          $\geq$ 3:1 for large text (18pt+)
+    \item \textbf{AAA}: contrast ratio $\geq$ 7:1
+    \item Check with: \texttt{https://webaim.org/resources/contrastchecker/}
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Grey + Accent: The Most Powerful Colour Strategy}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m04/grey_accent}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    Colouring everything equally gives everything equal salience ---
+    which means nothing stands out. Grey desaturates the background;
+    a single accent hue creates instant pre-attentive pop-out for the
+    focal data.
+  \end{exampleblock}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Grey + Accent in R}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+library(ggplot2)
+
+# Highlight one category, grey rest
+ggplot(df, aes(x = x, y = y,
+    color = is_highlight)) +
+  geom_point(aes(
+    size = ifelse(is_highlight,
+                  3, 1.5),
+    alpha = ifelse(is_highlight,
+                   0.9, 0.3))) +
+  scale_color_manual(
+    values = c(
+      "TRUE" = "#E53935",
+      "FALSE" = "#BBBBBB")) +
+  scale_size_identity() +
+  scale_alpha_identity() +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "Grey + Accent")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \textbf{Three-step recipe:}
+
+      \begin{enumerate}
+        \item Create a boolean column
+              \texttt{is\_highlight}
+        \item Map \texttt{TRUE} to accent,
+              \texttt{FALSE} to grey
+        \item Increase size and alpha for
+              the highlighted subset
+      \end{enumerate}
+
+      \vspace{4pt}
+      {\small This leverages both colour
+      and size pre-attentive channels
+      simultaneously.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}[fragile]{Grey + Accent in Python}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots()
+
+# Background points (grey)
+mask = df["category"] != "target"
+ax.scatter(
+    df.loc[mask, "x"],
+    df.loc[mask, "y"],
+    c="#BBBBBB", s=20,
+    alpha=0.3, edgecolors="none")
+
+# Highlighted points (accent)
+mask_hl = df["category"] == "target"
+ax.scatter(
+    df.loc[mask_hl, "x"],
+    df.loc[mask_hl, "y"],
+    c="#E53935", s=50,
+    alpha=0.9,
+    edgecolors="white",
+    linewidth=0.5, zorder=5)
+
+ax.set_title("Grey + Accent")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \textbf{Python pattern:}
+
+      \begin{enumerate}
+        \item Plot background first (grey,
+              small, low alpha)
+        \item Plot highlight second (accent,
+              large, high alpha, \texttt{zorder=5})
+        \item No legend needed --- the colour
+              difference is self-explanatory
+      \end{enumerate}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Colour Do's and Don'ts}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_m04/dos_donts}
+  \end{center}
+\end{frame}
+
+% ================================================================
+\section{Synthesis}
+% ================================================================
+
+\begin{frame}{Key Takeaways}
+  \begin{enumerate}
+    \item \textbf{Hue} for categories, \textbf{lightness} for quantities,
+          \textbf{saturation} for emphasis --- never conflate the three.
+    \item \textbf{Sequential} for ordered data, \textbf{diverging} for
+          data with a meaningful midpoint, \textbf{qualitative} for
+          nominal categories ($\leq$ 7).
+    \item \textbf{Never use rainbow}. Use \texttt{viridis}, \texttt{magma},
+          or \texttt{cividis} for perceptual uniformity.
+    \item \textbf{Simulate CVD} before publishing (\texttt{colorspace} in R,
+          \texttt{colorspacious} in Python).
+    \item \textbf{Grey + accent} is the single most effective colour strategy
+          for explanatory visualization.
+  \end{enumerate}
+\end{frame}
+
+% ================================================================
+\begin{frame}{Essential Readings for This Module}
+  \begin{itemize}
+    \item Brewer, C.~A. (2003). ``A Transition in Improving Maps: The
+          ColorBrewer Example.'' \emph{Cartography and Geographic
+          Information Science}, 30(2).
+    \item van der Walt, S. \& Smith, N. (2015). ``A Better Default
+          Colormap for Matplotlib.'' SciPy 2015.
+    \item Crameri, F., Shephard, G.~E. \& Heron, P.~J. (2020). ``The
+          Misuse of Colour in Science Communication.''
+          \emph{Nature Communications}, 11, 5444.
+    \item Wilke, C.~O. (2019). \emph{Fundamentals of Data Visualization},
+          Chapter 4 (Color Scales).
+  \end{itemize}
+
+  \vspace{6pt}
+  \textbf{Next Module}: Typography, Layout \& Composition (W01-M05)
+\end{frame}
+
+\end{document}
