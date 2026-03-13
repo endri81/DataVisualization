@@ -1,0 +1,294 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codeblue}{HTML}{1565C0}
+
+\lstdefinestyle{rstyle}{
+  language=R, backgroundcolor=\color{codebg}, basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries, stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape, breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=2,
+  morekeywords={library,ggplot,aes,geom_col,geom_histogram,geom_point,geom_boxplot,
+    geom_line,geom_bar,geom_smooth,geom_text,geom_vline,geom_hline,
+    coord_flip,scale_x_log10,scale_color_manual,scale_fill_manual,
+    facet_wrap,stat_summary,theme_minimal,theme,element_text,element_blank,
+    labs,ggsave,fct_reorder,count,slice_max,filter,mutate,drop_na,
+    patchwork,plot_annotation,tag_levels}
+}
+\lstdefinestyle{pythonstyle}{
+  language=Python, backgroundcolor=\color{codebg}, basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries, stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape, breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=4,
+  morekeywords={import,from,as,pd,plt,sns,np,fig,ax,subplots,GridSpec,
+    savefig,tight_layout,suptitle,text}
+}
+
+\title{Lab: Building a Visual Report}
+\subtitle{Workshop 2 --- Module 10}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item The visual report workflow: question to export
+    \item Apply all Grammar of Graphics layers to six chart types
+    \item Compose a six-panel dashboard in R (patchwork) and Python (GridSpec)
+    \item Workshop 2 review: what you now know
+  \end{enumerate}
+  \begin{exampleblock}{Learning Outcome}
+    You will produce a complete, publication-quality, six-panel visual
+    report from the Google Play Store dataset, applying every grammar
+    layer covered in Modules 1--9.
+  \end{exampleblock}
+\end{frame}
+
+\section{The Visual Report Workflow}
+
+\begin{frame}{Six Steps: Question to Export}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w02m10/report_structure}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    Start with the question, not the chart type. ``Which categories
+    dominate the Play Store?'' determines the chart (bar); ``How are
+    ratings distributed?'' determines the chart (histogram). The grammar
+    layers follow from the question.
+  \end{alertblock}
+\end{frame}
+
+\section{The Target: Six-Panel Dashboard}
+
+\begin{frame}{Complete Visual Report}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w02m10/dashboard}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Grammar Layers Applied per Panel}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w02m10/grammar_checklist}
+  \end{center}
+\end{frame}
+
+\section{Building Each Panel}
+
+\begin{frame}[fragile]{Panel (a): Top Categories --- Bar Chart}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+# Question: Which categories dominate?
+apps_clean |>
+  count(Category, sort = TRUE) |>
+  slice_max(n, n = 8) |>
+  mutate(
+    Category = fct_reorder(Category, n),
+    highlight = Category == "FAMILY") |>
+  ggplot(aes(x = Category, y = n,
+             fill = highlight)) +
+  geom_col(width = 0.5,
+           show.legend = FALSE) +
+  geom_text(aes(label = scales::comma(n)),
+    hjust = -0.15, size = 3,
+    fontface = "bold") +
+  scale_fill_manual(values =
+    c("TRUE" = "#1565C0",
+      "FALSE" = "#BBBBBB")) +
+  coord_flip() +
+  theme_minimal() +
+  theme(panel.grid.major.y =
+    element_blank()) +
+  labs(title = "FAMILY Leads with 1,832",
+       x = NULL, y = NULL)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_w02m10/r_report}
+
+      \vspace{4pt}
+      {\small Grammar layers:
+      \texttt{geom\_col} + \texttt{coord\_flip}
+      + \texttt{scale\_fill\_manual} (accent)
+      + \texttt{geom\_text} (direct labels)
+      + declarative title.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Panel (a): Same Chart in Python}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+top8 = (apps_clean
+    .value_counts("Category")
+    .head(8)
+    .sort_values())
+
+fig, ax = plt.subplots(figsize=(6, 5))
+colors = ["#BBBBBB"] * 8
+colors[-1] = "#1565C0"
+
+ax.barh(top8.index, top8.values,
+    color=colors, height=0.5)
+
+for i, v in enumerate(top8.values):
+    ax.text(v + 15, i, f"{v:,}",
+        va="center", fontsize=7,
+        fontweight="bold",
+        color="#1565C0"
+            if i == 7 else "#888")
+
+ax.set_title("FAMILY Leads with 1,832",
+    fontweight="bold")
+for sp in ["top","right","left"]:
+    ax.spines[sp].set_visible(False)
+ax.set_xticks([])
+ax.tick_params(left=False)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_w02m10/py_report}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Panels (b)--(f): Grammar Layer Summary}
+  \centering
+  {\small
+  \begin{tabular}{lp{3.5cm}p{3.5cm}}
+    \toprule
+    \textbf{Panel} & \textbf{R Code Pattern} & \textbf{Python Equivalent} \\
+    \midrule
+    (b) Histogram & \texttt{geom\_histogram(bins=30)} + \texttt{geom\_vline(mean)} & \texttt{ax.hist(bins=30)} + \texttt{ax.axvline(mean)} \\
+    (c) Scatter & \texttt{geom\_point(aes(color=Type))} + \texttt{scale\_x\_log10()} & \texttt{ax.scatter(c=)} + \texttt{set\_xscale("log")} \\
+    (d) Boxplot & \texttt{geom\_boxplot(notch=T)} + \texttt{stat\_summary(mean)} & \texttt{ax.boxplot(notch=T)} + \texttt{scatter(means)} \\
+    (e) Line & \texttt{geom\_line()} + direct labels & \texttt{ax.plot()} + \texttt{ax.text()} \\
+    (f) Stacked & \texttt{geom\_bar(position="stack")} & \texttt{ax.bar(bottom=)} \\
+    \bottomrule
+  \end{tabular}}
+\end{frame}
+
+\section{Composing the Dashboard}
+
+\begin{frame}[fragile]{R: patchwork Composition}
+\begin{lstlisting}[style=rstyle]
+library(patchwork)
+
+# Compose 6 panels: 3 on top, 3 on bottom
+dashboard <- (p_bar | p_hist | p_scatter) /
+             (p_box | p_line | p_stacked) +
+  plot_annotation(
+    title = "Google Play Store: Visual EDA Report",
+    subtitle = "Workshop 2 Lab — Grammar of Graphics Applied",
+    caption = "Source: Kaggle | UNYT Data Visualization Course",
+    tag_levels = "a"  # auto-labels (a), (b), ...
+  )
+
+# Export
+ggsave("report.pdf", dashboard, width = 14, height = 9, device = cairo_pdf)
+ggsave("report.png", dashboard, width = 14, height = 9, dpi = 300)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Python: GridSpec Composition}
+\begin{lstlisting}[style=pythonstyle]
+from matplotlib.gridspec import GridSpec
+
+fig = plt.figure(figsize=(14, 9))
+gs = GridSpec(2, 3, figure=fig, hspace=0.4, wspace=0.35)
+
+ax_bar    = fig.add_subplot(gs[0, 0])   # top-left
+ax_hist   = fig.add_subplot(gs[0, 1])   # top-center
+ax_scat   = fig.add_subplot(gs[0, 2])   # top-right
+ax_box    = fig.add_subplot(gs[1, 0])   # bottom-left
+ax_line   = fig.add_subplot(gs[1, 1])   # bottom-center
+ax_stack  = fig.add_subplot(gs[1, 2])   # bottom-right
+
+# ... plot each panel onto its axes ...
+
+fig.suptitle("Google Play Store: Visual EDA Report",
+    fontsize=13, fontweight="bold")
+fig.text(0.5, 0.01, "Source: Kaggle | UNYT",
+    ha="center", fontsize=8, fontstyle="italic", color="#888")
+
+fig.savefig("report.pdf", bbox_inches="tight")
+fig.savefig("report.png", dpi=300, bbox_inches="tight")
+\end{lstlisting}
+\end{frame}
+
+\section{Workshop 2 Review}
+
+\begin{frame}{Workshop 2: What You Now Know}
+  \begin{center}
+    \includegraphics[width=0.85\textwidth]{figures_w02m10/w02_summary}
+  \end{center}
+\end{frame}
+
+\begin{frame}{The Grammar Gives You Infinite Charts}
+  \centering
+  \begin{tabular}{rlp{5.5cm}}
+    \toprule
+    \textbf{Layer} & \textbf{R} & \textbf{Python} \\
+    \midrule
+    Data + Aes   & \texttt{ggplot(df, aes())}     & \texttt{ggplot(df, aes())} / loop \\
+    Geometry     & \texttt{geom\_*()} (20+ types)  & \texttt{ax.*} or \texttt{geom\_*()} \\
+    Statistics   & \texttt{stat\_*()} or default   & Built into seaborn / manual \\
+    Scales       & \texttt{scale\_*()} family      & \texttt{set\_xscale} / \texttt{cmap} \\
+    Facets       & \texttt{facet\_wrap/grid}       & \texttt{FacetGrid} / subplots \\
+    Coordinates  & \texttt{coord\_*()} family      & projection / set\_aspect \\
+    Theme        & \texttt{theme\_*() + theme()}   & \texttt{rcParams} / manual \\
+    Labels       & \texttt{labs()}                 & \texttt{set\_title/xlabel/text} \\
+    Annotations  & \texttt{annotate() + geom\_*}   & \texttt{ax.annotate/axhline} \\
+    \bottomrule
+  \end{tabular}
+\end{frame}
+
+\begin{frame}{Key Takeaways}
+  \begin{enumerate}
+    \item A visual report is built in six steps: \textbf{question → wrangle
+          → explore → polish → compose → export}.
+    \item Every chart is a stack of \textbf{grammar layers}: data, aes,
+          geom, stat, scale, facet, coord, theme, labs, annotations.
+    \item \textbf{patchwork} (R) and \textbf{GridSpec} (Python) compose
+          individual charts into multi-panel dashboards.
+    \item The \textbf{Grammar of Graphics} is a universal system: learn
+          it once in ggplot2, apply it in plotnine, seaborn, or matplotlib.
+    \item \textbf{Workshop 3} builds on this foundation with the Chart
+          Types Encyclopedia: distributions, comparisons, relationships,
+          proportions, rankings, and uncertainty.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Workshop 2 Homework Summary}
+  \begin{alertblock}{Due: Before Workshop 3}
+    Create a ``Grammar of Graphics Cheat Sheet'': implement 15 chart
+    types using GoG layers in both R and Python.
+    \begin{itemize}
+      \item 15 chart types (bar, histogram, scatter, box, line, area,
+            lollipop, dumbbell, heatmap, violin, density, stacked,
+            faceted scatter, bubble, annotated line)
+      \item Each in R (ggplot2) and Python (plotnine or seaborn)
+      \item One-page PDF per chart showing code + output
+    \end{itemize}
+    Total weight: 5\% of course grade.
+  \end{alertblock}
+  \vspace{4pt}
+  \textbf{Next}: Workshop 3 --- Chart Types Encyclopedia (M01: Distributions)
+\end{frame}
+
+\end{document}

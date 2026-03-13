@@ -1,0 +1,414 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codeblue}{HTML}{1565C0}
+
+\lstdefinestyle{rstyle}{
+  language=R, backgroundcolor=\color{codebg}, basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries, stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape, breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=2,
+  morekeywords={library,ggplot,aes,geom_point,geom_col,geom_line,geom_smooth,
+    geom_text,geom_label,geom_text_repel,geom_hline,geom_vline,geom_rect,
+    annotate,labs,theme_minimal,theme,element_text,coord_flip,
+    fct_reorder,scale_fill_manual}
+}
+\lstdefinestyle{pythonstyle}{
+  language=Python, backgroundcolor=\color{codebg}, basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries, stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape, breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=4,
+  morekeywords={import,from,as,pd,plt,sns,np,fig,ax,annotate,text,
+    axhline,axvline,axhspan,axvspan,set_title,set_xlabel,set_ylabel}
+}
+
+\title{labs(), Annotations \& Storytelling Layers}
+\subtitle{Workshop 2 --- Module 8}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item \texttt{labs()}: title, subtitle, caption, axis labels
+    \item Title patterns: descriptive, declarative, question
+    \item Annotation types: text, arrow, reference line, band, highlight
+    \item \texttt{annotate()} vs \texttt{geom\_text()} vs \texttt{geom\_text\_repel()}
+    \item Storytelling layers: progressive reveal
+    \item Complete annotated chart in R and Python
+  \end{enumerate}
+  \begin{exampleblock}{Learning Outcome}
+    You will transform a data display into a data story by adding
+    labels, annotations, and reference marks that guide the reader
+    to the intended finding.
+  \end{exampleblock}
+\end{frame}
+
+\section{labs(): The Label Layer}
+
+\begin{frame}{Anatomy of labs()}
+  \begin{center}
+    \includegraphics[width=0.82\textwidth]{figures_w02m08/labs_anatomy}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{labs() in R vs Python}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{R (ggplot2)}
+\begin{lstlisting}[style=rstyle]
+ggplot(df, aes(x, y, color = g)) +
+  geom_point() +
+  labs(
+    title = "Q4 Revenue Surged 35%",
+    subtitle = "Quarterly revenue,
+                East region, 2024",
+    caption = "Source: Internal DB",
+    x = "Displacement (L)",
+    y = "Highway MPG",
+    color = "Vehicle Class"
+  )
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Python (matplotlib)}
+\begin{lstlisting}[style=pythonstyle]
+ax.set_title("Q4 Revenue Surged 35%",
+    fontsize=14, fontweight="bold")
+fig.text(0.13, 0.91,
+    "Quarterly revenue, East, 2024",
+    fontsize=10, color="grey")
+ax.set_xlabel("Displacement (L)")
+ax.set_ylabel("Highway MPG")
+fig.text(0.13, 0.02,
+    "Source: Internal DB",
+    fontsize=8, fontstyle="italic",
+    color="#888")
+ax.legend(title="Vehicle Class")
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+  \vspace{4pt}
+  \begin{alertblock}{Pro-Tip}
+    In ggplot2, \texttt{labs()} sets all labels in one call. In matplotlib,
+    title/xlabel/ylabel are on the axes, but subtitle and caption require
+    \texttt{fig.text()} with manual coordinates.
+  \end{alertblock}
+\end{frame}
+
+\section{Title Patterns}
+
+\begin{frame}{Three Title Strategies}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w02m08/title_patterns}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    For executive communication, use \textbf{declarative} titles that
+    state the finding as a sentence. For exploratory analysis, use
+    \textbf{descriptive} titles. For teaching or interactive contexts,
+    use \textbf{question} titles that invite investigation.
+  \end{exampleblock}
+\end{frame}
+
+\section{Annotation Types}
+
+\begin{frame}{Four Annotation Types in One Chart}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{figures_w02m08/annotation_types}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Before \& After: Annotations Add Meaning}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w02m08/before_after_annotations}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Annotations in R (ggplot2)}
+\begin{lstlisting}[style=rstyle]
+ggplot(df, aes(x = month, y = revenue)) +
+  geom_line(color = "#1565C0", linewidth = 1.2) +
+
+  # 1. Text callout with arrow
+  annotate("text", x = 8, y = 250, label = "Peak: $250K",
+           fontface = "bold", color = "#E53935", size = 4) +
+  annotate("segment", x = 8, y = 245, xend = 7, yend = 235,
+           arrow = arrow(length = unit(0.2, "cm")), color = "#E53935") +
+
+  # 2. Reference line (mean)
+  geom_hline(yintercept = mean(df$revenue),
+             linetype = "dashed", color = "grey50") +
+
+  # 3. Reference band (target range)
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = 200, ymax = 220,
+           alpha = 0.08, fill = "#2E7D32") +
+
+  # 4. Event marker (vertical line)
+  geom_vline(xintercept = 6.5, linetype = "dotted", color = "#E65100") +
+  annotate("text", x = 7, y = min(df$revenue), label = "Policy change",
+           size = 3, color = "#E65100")
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Annotations in Python (matplotlib)}
+\begin{lstlisting}[style=pythonstyle]
+ax.plot(months, revenue, "-o", color="#1565C0", lw=2)
+
+# 1. Text callout with arrow
+ax.annotate("Peak: $250K",
+    xy=(7, 235), xytext=(8, 250),            # data coords
+    fontsize=9, fontweight="bold", color="#E53935",
+    arrowprops=dict(arrowstyle="->", color="#E53935", lw=1.5))
+
+# 2. Reference line (mean)
+ax.axhline(y=np.mean(revenue), color="grey", lw=1, linestyle="--")
+
+# 3. Reference band (target range)
+ax.axhspan(200, 220, alpha=0.08, color="#2E7D32")
+
+# 4. Event marker (vertical line)
+ax.axvline(x=6.5, color="#E65100", lw=0.8, linestyle=":")
+ax.text(6.7, min(revenue), "Policy change", fontsize=7, color="#E65100")
+\end{lstlisting}
+\end{frame}
+
+\section{annotate() vs geom\_text()}
+
+\begin{frame}{Three Labelling Functions}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w02m08/annotate_vs_geom_text}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{geom\_text\_repel: Anti-Overlap Labels}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{R}
+\begin{lstlisting}[style=rstyle]
+library(ggrepel)
+
+ggplot(top10, aes(x = reviews,
+    y = rating, label = app)) +
+  geom_point(alpha = 0.6) +
+  # Labels repel from each other
+  geom_text_repel(
+    size = 3,
+    max.overlaps = 15,
+    segment.color = "grey70",
+    segment.size = 0.3) +
+  scale_x_log10() +
+  theme_minimal()
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Python}
+\begin{lstlisting}[style=pythonstyle]
+from adjustText import adjust_text
+
+ax.scatter(reviews, rating, s=20)
+texts = [ax.text(r, rat, name,
+    fontsize=7)
+    for r, rat, name in
+    zip(reviews, rating, names)]
+
+# Repel overlapping labels
+adjust_text(texts,
+    arrowprops=dict(
+        arrowstyle="-",
+        color="grey",
+        lw=0.5))
+\end{lstlisting}
+      {\small Install: \texttt{pip install adjustText}}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Callout Annotations}
+
+\begin{frame}{Arrow + Text Box: The Callout Pattern}
+  \begin{center}
+    \includegraphics[width=0.82\textwidth]{figures_w02m08/callout}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    Use callouts sparingly --- one or two per chart maximum. Each callout
+    should highlight a \textbf{specific finding}, not just label a data
+    point. ``COVID-19 impact'' is a finding; ``2020'' is just a label.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{Reference Lines, Event Markers, Target Bands}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w02m08/reference_lines}
+  \end{center}
+\end{frame}
+
+\section{Storytelling Layers}
+
+\begin{frame}{Progressive Reveal: Four Layers of Meaning}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w02m08/storytelling_layers}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    Each layer adds one element of the story: (1) raw data, (2) trend
+    context, (3) key events, (4) the finding as a title. This layering
+    technique works equally well for presentations (reveal one slide at
+    a time) and static reports (the final chart contains all layers).
+  \end{exampleblock}
+\end{frame}
+
+\section{Complete Examples}
+
+\begin{frame}[fragile]{R: Fully Annotated Bar Chart}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+df |>
+  mutate(highlight =
+    cat == "SUV") |>
+  ggplot(aes(
+    x = fct_reorder(cat, n),
+    y = n,
+    fill = highlight)) +
+  geom_col(width = 0.5,
+    show.legend = FALSE) +
+  geom_text(aes(label = n),
+    hjust = -0.2, size = 3.5,
+    fontface = "bold") +
+  scale_fill_manual(
+    values = c("TRUE" = "#E53935",
+               "FALSE" = "#BBBBBB")) +
+  geom_hline(yintercept = mean_n,
+    linetype = "dashed",
+    color = "grey50") +
+  coord_flip() +
+  labs(
+    title = "SUV Leads with 62",
+    subtitle = "Vehicle count, 2024",
+    caption = "Source: mpg | UNYT",
+    x = NULL, y = NULL) +
+  theme_minimal()
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_w02m08/r_annotated}
+
+      \vspace{4pt}
+      {\small Annotation checklist:
+      \begin{enumerate}
+        \item Declarative title
+        \item Contextual subtitle
+        \item Source caption
+        \item Direct bar labels
+        \item Grey-accent colour
+        \item Mean reference line
+      \end{enumerate}}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Python: Same Annotated Chart}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+fig, ax = plt.subplots(figsize=(6,5))
+
+colors = ["#BBBBBB"] * 5
+colors[-1] = "#2E7D32"  # accent
+
+ax.barh(sorted_cats, sorted_vals,
+    color=colors, height=0.5)
+
+# Direct labels
+for i, v in enumerate(sorted_vals):
+    ax.text(v + 0.8, i, str(v),
+        va="center", fontsize=9,
+        fontweight="bold",
+        color="#2E7D32"
+            if i == 4 else "#888")
+
+# Reference line
+ax.axvline(x=np.mean(sorted_vals),
+    color="#888", lw=0.8, ls="--")
+
+# Title + subtitle + caption
+ax.set_title("SUV Leads with 62",
+    fontsize=11, fontweight="bold")
+fig.text(0.13, 0.88,
+    "Vehicle count, 2024",
+    fontsize=9, color="grey")
+fig.text(0.13, 0.02,
+    "Source: mpg | UNYT",
+    fontsize=7, fontstyle="italic")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_w02m08/py_annotated}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Synthesis}
+
+\begin{frame}{Annotation Checklist}
+  Before finalising any chart, verify:
+  \begin{enumerate}
+    \item \textbf{Title}: Does it state the finding (declarative) or
+          describe the chart (descriptive)?
+    \item \textbf{Subtitle}: Does it add context (time period, filter,
+          data source)?
+    \item \textbf{Caption}: Does it credit the source and note methodology?
+    \item \textbf{Axis labels}: Do they include units (\$, \%, kg)?
+    \item \textbf{Direct labels}: Are key values shown on the chart
+          (eliminating need to read axes)?
+    \item \textbf{Reference marks}: Is there a mean line, target band,
+          or event marker for context?
+    \item \textbf{Accent colour}: Is the key finding visually highlighted?
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Key Takeaways}
+  \begin{enumerate}
+    \item \textbf{labs()} sets title, subtitle, caption, and axis labels.
+          Use declarative titles for executive audiences.
+    \item Four annotation types: \textbf{text callout} (arrow + label),
+          \textbf{reference line} (mean, target), \textbf{band} (range),
+          \textbf{highlight region} (event period).
+    \item \textbf{annotate()} for fixed-position single annotations;
+          \textbf{geom\_text()} for data-driven labels;
+          \textbf{geom\_text\_repel()} for anti-overlap.
+    \item \textbf{Storytelling layers} build meaning progressively:
+          data $\rightarrow$ trend $\rightarrow$ events $\rightarrow$ finding.
+    \item Every production chart needs: title, subtitle, caption, units,
+          and at least one annotation that guides the reader.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Essential Readings}
+  \begin{itemize}
+    \item Knaflic, C.~N. (2015). \emph{Storytelling with Data},
+          Chapter 4 (Focus Your Audience's Attention).
+    \item Schwabish, J. (2021). \emph{Better Data Visualizations},
+          Chapter 5 (Annotations).
+    \item Wickham, H. (2016). \emph{ggplot2}, Chapter 8.3 (Annotations).
+    \item Wilke, C.~O. (2019). \emph{Fundamentals of Data Visualization},
+          Chapter 22 (Titles, Captions, and Tables).
+  \end{itemize}
+  \vspace{6pt}
+  \textbf{Next Module}: Tidy Data \& Data Wrangling for Viz (W02-M09)
+\end{frame}
+
+\end{document}

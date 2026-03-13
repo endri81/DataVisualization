@@ -1,0 +1,482 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codeblue}{HTML}{1565C0}
+\lstdefinestyle{rstyle}{language=R, backgroundcolor=\color{codebg}, basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries, stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape, breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=2,
+  morekeywords={library,ggplot,aes,geom_col,geom_bar,geom_segment,geom_point,geom_text,
+    coord_flip,fct_reorder,scale_fill_manual,position_dodge,position_stack,position_fill,
+    theme_minimal,theme,element_text,element_blank,labs,count,slice_max,mutate}}
+\lstdefinestyle{pythonstyle}{language=Python, backgroundcolor=\color{codebg}, basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries, stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape, breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=4,
+  morekeywords={import,from,as,pd,plt,sns,np,fig,ax,barh,bar,hlines,scatter,text}}
+\title{Comparisons: Bar Charts, Lollipop \& Cleveland Dot}
+\subtitle{Workshop 3 --- Module 3}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item Bar chart best practices: horizontal, sorted, labelled
+    \item Three bar variants: grouped, stacked, 100\% stacked
+    \item Lollipop charts: less ink, same precision
+    \item Cleveland dot plots: Tufte-minimal ranking
+    \item Dumbbell charts: before/after comparisons
+    \item Comparison chart selection guide
+  \end{enumerate}
+  \begin{exampleblock}{Learning Outcome}
+    You will select and produce the optimal comparison chart for any
+    categorical variable, from the standard bar chart to the Tufte-minimal
+    Cleveland dot plot.
+  \end{exampleblock}
+\end{frame}
+
+\section{Bar Chart Best Practices}
+
+\begin{frame}{Vertical vs Horizontal}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w03m03/vert_vs_horiz}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    \textbf{Always use horizontal bars} for categorical data with text
+    labels. Vertical bars require rotated labels (45\textdegree{} or 90\textdegree{}),
+    which are harder to read. Use vertical only when x is temporal
+    (years, months) or ordinal.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{Sorted vs Unsorted}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w03m03/sorted_vs_unsorted}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    Alphabetical order is almost never meaningful. \textbf{Sort by value}
+    to make ranking instantly visible. Use \texttt{fct\_reorder(cat, n)}
+    in R or \texttt{sort\_values()} in Python. Add \textbf{grey-accent}
+    colour to highlight the key finding.
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{Sorted Horizontal Bar in R vs Python}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{R (ggplot2)}
+\begin{lstlisting}[style=rstyle]
+apps |>
+  count(Category, sort = TRUE) |>
+  slice_max(n, n = 10) |>
+  mutate(
+    Category = fct_reorder(
+      Category, n),
+    hl = n == max(n)) |>
+  ggplot(aes(x = Category, y = n,
+             fill = hl)) +
+  geom_col(width = 0.5,
+           show.legend = FALSE) +
+  geom_text(aes(label =
+    scales::comma(n)),
+    hjust = -0.15, size = 3,
+    fontface = "bold") +
+  scale_fill_manual(values =
+    c("TRUE"="#1565C0",
+      "FALSE"="#BBBBBB")) +
+  coord_flip() +
+  theme_minimal() +
+  theme(panel.grid.major.y =
+    element_blank())
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Python}
+\begin{lstlisting}[style=pythonstyle]
+top10 = (apps
+    .value_counts("Category")
+    .head(10).sort_values())
+
+fig, ax = plt.subplots()
+colors = ["#BBBBBB"] * 10
+colors[-1] = "#1565C0"
+
+ax.barh(top10.index, top10.values,
+    color=colors, height=0.55)
+
+for i, v in enumerate(
+    top10.values):
+    ax.text(v + 15, i, f"{v:,}",
+        va="center", fontsize=7,
+        fontweight="bold",
+        color="#1565C0"
+          if i == 9 else "#888")
+
+for sp in ["top","right","left"]:
+    ax.spines[sp].set_visible(False)
+ax.set_xticks([])
+ax.tick_params(left=False)
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Bar Chart Variants}
+
+\begin{frame}{Grouped, Stacked, and 100\% Stacked}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w03m03/grouped_stacked}
+  \end{center}
+\end{frame}
+
+\begin{frame}{When to Use Each Variant}
+  \centering
+  \begin{tabular}{lp{4cm}p{4cm}}
+    \toprule
+    \textbf{Variant} & \textbf{Question} & \textbf{Limitation} \\
+    \midrule
+    Grouped (dodge) & Compare values between groups within each category & Max 3 groups; more = clutter \\
+    Stacked & Compare totals across categories + see group contribution & Hard to compare non-baseline segments \\
+    100\% Stacked & Compare proportions & Loses magnitude (totals invisible) \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{6pt}
+  \begin{alertblock}{Pro-Tip}
+    If you have only \textbf{two groups}, use a grouped bar --- proportions
+    are visible without 100\% stacking. If proportions are the message,
+    prefer 100\% stacked. If totals matter, use regular stacked.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Bar Variants in R vs Python}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}[style=rstyle]
+# Grouped
+ggplot(df, aes(x = cat,
+    fill = group)) +
+  geom_bar(position = "dodge")
+
+# Stacked
+ggplot(df, aes(x = cat,
+    fill = group)) +
+  geom_bar(position = "stack")
+
+# 100% Stacked
+ggplot(df, aes(x = cat,
+    fill = group)) +
+  geom_bar(position = "fill") +
+  scale_y_continuous(
+    labels = scales::percent)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+# Grouped (manual offset)
+x = np.arange(len(cats))
+ax.bar(x - w/2, free, w,
+    label="Free")
+ax.bar(x + w/2, paid, w,
+    label="Paid")
+
+# Stacked
+ax.bar(cats, free, label="Free")
+ax.bar(cats, paid, bottom=free,
+    label="Paid")
+
+# 100% Stacked (compute %)
+ct = pd.crosstab(
+    df["cat"], df["group"],
+    normalize="index") * 100
+ct.plot.bar(stacked=True, ax=ax)
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Lollipop Charts}
+
+\begin{frame}{Lollipop: Less Ink, Same Precision}
+  \begin{center}
+    \includegraphics[width=0.78\textwidth]{figures_w03m03/lollipop}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    The lollipop chart replaces the bar's filled rectangle with a thin
+    line (segment) and a point. This reduces data ink while preserving
+    the position encoding. It is especially effective for long category
+    lists (10--20 items) where bars become visually heavy.
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{Lollipop in R vs Python}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}[style=rstyle]
+ggplot(df, aes(
+    x = fct_reorder(cat, val),
+    y = val)) +
+  geom_segment(aes(
+    xend = cat, y = 0,
+    yend = val),
+    color = "grey70",
+    linewidth = 0.8) +
+  geom_point(size = 3,
+    color = "#1565C0") +
+  coord_flip() +
+  theme_minimal() +
+  theme(
+    panel.grid.major.y =
+      element_blank()) +
+  labs(x = NULL, y = "Count")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+fig, ax = plt.subplots()
+
+# Segments (stems)
+ax.hlines(y=range(len(cats)),
+    xmin=0, xmax=vals,
+    color="#BBBBBB", lw=1.5)
+
+# Points (dots)
+ax.scatter(vals,
+    range(len(cats)),
+    s=60, c="#1565C0",
+    zorder=5,
+    edgecolors="white", lw=0.5)
+
+# Direct labels
+for i, v in enumerate(vals):
+    ax.text(v + 10, i, f"{v:,}",
+        va="center", fontsize=7,
+        fontweight="bold")
+
+ax.set_yticks(range(len(cats)))
+ax.set_yticklabels(cats)
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Cleveland Dot Plot}
+
+\begin{frame}{Cleveland Dot: Minimal Ink, Maximum Precision}
+  \begin{center}
+    \includegraphics[width=0.78\textwidth]{figures_w03m03/cleveland_dot}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    The Cleveland dot plot uses only a point per category --- the
+    absolute minimum of data ink (Tufte, 1983). Add subtle gridlines
+    for alignment and a mean reference line for context. Best for
+    audiences who value precision over visual impact.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{Bar vs Lollipop vs Cleveland: Ink Reduction}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w03m03/three_comparison}
+  \end{center}
+\end{frame}
+
+\section{Dumbbell Charts}
+
+\begin{frame}{Dumbbell: Before/After Comparison}
+  \begin{center}
+    \includegraphics[width=0.82\textwidth]{figures_w03m03/dumbbell}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    Dumbbell charts show change between two time points per category.
+    The connector length encodes the magnitude of change; colour
+    distinguishes the two periods. Direct-label the change value
+    (\texttt{+459}) to avoid requiring mental arithmetic.
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{Dumbbell in R vs Python}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}[style=rstyle]
+ggplot(df, aes(
+    y = fct_reorder(cat,
+      val_2024))) +
+  geom_segment(aes(
+    x = val_2020, xend = val_2024,
+    yend = cat),
+    color = "grey80",
+    linewidth = 1.5) +
+  geom_point(aes(x = val_2020),
+    size = 3, color = "#1565C0") +
+  geom_point(aes(x = val_2024),
+    size = 3, color = "#E53935") +
+  geom_text(aes(x = val_2024,
+    label = paste0("+",
+      val_2024 - val_2020)),
+    hjust = -0.3, size = 3,
+    color = "#E53935") +
+  theme_minimal() +
+  labs(x = "Count", y = NULL,
+    title = "Change: 2020 vs 2024")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+for i in range(len(cats)):
+    # Connector
+    ax.plot([v2020[i], v2024[i]],
+        [i, i], color="#CCCCCC",
+        lw=2.5,
+        solid_capstyle="round")
+    # Start point (2020)
+    ax.scatter([v2020[i]], [i],
+        s=60, c="#1565C0", zorder=5,
+        edgecolors="white", lw=0.5)
+    # End point (2024)
+    ax.scatter([v2024[i]], [i],
+        s=60, c="#E53935", zorder=5,
+        edgecolors="white", lw=0.5)
+    # Change label
+    ax.text(v2024[i] + 20, i,
+        f"+{v2024[i]-v2020[i]:,}",
+        va="center", fontsize=7,
+        fontweight="bold",
+        color="#E53935")
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Chart Selection}
+
+\begin{frame}{Comparison Chart Selection Guide}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w03m03/decision_card}
+  \end{center}
+\end{frame}
+
+\section{Complete Examples}
+
+\begin{frame}[fragile]{R: Publication-Quality Lollipop}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+apps |>
+  count(Category, sort = TRUE) |>
+  slice_max(n, n = 8) |>
+  mutate(Category =
+    fct_reorder(Category, n),
+    hl = n == max(n)) |>
+  ggplot(aes(x = Category,
+             y = n)) +
+  geom_segment(aes(xend = Category,
+    y = 0, yend = n),
+    color = "grey75") +
+  geom_point(aes(color = hl),
+    size = 3, show.legend = FALSE) +
+  scale_color_manual(values =
+    c("TRUE"="#1565C0",
+      "FALSE"="#BBBBBB")) +
+  geom_text(aes(
+    label = scales::comma(n)),
+    hjust = -0.3, size = 3,
+    fontface = "bold") +
+  coord_flip() +
+  theme_minimal() +
+  labs(title = "FAMILY Leads",
+       x = NULL, y = NULL)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_w03m03/r_output}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Python: Same Lollipop}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+top8 = (apps
+    .value_counts("Category")
+    .head(8).sort_values())
+
+fig, ax = plt.subplots(
+    figsize=(6, 5))
+colors = ["#BBBBBB"] * 8
+colors[-1] = "#2E7D32"
+
+ax.hlines(y=range(8), xmin=0,
+    xmax=top8.values,
+    color="#BBBBBB", lw=1.5)
+ax.scatter(top8.values,
+    range(8), s=50, c=colors,
+    zorder=5, edgecolors="white")
+
+for i, v in enumerate(
+    top8.values):
+    ax.text(v + 15, i, f"{v:,}",
+        va="center", fontsize=7,
+        fontweight="bold",
+        color="#2E7D32"
+          if i == 7 else "#888")
+
+ax.set_yticks(range(8))
+ax.set_yticklabels(top8.index)
+ax.set_title("FAMILY Leads",
+    fontweight="bold")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_w03m03/py_output}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Synthesis}
+
+\begin{frame}{Key Takeaways}
+  \begin{enumerate}
+    \item \textbf{Always horizontal + sorted + labelled} for categorical
+          bar charts. Vertical only for temporal x-axes.
+    \item Three bar variants serve different questions: \textbf{grouped}
+          (compare values), \textbf{stacked} (compare totals),
+          \textbf{100\% stacked} (compare proportions).
+    \item \textbf{Lollipop} = segment + point: less ink than bars,
+          same precision. Best for 10--20 categories.
+    \item \textbf{Cleveland dot} = point only + gridlines: minimum ink,
+          Tufte-approved. Best for precision-oriented audiences.
+    \item \textbf{Dumbbell} = two points + connector: shows change
+          between two time periods per category.
+    \item The progression bar $\rightarrow$ lollipop $\rightarrow$ dot
+          is a data-ink reduction cascade.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Essential Readings}
+  \begin{itemize}
+    \item Cleveland, W.~S. (1985). \emph{The Elements of Graphing Data}.
+          Wadsworth. (Origin of the dot plot.)
+    \item Schwabish, J. (2021). \emph{Better Data Visualizations},
+          Chapter 4 (Bar Charts and Alternatives).
+    \item Wickham, H. (2016). \emph{ggplot2}, Chapter 3 (Bar Charts).
+    \item Wilke, C.~O. (2019). \emph{Fundamentals of Data Visualization},
+          Chapter 6 (Amounts).
+  \end{itemize}
+  \vspace{6pt}
+  \textbf{Next Module}: Relationships --- Scatter, Bubble \& Hexbin (W03-M04)
+\end{frame}
+
+\end{document}

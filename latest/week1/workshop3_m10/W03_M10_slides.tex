@@ -1,0 +1,250 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codeblue}{HTML}{1565C0}
+\lstdefinestyle{rstyle}{language=R,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,
+  rulecolor=\color{codegray!30},showstringspaces=false,tabsize=2,
+  morekeywords={library,ggplot,aes,geom_col,geom_histogram,geom_density,geom_point,geom_boxplot,
+    geom_line,geom_bar,geom_density_ridges,geom_smooth,geom_violin,geom_segment,
+    stat_summary,stat_ecdf,facet_wrap,coord_flip,scale_x_log10,scale_fill_manual,
+    theme_minimal,labs,patchwork,plot_annotation,tag_levels,ggsave}}
+\lstdefinestyle{pythonstyle}{language=Python,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,
+  rulecolor=\color{codegray!30},showstringspaces=false,tabsize=4,
+  morekeywords={import,from,as,pd,plt,sns,np,fig,ax,GridSpec,subplots,savefig}}
+\title{Lab: Chart Selection Decision Framework}
+\subtitle{Workshop 3 --- Module 10}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item The Chart Selection Decision Framework (flowchart)
+    \item Apply the framework to the Netflix dataset
+    \item Build an 8-panel dashboard using 8 chart types
+    \item Workshop 3 review: the complete chart encyclopedia
+    \item Course Project 1 introduction
+  \end{enumerate}
+  \begin{exampleblock}{Learning Outcome}
+    You will apply the chart selection decision framework to a real
+    dataset, choosing the optimal chart type for each analytical
+    question and composing the results into a multi-panel report.
+  \end{exampleblock}
+\end{frame}
+
+\section{The Decision Framework}
+
+\begin{frame}{Chart Selection Flowchart}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w03m10/flowchart}
+  \end{center}
+\end{frame}
+
+\begin{frame}{The Five Questions}
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Question} & \textbf{Chart Family} & \textbf{W03 Module} \\
+    \midrule
+    What is the distribution? & Histogram, density, ridgeline, box, violin & M01--M02 \\
+    How do categories compare? & Bar, lollipop, Cleveland dot, dumbbell & M03 \\
+    What is the relationship? & Scatter, bubble, hexbin + smoothers & M04 \\
+    What are the proportions? & Pie, donut, treemap, waffle, stacked bar & M05 \\
+    How do rankings change? & Slope, bump, waterfall & M06 \\
+    \midrule
+    \multicolumn{3}{l}{\textit{Enhancement layers (apply to any chart):}} \\
+    How uncertain is it? & Error bars, ribbons, gradient bands & M07 \\
+    Multiple groups? & Facet, patchwork, GridSpec & M08 \\
+    Need exact values? & Styled tables, sparklines & M09 \\
+    \bottomrule
+  \end{tabular}
+\end{frame}
+
+\section{Netflix Dataset}
+
+\begin{frame}{The Netflix Dataset}
+  \centering
+  \begin{tabular}{ll}
+    \toprule
+    \textbf{Variable} & \textbf{Type} \\
+    \midrule
+    type & Categorical (Movie / TV Show) \\
+    title & Text (8,807 unique) \\
+    director & Categorical (many missing) \\
+    country & Categorical (multi-valued) \\
+    date\_added & Date (2008--2021) \\
+    release\_year & Integer (1925--2021) \\
+    rating & Ordinal (TV-MA, TV-14, etc.) \\
+    duration & Numeric (minutes or seasons) \\
+    listed\_in & Categorical (genre, multi-valued) \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{6pt}
+  {\small 8,807 titles: 6,131 movies (70\%) + 2,676 TV shows (30\%).
+  Our task: apply the decision framework to answer 8 analytical questions.}
+\end{frame}
+
+\begin{frame}{Eight Questions $\rightarrow$ Eight Chart Types}
+  \centering
+  {\small
+  \begin{tabular}{rlll}
+    \toprule
+    \textbf{\#} & \textbf{Question} & \textbf{Chart} & \textbf{Panel} \\
+    \midrule
+    1 & Which genres dominate? & Sorted bar & (a) \\
+    2 & How long are movies? & Histogram & (b) \\
+    3 & Ratings by type? & Stacked bar & (c) \\
+    4 & Movie vs TV split? & Waffle & (d) \\
+    5 & Release trends? & Line & (e) \\
+    6 & Duration by genre? & Ridgeline & (f) \\
+    7 & How many seasons? & Boxplot & (g) \\
+    8 & Which countries? & Lollipop & (h) \\
+    \bottomrule
+  \end{tabular}}
+\end{frame}
+
+\section{The Dashboard}
+
+\begin{frame}{Netflix: 8 Chart Types in One Dashboard}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w03m10/netflix_dashboard}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{R: Building the Netflix Dashboard}
+\begin{lstlisting}[style=rstyle]
+library(tidyverse); library(patchwork)
+netflix <- read_csv("netflix.csv")
+
+p_a <- netflix |> separate_rows(listed_in, sep=", ") |>
+  count(listed_in, sort=TRUE) |> slice_max(n, n=8) |>
+  mutate(listed_in = fct_reorder(listed_in, n)) |>
+  ggplot(aes(x=listed_in, y=n)) + geom_col(fill="#E53935") +
+  coord_flip() + theme_minimal() + labs(title="(a) Top Genres")
+
+p_b <- netflix |> filter(type=="Movie") |>
+  mutate(dur = parse_number(duration)) |>
+  ggplot(aes(x=dur)) + geom_histogram(bins=35, fill="#1565C0") +
+  theme_minimal() + labs(title="(b) Movie Duration")
+
+# ... panels c through h ...
+
+dashboard <- (p_a | p_b | p_c | p_d) / (p_e | p_f | p_g | p_h) +
+  plot_annotation(
+    title = "Netflix Dataset: Visual Report",
+    subtitle = "Workshop 3 Lab — 8 Chart Types from the Decision Framework",
+    caption = "Source: Netflix Dataset (Kaggle) | UNYT",
+    tag_levels = "a")
+
+ggsave("netflix_report.pdf", dashboard, width=16, height=10)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Python: Same Dashboard via GridSpec}
+\begin{lstlisting}[style=pythonstyle]
+import pandas as pd, matplotlib.pyplot as plt
+from matplotlib.gridspec import GridSpec
+
+netflix = pd.read_csv("netflix.csv")
+fig = plt.figure(figsize=(16, 10))
+gs = GridSpec(2, 4, figure=fig, hspace=0.45, wspace=0.35)
+
+# (a) Sorted bar — top genres
+ax_a = fig.add_subplot(gs[0, 0])
+genres = netflix["listed_in"].str.split(", ").explode().value_counts().head(8)
+ax_a.barh(genres.index[::-1], genres.values[::-1], color="#E53935")
+ax_a.set_title("(a) Top Genres")
+
+# (b) Histogram — movie duration
+ax_b = fig.add_subplot(gs[0, 1])
+movies = netflix.query("type == 'Movie'")
+movies["dur"] = movies["duration"].str.extract(r"(\d+)").astype(float)
+ax_b.hist(movies["dur"].dropna(), bins=35, color="#1565C0", edgecolor="white")
+ax_b.set_title("(b) Movie Duration")
+
+# ... panels c through h on gs[0,2], gs[0,3], gs[1,0:4] ...
+
+fig.suptitle("Netflix: 8 Chart Types", fontsize=13, fontweight="bold")
+fig.savefig("netflix_report.pdf", bbox_inches="tight")
+\end{lstlisting}
+\end{frame}
+
+\section{Workshop 3 Review}
+
+\begin{frame}{Workshop 3 Complete: Chart Types Encyclopedia}
+  \begin{center}
+    \includegraphics[width=0.85\textwidth]{figures_w03m10/w03_summary}
+  \end{center}
+\end{frame}
+
+\begin{frame}{The Complete Chart Vocabulary}
+  \centering
+  {\small
+  \begin{tabular}{llr}
+    \toprule
+    \textbf{Family} & \textbf{Charts Covered} & \textbf{Count} \\
+    \midrule
+    Distribution & Histogram, density, KDE, ridgeline, box, violin, beeswarm, raincloud & 8 \\
+    Comparison & Bar, lollipop, Cleveland dot, grouped, stacked, 100\% stacked & 6 \\
+    Relationship & Scatter, bubble, hexbin, 2D density, marginal & 5 \\
+    Proportion & Pie, donut, treemap, waffle, 100\% stacked bar & 5 \\
+    Ranking & Slope, bump, waterfall, dumbbell & 4 \\
+    Uncertainty & Errorbar, pointrange, ribbon, gradient, forest & 5 \\
+    Composition & Facet, patchwork, GridSpec, subplot\_mosaic & 4 \\
+    Table & gt, kableExtra, Styler, sparklines & 4 \\
+    \midrule
+    \textbf{Total} & & \textbf{41} \\
+    \bottomrule
+  \end{tabular}}
+\end{frame}
+
+\section{Course Project 1}
+
+\begin{frame}{Course Project 1: Visual Redesign Portfolio}
+  \begin{alertblock}{Due: End of Workshop 3 (10\% of total grade)}
+    Select \textbf{5 published visualizations} (news media, academic
+    papers, corporate reports). For each:
+    \begin{enumerate}
+      \item Critique using Tufte's principles (W01)
+      \item Redesign in R (ggplot2)
+      \item Redesign in Python (plotnine or seaborn)
+      \item Write a 300-word rationale
+    \end{enumerate}
+    \textbf{Deliverable}: PDF portfolio + reproducible R and Python scripts.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{Workshop 3 Homework Summary}
+  \begin{alertblock}{Due: Before Workshop 4}
+    Visualize the Netflix dataset using $\geq$8 distinct chart types
+    in both R and Python:
+    \begin{itemize}
+      \item Apply the chart selection decision framework
+      \item Each chart must match the analytical question
+      \item Compose into a multi-panel dashboard
+      \item Export as PDF + PNG (300 dpi)
+    \end{itemize}
+    Total weight: 5\% of course grade.
+  \end{alertblock}
+  \vspace{6pt}
+  \textbf{Next}: Workshop 4 --- Exploratory Data Analysis
+  (M01: Tukey's EDA Philosophy)
+\end{frame}
+
+\end{document}

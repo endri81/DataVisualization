@@ -1,0 +1,336 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codeblue}{HTML}{1565C0}
+\lstdefinestyle{rstyle}{language=R,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,
+  rulecolor=\color{codegray!30},showstringspaces=false,tabsize=2,
+  morekeywords={library,ggplot,aes,geom_point,geom_line,geom_col,geom_histogram,geom_boxplot,
+    facet_wrap,facet_grid,patchwork,plot_annotation,tag_levels,plot_layout,
+    theme_minimal,theme,element_text,labs,wrap_plots,free}}
+\lstdefinestyle{pythonstyle}{language=Python,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,
+  rulecolor=\color{codegray!30},showstringspaces=false,tabsize=4,
+  morekeywords={import,from,as,pd,plt,sns,np,fig,ax,subplots,GridSpec,
+    add_subplot,savefig,suptitle,tight_layout}}
+\title{Small Multiples \& Faceted Displays}
+\subtitle{Workshop 3 --- Module 8}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item Tufte's small multiples revisited as a chart type
+    \item Cleveland's Trellis philosophy: four principles
+    \item Composition in R: patchwork operators and cowplot
+    \item Composition in Python: GridSpec layout patterns
+    \item Facet (homogeneous) vs patchwork (heterogeneous) decision
+    \item Building multi-panel dashboards as static figures
+  \end{enumerate}
+  \begin{exampleblock}{Learning Outcome}
+    You will compose heterogeneous multi-panel figures using
+    \texttt{patchwork} (R) and \texttt{GridSpec} (Python), choosing
+    between faceting and manual composition based on panel homogeneity.
+  \end{exampleblock}
+\end{frame}
+
+\section{From Spaghetti to Small Multiples}
+
+\begin{frame}{The Motivation: 6 Lines $\rightarrow$ 6 Panels}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w03m08/spaghetti_to_sm}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Trellis Philosophy: Four Principles}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w03m08/trellis_philosophy}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    Cleveland (1993) formalised small multiples as \textbf{Trellis
+    displays}: same chart type, same axes, one variable per panel.
+    This exploits the pre-attentive system: the reader scans panels
+    by position (Gestalt proximity from W01-M03) rather than by colour
+    discrimination.
+  \end{alertblock}
+\end{frame}
+
+\section{Composition in R: patchwork}
+
+\begin{frame}{patchwork Operators}
+  \begin{center}
+    \includegraphics[width=0.85\textwidth]{figures_w03m08/patchwork_operators}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{patchwork: Complete Example}
+\begin{lstlisting}[style=rstyle]
+library(patchwork)
+
+p_bar <- ggplot(df, aes(x = fct_reorder(cat, n), y = n)) +
+  geom_col(fill = "#1565C0") + coord_flip() + theme_minimal()
+
+p_scatter <- ggplot(df, aes(x = reviews, y = rating)) +
+  geom_point(alpha = 0.3) + scale_x_log10() + theme_minimal()
+
+p_hist <- ggplot(df, aes(x = rating)) +
+  geom_histogram(bins = 30, fill = "#2E7D32") + theme_minimal()
+
+p_box <- ggplot(df, aes(x = type, y = rating)) +
+  geom_boxplot(fill = "#E3F2FD") + theme_minimal()
+
+# Compose: | = side by side, / = stack
+dashboard <- (p_bar | p_scatter) / (p_hist | p_box) +
+  plot_annotation(
+    title = "Google Play Store: Visual EDA",
+    tag_levels = "a") &      # & applies to ALL panels
+  theme_minimal(base_size = 9)
+
+ggsave("dashboard.pdf", dashboard, width = 12, height = 8)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{patchwork: Advanced Layouts}
+\begin{lstlisting}[style=rstyle]
+# Unequal widths: bar gets 2x space
+(p_bar + p_scatter) + plot_layout(widths = c(2, 1))
+
+# Nested: bar on left, scatter + hist stacked on right
+p_bar | (p_scatter / p_hist)
+
+# Insets: small plot inside a large one
+p_scatter + inset_element(p_hist, left = 0.6, bottom = 0.6,
+                          right = 1, top = 1)
+
+# cowplot alternative (for legacy code)
+library(cowplot)
+plot_grid(p_bar, p_scatter, p_hist, p_box,
+          ncol = 2, labels = "auto",
+          rel_widths = c(1.5, 1))
+\end{lstlisting}
+  \begin{alertblock}{Pro-Tip}
+    \texttt{patchwork} is the modern standard (Thomas Lin Pedersen, 2020).
+    \texttt{cowplot} (Claus Wilke) and \texttt{gridExtra} are older
+    alternatives still found in legacy code. Prefer patchwork for new work.
+  \end{alertblock}
+\end{frame}
+
+\section{Composition in Python: GridSpec}
+
+\begin{frame}{GridSpec: Three Layout Patterns}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w03m08/gridspec_layouts}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{GridSpec: Complete Example}
+\begin{lstlisting}[style=pythonstyle]
+from matplotlib.gridspec import GridSpec
+
+fig = plt.figure(figsize=(14, 9))
+gs = GridSpec(2, 3, figure=fig, hspace=0.4, wspace=0.35)
+
+# Top row: 3 equal panels
+ax_bar  = fig.add_subplot(gs[0, 0])    # (a)
+ax_hist = fig.add_subplot(gs[0, 1])    # (b)
+ax_scat = fig.add_subplot(gs[0, 2])    # (c)
+
+# Bottom row: 1 wide + 2 narrow
+ax_line = fig.add_subplot(gs[1, :2])   # (d) spans 2 columns
+ax_box  = fig.add_subplot(gs[1, 2])    # (e) single column
+
+# ... plot each panel onto its axes ...
+
+# Global title + caption
+fig.suptitle("Dashboard Title", fontsize=13, fontweight="bold")
+fig.text(0.5, 0.01, "Source: ...", ha="center", fontsize=8, color="#888")
+
+fig.savefig("dashboard.pdf", bbox_inches="tight")
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{subplot\_mosaic: Named Layouts (Python 3.4+)}
+\begin{lstlisting}[style=pythonstyle]
+# matplotlib 3.4+ : named subplot layout
+fig, axes = plt.subplot_mosaic(
+    [["bar", "bar", "scatter"],
+     ["hist", "box", "scatter"]],
+    figsize=(12, 8))
+
+# Access by name instead of index
+axes["bar"].barh(cats, vals, color="#1565C0")
+axes["scatter"].scatter(x, y, s=10, alpha=0.3)
+axes["hist"].hist(ratings, bins=30, color="#2E7D32")
+axes["box"].boxplot([free_r, paid_r], labels=["Free","Paid"])
+\end{lstlisting}
+  \begin{exampleblock}{Data Insight}
+    \texttt{subplot\_mosaic} uses an ASCII grid to define layout:
+    repeated names span multiple cells (like \texttt{gs[:2]} but more
+    readable). Available since matplotlib 3.4. For older versions,
+    use \texttt{GridSpec}.
+  \end{exampleblock}
+\end{frame}
+
+\section{Facet vs Patchwork}
+
+\begin{frame}{When to Facet vs When to Compose}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w03m08/facet_vs_patchwork}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Decision Rule}
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Question} & \textbf{Answer} & \textbf{Tool} \\
+    \midrule
+    Same geom in all panels? & Yes & \texttt{facet\_wrap/grid} \\
+    Same aes in all panels? & Yes & \texttt{facet\_wrap/grid} \\
+    Different geoms per panel? & Yes & \texttt{patchwork / GridSpec} \\
+    Need unequal panel sizes? & Yes & \texttt{patchwork(widths=)} \\
+    Need inset plot? & Yes & \texttt{patchwork::inset\_element()} \\
+    Need panel labels (a,b,c)? & Yes & \texttt{tag\_levels = "a"} \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{6pt}
+  {\small The simplest rule: if you can write one \texttt{ggplot() + facet\_*()}
+  call, use faceting. If you need multiple separate \texttt{ggplot()} calls
+  with different geoms, use patchwork.}
+\end{frame}
+
+\section{Dashboard Example}
+
+\begin{frame}{Six-Panel Dashboard via GridSpec}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{figures_w03m08/dashboard}
+  \end{center}
+\end{frame}
+
+\section{Complete Examples}
+
+\begin{frame}[fragile]{R: patchwork 2$\times$2}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+library(patchwork)
+
+p1 <- ggplot(df, aes(x=cat,y=n)) +
+  geom_col(fill="#1565C0") +
+  coord_flip() + theme_minimal() +
+  labs(title="(a) Bar")
+
+p2 <- ggplot(df, aes(x=x,y=y)) +
+  geom_point(alpha=0.5, size=1,
+    color="#E53935") +
+  theme_minimal() +
+  labs(title="(b) Scatter")
+
+p3 <- ggplot(df, aes(x=val)) +
+  geom_histogram(bins=20,
+    fill="#2E7D32") +
+  theme_minimal() +
+  labs(title="(c) Histogram")
+
+p4 <- ggplot(df, aes(x=1:10,y=y)) +
+  geom_line(color="#7B1FA2") +
+  theme_minimal() +
+  labs(title="(d) Line")
+
+(p1 | p2) / (p3 | p4)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_w03m08/r_output}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Python: GridSpec Asymmetric Layout}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+fig = plt.figure(figsize=(10, 6))
+gs = GridSpec(2, 3, figure=fig,
+    hspace=0.4, wspace=0.3)
+
+# (a) Top wide bar (spans all 3 cols)
+ax_bar = fig.add_subplot(gs[0, :])
+ax_bar.barh(cats, vals,
+    color="#1565C0", height=0.5)
+ax_bar.set_title("(a) Wide bar")
+
+# (b,c,d) Bottom row: 3 panels
+ax_sc = fig.add_subplot(gs[1, 0])
+ax_sc.scatter(x, y, s=8,
+    c="#E53935", alpha=0.5)
+ax_sc.set_title("(b) Scatter")
+
+ax_hi = fig.add_subplot(gs[1, 1])
+ax_hi.hist(data, bins=15,
+    color="#2E7D32")
+ax_hi.set_title("(c) Hist")
+
+ax_bx = fig.add_subplot(gs[1, 2])
+ax_bx.boxplot([d1], widths=0.4,
+    patch_artist=True)
+ax_bx.set_title("(d) Box")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_w03m08/py_output}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Synthesis}
+
+\begin{frame}{Key Takeaways}
+  \begin{enumerate}
+    \item \textbf{Small multiples} (Tufte) = same chart, same axes,
+          one variable per panel. Exploits position over colour.
+    \item \textbf{Trellis principles} (Cleveland): same geom, shared axes,
+          one variable per panel, minimal strip labels.
+    \item \textbf{patchwork} (R): \texttt{|} = side by side, \texttt{/} =
+          stack, \texttt{\&} = apply to all, \texttt{tag\_levels} = auto
+          panel labels.
+    \item \textbf{GridSpec} (Python): \texttt{gs[row, col]} for placement,
+          \texttt{gs[0, :]} for spanning. \texttt{subplot\_mosaic} for
+          named ASCII layouts.
+    \item Use \textbf{faceting} for homogeneous panels (same geom/aes);
+          \textbf{patchwork/GridSpec} for heterogeneous dashboards.
+    \item Every multi-panel figure needs: \textbf{panel labels} (a, b, c),
+          \textbf{shared title}, and \textbf{source caption}.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Essential Readings}
+  \begin{itemize}
+    \item Cleveland, W.~S. (1993). \emph{Visualizing Data}. (Trellis displays.)
+    \item Tufte, E.~R. (1983). \emph{The Visual Display of Quantitative
+          Information}, pp.\ 170--174 (Small multiples.)
+    \item Pedersen, T.~L. (2020). patchwork: The Composer of Plots.
+          \texttt{https://patchwork.data-imaginist.com}
+    \item Wilke, C.~O. (2019). \emph{Fundamentals of Data Visualization},
+          Chapter 21 (Multi-Panel Figures).
+  \end{itemize}
+  \vspace{6pt}
+  \textbf{Next Module}: Tables as Visualization (W03-M09)
+\end{frame}
+
+\end{document}

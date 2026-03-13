@@ -1,0 +1,454 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codeblue}{HTML}{1565C0}
+
+\lstdefinestyle{rstyle}{
+  language=R, backgroundcolor=\color{codebg}, basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries, stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape, breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=2,
+  morekeywords={library,ggplot,aes,geom_point,geom_line,geom_col,geom_bar,
+    geom_smooth,geom_histogram,geom_hex,
+    scale_x_continuous,scale_x_log10,scale_x_discrete,scale_x_date,
+    scale_y_continuous,scale_y_log10,
+    scale_color_manual,scale_color_brewer,scale_color_viridis_c,
+    scale_color_gradient2,scale_fill_viridis_c,scale_fill_brewer,
+    scale_size,coord_cartesian,coord_flip,coord_polar,coord_fixed,
+    theme_minimal,theme,element_text,element_blank,labs,
+    date_breaks,date_labels,comma,dollar,percent,label_comma}
+}
+\lstdefinestyle{pythonstyle}{
+  language=Python, backgroundcolor=\color{codebg}, basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries, stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape, breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=4,
+  morekeywords={import,from,as,pd,plt,sns,np,fig,ax,set_xscale,set_yscale,
+    set_xlim,set_ylim,set_aspect,FuncFormatter,DateFormatter,YearLocator,
+    TwoSlopeNorm}
+}
+
+\title{Scales \& Coordinate Systems}
+\subtitle{Workshop 2 --- Module 4}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item Anatomy of a scale: domain $\rightarrow$ transform $\rightarrow$ visual range
+    \item Position scales: continuous, log, discrete, date
+    \item Colour scales: manual, Brewer, viridis, gradient2
+    \item Axis label formatting: comma, dollar, percent
+    \item Coordinate systems: Cartesian, flip, polar, fixed
+    \item Zooming safely: \texttt{coord\_cartesian} vs scale \texttt{limits}
+  \end{enumerate}
+  \begin{exampleblock}{Learning Outcome}
+    You will control how every data value maps to a visual property ---
+    position, colour, size --- and how the coordinate system frames
+    the chart.
+  \end{exampleblock}
+\end{frame}
+
+\section{Anatomy of a Scale}
+
+\begin{frame}{Domain $\rightarrow$ Transform $\rightarrow$ Visual Range}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w02m04/scale_anatomy}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    A scale answers three questions: (1) What are the input values?
+    (domain), (2) Should they be transformed? (log, sqrt, reverse),
+    (3) What visual output do they produce? (pixel position, hex colour,
+    point size).
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Scale Functions Cheat Sheet}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{figures_w02m04/scale_types}
+  \end{center}
+\end{frame}
+
+\section{Position Scales}
+
+\begin{frame}{Linear vs Log Scale}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w02m04/linear_vs_log}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    Use \texttt{scale\_x\_log10()} (R) or \texttt{ax.set\_xscale("log")}
+    (Python) whenever data spans more than two orders of magnitude.
+    The log transform converts multiplicative relationships to linear
+    ones, making patterns visible.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Log Scale in R vs Python}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{R (ggplot2)}
+\begin{lstlisting}[style=rstyle]
+ggplot(apps, aes(x = Reviews,
+                  y = Rating)) +
+  geom_point(alpha = 0.3,
+             size = 0.8) +
+
+  # Log-transform x axis
+  scale_x_log10(
+    labels = scales::comma) +
+
+  # Limit y without filtering
+  coord_cartesian(
+    ylim = c(1, 5)) +
+
+  theme_minimal() +
+  labs(x = "Reviews (log scale)")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Python (matplotlib)}
+\begin{lstlisting}[style=pythonstyle]
+fig, ax = plt.subplots()
+
+ax.scatter(reviews, rating,
+    s=8, alpha=0.3)
+
+# Log-transform x axis
+ax.set_xscale("log")
+
+# Zoom without filtering
+ax.set_ylim(1, 5)
+
+# Format tick labels
+from matplotlib.ticker import (
+    FuncFormatter)
+ax.xaxis.set_major_formatter(
+    FuncFormatter(lambda x, p:
+        f"{x:,.0f}"))
+
+ax.set_xlabel("Reviews (log)")
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Date Axis Formatting}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w02m04/date_scale}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Date Scales in R vs Python}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{R}
+\begin{lstlisting}[style=rstyle]
+ggplot(df, aes(x = date,
+               y = value)) +
+  geom_line() +
+  scale_x_date(
+    date_breaks = "6 months",
+    date_labels = "%b %Y") +
+  # Produces: "Jan 2023"
+  theme_minimal()
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Python}
+\begin{lstlisting}[style=pythonstyle]
+import matplotlib.dates as mdates
+
+ax.plot(dates, values)
+
+ax.xaxis.set_major_locator(
+    mdates.MonthLocator(
+        bymonth=[1, 7]))
+ax.xaxis.set_major_formatter(
+    mdates.DateFormatter("%b %Y"))
+
+fig.autofmt_xdate()
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Colour Scales}
+
+\begin{frame}{Axis Label Formatting}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w02m04/axis_labels}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    In R: \texttt{scale\_y\_continuous(labels = scales::comma)} or
+    \texttt{scales::dollar} or \texttt{scales::percent}. In Python:
+    \texttt{ax.yaxis.set\_major\_formatter(FuncFormatter(...))} or
+    use \texttt{matplotlib.ticker.StrMethodFormatter}.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Colour Scale Selection}
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Data Type} & \textbf{R Scale} & \textbf{Python Equivalent} \\
+    \midrule
+    Categorical ($\leq$7) & \texttt{scale\_color\_brewer("Set2")} & \texttt{palette="Set2"} \\
+    Categorical (custom) & \texttt{scale\_color\_manual(values)} & loop + palette dict \\
+    Sequential cont. & \texttt{scale\_color\_viridis\_c()} & \texttt{cmap="viridis"} \\
+    Diverging cont. & \texttt{scale\_color\_gradient2()} & \texttt{TwoSlopeNorm} \\
+    Binary & \texttt{scale\_color\_manual(c(a,b))} & 2-colour list \\
+    \bottomrule
+  \end{tabular}
+  \vspace{4pt}
+
+  {\small Always match scale type to variable type. Using a sequential
+  scale for categorical data implies a false ordering; using a
+  qualitative scale for continuous data creates false boundaries.}
+\end{frame}
+
+\begin{frame}{Diverging vs Sequential}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{figures_w02m04/diverging}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    Use a diverging scale (\texttt{RdBu\_r}, \texttt{gradient2}) when
+    the data has a meaningful midpoint (zero, average, break-even).
+    The two hues encode direction; the midpoint anchors neutral.
+    Use sequential (\texttt{viridis}) when only magnitude matters.
+  \end{exampleblock}
+\end{frame}
+
+\section{Coordinate Systems}
+
+\begin{frame}{Four Coordinate Systems}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w02m04/coord_systems}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Coordinate Systems in Code}
+\begin{lstlisting}[style=rstyle]
+# Default: Cartesian
+p + coord_cartesian()
+
+# Flip x and y (horizontal bars)
+p + coord_flip()
+
+# Polar (bar -> coxcomb/pie)
+p + coord_polar(theta = "y")   # pie: maps y to angle
+p + coord_polar(theta = "x")   # coxcomb: maps x to angle
+
+# Equal aspect ratio (maps, scatter comparison)
+p + coord_fixed(ratio = 1)
+
+# Python equivalents:
+# coord_flip    -> ax.barh() instead of ax.bar()
+# coord_polar   -> fig.add_subplot(projection="polar")
+# coord_fixed   -> ax.set_aspect("equal")
+\end{lstlisting}
+\end{frame}
+
+\section{Zooming Safely}
+
+\begin{frame}{scale limits vs coord\_cartesian}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w02m04/zoom}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{The Zoom Rule}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{DANGEROUS: scale limits}
+\begin{lstlisting}[style=rstyle]
+# Filters data outside range!
+ggplot(df, aes(x, y)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  scale_x_continuous(
+    limits = c(25, 75))
+# geom_smooth recalculated on
+# subset -> different slope!
+\end{lstlisting}
+      {\small Data outside limits is \textbf{removed}
+      before statistics are computed. The regression
+      line changes.}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{SAFE: coord\_cartesian}
+\begin{lstlisting}[style=rstyle]
+# Zooms without filtering
+ggplot(df, aes(x, y)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  coord_cartesian(
+    xlim = c(25, 75))
+# geom_smooth computed on ALL
+# data, then clipped to window
+\end{lstlisting}
+      {\small Data is only \textbf{clipped} at the
+      viewport edge. Statistics remain unchanged.}
+    \end{column}
+  \end{columns}
+
+  \vspace{6pt}
+  \begin{alertblock}{Pro-Tip}
+    \textbf{Always} use \texttt{coord\_cartesian()} for zooming. Use
+    scale \texttt{limits} only when you intentionally want to
+    \textbf{exclude} data from computation.
+    In Python: \texttt{ax.set\_xlim()} is equivalent to
+    \texttt{coord\_cartesian} --- it clips, not filters.
+  \end{alertblock}
+\end{frame}
+
+\section{Complete Examples}
+
+\begin{frame}[fragile]{R: Combining Scale + Coord}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+ggplot(apps_clean,
+  aes(x = Reviews, y = Rating,
+      color = Type)) +
+  geom_point(alpha = 0.3,
+             size = 0.8) +
+
+  # Position scale: log
+  scale_x_log10(
+    labels = scales::comma) +
+
+  # Colour scale: manual
+  scale_color_manual(
+    values = c(Free = "#1565C0",
+               Paid = "#E53935")) +
+
+  # Zoom safely
+  coord_cartesian(
+    ylim = c(1, 5)) +
+
+  theme_minimal() +
+  labs(title = "Reviews vs Rating",
+       x = "Reviews (log)",
+       y = "Rating")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_w02m04/r_scale}
+
+      \vspace{4pt}
+      {\small Three scale operations:
+      (1) x-axis log-transformed,
+      (2) colour manually assigned,
+      (3) y-axis zoomed via coord.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Python: Same Three Operations}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+fig, ax = plt.subplots(figsize=(6,5))
+
+palette = {"Free": "#1565C0",
+           "Paid": "#E53935"}
+for t, c in palette.items():
+    mask = df["Type"] == t
+    ax.scatter(
+        df.loc[mask, "Reviews"],
+        df.loc[mask, "Rating"],
+        s=8, c=c, alpha=0.3,
+        edgecolors="none", label=t)
+
+# Position scale: log
+ax.set_xscale("log")
+
+# Colour: handled by palette dict
+
+# Zoom: set_ylim clips, not filters
+ax.set_ylim(1, 5)
+
+ax.legend(fontsize=7)
+ax.set_xlabel("Reviews (log)")
+ax.set_ylabel("Rating")
+ax.spines["top"].set_visible(False)
+ax.spines["right"].set_visible(False)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_w02m04/py_scale}
+
+      \vspace{4pt}
+      {\small matplotlib equivalents:
+      \texttt{set\_xscale("log")} = log,
+      palette dict = manual colour,
+      \texttt{set\_ylim()} = safe zoom.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Synthesis}
+
+\begin{frame}{Scale Selection Decision Tree}
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Question} & \textbf{Answer} & \textbf{Scale} \\
+    \midrule
+    Spans $>$2 orders?     & Yes  & \texttt{scale\_x\_log10()} \\
+    Has a meaningful zero? & Yes  & \texttt{scale\_color\_gradient2()} \\
+    Categorical $\leq$7?   & Yes  & \texttt{scale\_color\_brewer()} \\
+    Dates on x?            & Yes  & \texttt{scale\_x\_date()} \\
+    Need horizontal bars?  & Yes  & \texttt{coord\_flip()} \\
+    Need equal aspect?     & Yes  & \texttt{coord\_fixed(ratio=1)} \\
+    Want to zoom?          & Yes  & \texttt{coord\_cartesian(xlim)} \\
+    \bottomrule
+  \end{tabular}
+\end{frame}
+
+\begin{frame}{Key Takeaways}
+  \begin{enumerate}
+    \item A \textbf{scale} maps data values (domain) through an optional
+          transform to visual properties (range).
+    \item \textbf{Log scales} reveal patterns in skewed data; use when
+          values span $>$2 orders of magnitude.
+    \item \textbf{Diverging} colour scales need a meaningful midpoint;
+          \textbf{sequential} scales encode magnitude only.
+    \item Format axis labels with \texttt{scales::comma/dollar/percent}
+          (R) or \texttt{FuncFormatter} (Python).
+    \item \textbf{coord\_cartesian} zooms safely (clips); scale
+          \texttt{limits} zoom dangerously (filters data).
+    \item In Python, \texttt{ax.set\_xlim()} is a safe zoom (like
+          \texttt{coord\_cartesian}), not a filter.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Essential Readings}
+  \begin{itemize}
+    \item Wickham, H. (2016). \emph{ggplot2}, Chapters 6--8
+          (Scales, Colour, Coordinate Systems).
+    \item Wilke, C.~O. (2019). \emph{Fundamentals of Data Visualization},
+          Chapters 3, 7, 8 (Coordinate Systems, Colour Scales).
+    \item Wickham, H. \& Grolemund, G. (2023). \emph{R for Data Science},
+          2nd ed., Chapter 11 (Communication: Scales).
+  \end{itemize}
+  \vspace{6pt}
+  \textbf{Next Module}: Faceting \& Small Multiples (W02-M05)
+\end{frame}
+
+\end{document}

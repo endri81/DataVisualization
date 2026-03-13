@@ -1,0 +1,372 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codeblue}{HTML}{1565C0}
+
+\lstdefinestyle{rstyle}{
+  language=R, backgroundcolor=\color{codebg}, basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries, stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape, breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=2,
+  morekeywords={library,ggplot,aes,geom_point,geom_line,geom_col,geom_bar,
+    geom_histogram,geom_boxplot,geom_smooth,geom_density,geom_jitter,
+    geom_text,geom_label,geom_segment,geom_hex,geom_violin,geom_area,
+    geom_tile,geom_rug,geom_text_repel,
+    scale_color_manual,scale_fill_viridis_c,scale_color_brewer,
+    scale_size,scale_shape_manual,scale_x_log10,
+    facet_wrap,coord_flip,theme_minimal,theme,element_text,labs,
+    position_jitter,after_stat,stat_summary}
+}
+\lstdefinestyle{pythonstyle}{
+  language=Python, backgroundcolor=\color{codebg}, basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries, stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape, breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=4,
+  morekeywords={import,from,as,ggplot,aes,geom_point,geom_line,geom_col,
+    geom_smooth,geom_histogram,geom_boxplot,geom_bar,geom_density,
+    geom_text,geom_label,geom_segment,geom_jitter,
+    scale_color_brewer,scale_color_cmap,scale_size,
+    facet_wrap,theme_minimal,labs,coord_flip}
+}
+
+\title{ggplot2 Deep Dive: Aesthetics \& Geometries}
+\subtitle{Workshop 2 --- Module 3}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item The five core aesthetic channels: x/y, color, size, shape, alpha
+    \item Continuous vs discrete colour mapping
+    \item Layering multiple geometries with \texttt{+}
+    \item Overplotting: diagnosis and three fixes
+    \item Special geometries: text, label, segment, lollipop, dumbbell
+  \end{enumerate}
+  \begin{exampleblock}{Learning Outcome}
+    You will be able to encode up to five variables simultaneously using
+    aesthetic channels, layer multiple geoms on one axes, and solve
+    overplotting with alpha, jitter, or hexbin.
+  \end{exampleblock}
+\end{frame}
+
+\section{The Five Core Aesthetics}
+
+\begin{frame}{Aesthetic Channels}
+  \begin{center}
+    \includegraphics[width=0.82\textwidth]{figures_w02m03/core_aesthetics}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    Position (x, y) is the most precise channel (Cleveland rank 1).
+    Colour hue is next for categorical data. Size works for ordered
+    quantitative data but not for precise comparisons. Shape tops out
+    at 6 distinguishable glyphs. Alpha is a last resort.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{The shape Palette: Maximum 6 Levels}
+  \begin{center}
+    \includegraphics[width=0.85\textwidth]{figures_w02m03/shape_palette}
+  \end{center}
+  \vspace{4pt}
+  ggplot2's default shape scale uses filled shapes for the first 6 levels,
+  then switches to unfilled --- which become nearly indistinguishable.
+  If your categorical variable has $>6$ levels, use colour or faceting
+  instead.
+\end{frame}
+
+\begin{frame}{Continuous vs Discrete Colour}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w02m03/continuous_vs_discrete}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    Continuous variables map to a colour gradient
+    (\texttt{scale\_color\_viridis\_c}). Discrete variables map to a
+    qualitative palette (\texttt{scale\_color\_brewer}). Mismatching
+    produces misleading perceptual ordering.
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{Multi-Aesthetic Encoding in R}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+# Five variables in one chart
+ggplot(df, aes(
+    x     = gdp,        # position
+    y     = life_exp,    # position
+    color = continent,   # hue
+    size  = population,  # area
+    shape = income_group # glyph
+  )) +
+  geom_point(alpha = 0.6) +
+  scale_color_brewer(
+    palette = "Set2") +
+  scale_size(range = c(1, 12)) +
+  scale_shape_manual(
+    values = c(16, 17, 15)) +
+  theme_minimal() +
+  labs(title = "Gapminder: 5 Vars")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_w02m03/r_multi_aes}
+
+      \vspace{4pt}
+      {\small Five variables encoded:
+      x = GDP, y = life expectancy,
+      colour = continent, size = pop,
+      shape = income group. Each
+      \texttt{aes()} creates its own
+      legend.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Multi-Aesthetic Encoding in Python}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+# plotnine: identical syntax
+(ggplot(df, aes(
+    x="gdp", y="life_exp",
+    color="continent",
+    size="population",
+    shape="income_group"))
+ + geom_point(alpha=0.6)
+ + scale_color_brewer(
+     type="qual", palette="Set2")
+ + scale_size(range=(1, 12))
+ + theme_minimal())
+
+# matplotlib OO alternative:
+for grp in groups:
+    mask = df["continent"] == grp
+    ax.scatter(
+        df.loc[mask, "gdp"],
+        df.loc[mask, "life_exp"],
+        s=df.loc[mask, "pop"] / 1e5,
+        c=palette[grp],
+        marker=markers[grp],
+        alpha=0.6, label=grp)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_w02m03/py_multi_aes}
+
+      \vspace{4pt}
+      {\small plotnine handles multi-
+      aesthetic legends automatically.
+      In matplotlib, you must loop over
+      groups and manage legends manually.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Bubble Chart: The size Aesthetic}
+  \begin{center}
+    \includegraphics[width=0.72\textwidth]{figures_w02m03/size_aesthetic}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    \texttt{scale\_size(range = c(1, 12))} controls the min/max point
+    size. ggplot2 maps to area (perceptually correct). In matplotlib,
+    \texttt{s} is in points\textsuperscript{2} --- already area-based.
+  \end{alertblock}
+\end{frame}
+
+\section{Layering Multiple Geometries}
+
+\begin{frame}{The Power of \texttt{+}: Three Geom Combinations}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w02m03/geom_combinations}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Geom Layering in Code}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{R: point + smooth}
+\begin{lstlisting}[style=rstyle]
+ggplot(df, aes(x, y)) +
+  geom_point(alpha = 0.4) +
+  geom_smooth(method = "lm",
+    color = "#E53935")
+# Two layers: raw data + trend
+\end{lstlisting}
+      \vspace{4pt}
+      \textbf{R: boxplot + jitter}
+\begin{lstlisting}[style=rstyle]
+ggplot(df, aes(x = group,
+               y = value)) +
+  geom_boxplot(outlier.shape = NA,
+    fill = "#E3F2FD") +
+  geom_jitter(width = 0.15,
+    alpha = 0.3, size = 1,
+    color = "#E53935")
+# Show summary AND raw data
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{R: col + errorbar}
+\begin{lstlisting}[style=rstyle]
+df_summary <- df |>
+  group_by(cat) |>
+  summarise(
+    m = mean(val),
+    se = sd(val)/sqrt(n()))
+
+ggplot(df_summary,
+  aes(x = cat, y = m)) +
+  geom_col(fill = "#1565C0",
+    alpha = 0.6, width = 0.5) +
+  geom_errorbar(
+    aes(ymin = m - se,
+        ymax = m + se),
+    width = 0.2,
+    linewidth = 0.8) +
+  coord_flip()
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Overplotting}
+
+\begin{frame}{Problem and Three Solutions}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w02m03/overplotting}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Overplotting Solutions in R}
+\begin{lstlisting}[style=rstyle]
+# Fix 1: Reduce alpha (most common)
+ggplot(df, aes(x, y)) +
+  geom_point(alpha = 0.05, size = 0.5)     # near-transparent
+
+# Fix 2: Jitter (for discrete x)
+ggplot(df, aes(x = category, y = value)) +
+  geom_jitter(width = 0.2, height = 0, alpha = 0.15, size = 0.8)
+
+# Fix 3: Hexbin (for large n)
+ggplot(df, aes(x, y)) +
+  geom_hex(bins = 25) +
+  scale_fill_viridis_c()                   # count encoded as colour
+
+# Fix 4: 2D density contours
+ggplot(df, aes(x, y)) +
+  geom_density_2d_filled(alpha = 0.7) +
+  geom_point(alpha = 0.02, size = 0.3)     # ghost points for context
+\end{lstlisting}
+  \begin{alertblock}{Pro-Tip}
+    Rule of thumb: $n < 500$ use alpha; $500 < n < 5000$ use hex/density;
+    $n > 5000$ use aggregation (\texttt{geom\_bin2d} or \texttt{geom\_hex}).
+  \end{alertblock}
+\end{frame}
+
+\section{Special Geometries}
+
+\begin{frame}{Annotation Geoms: text vs label}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w02m03/annotation_geoms}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    \texttt{geom\_text()} renders plain text (no background). \texttt{geom\_label()}
+    adds a filled box --- better visibility on cluttered backgrounds.
+    For anti-overlap, use \texttt{ggrepel::geom\_text\_repel()} (R) or
+    \texttt{adjustText} (Python).
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Connector Geoms: Lollipop \& Dumbbell}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w02m03/connector_geoms}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Lollipop \& Dumbbell in R}
+\begin{lstlisting}[style=rstyle]
+# Lollipop: geom_segment + geom_point
+ggplot(df, aes(x = fct_reorder(cat, val), y = val)) +
+  geom_segment(aes(xend = cat, y = 0, yend = val), color = "grey70") +
+  geom_point(size = 3, color = "#1565C0") +
+  coord_flip() + theme_minimal()
+
+# Dumbbell: two geom_point layers + geom_segment
+ggplot(df, aes(y = fct_reorder(cat, val_2024))) +
+  geom_segment(aes(x = val_2020, xend = val_2024,
+                   yend = cat), color = "grey80", linewidth = 1.5) +
+  geom_point(aes(x = val_2020), size = 3, color = "#1565C0") +
+  geom_point(aes(x = val_2024), size = 3, color = "#E53935") +
+  theme_minimal() +
+  labs(x = "Value", y = NULL, title = "Change: 2020 vs 2024")
+\end{lstlisting}
+\end{frame}
+
+\section{Synthesis}
+
+\begin{frame}{Aesthetic Selection Checklist}
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Variable Type} & \textbf{Best Aesthetic} & \textbf{Fallback} \\
+    \midrule
+    Quantitative (primary) & x or y position & size \\
+    Quantitative (secondary) & colour gradient & size \\
+    Categorical ($\leq$ 6) & colour hue or shape & facet \\
+    Categorical ($>$ 6) & facet\_wrap & colour + label \\
+    Ordered categorical & colour luminance & size \\
+    Binary & colour (2 hues) & shape or alpha \\
+    \bottomrule
+  \end{tabular}
+  \vspace{6pt}
+  \begin{alertblock}{Pro-Tip}
+    Encode the most important variable on the highest-precision channel
+    (position). Reserve colour for the second-most-important grouping.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{Key Takeaways}
+  \begin{enumerate}
+    \item Five core aesthetics: \textbf{x/y} (position), \textbf{color}
+          (hue/gradient), \textbf{size} (area), \textbf{shape} (glyph,
+          $\leq$6), \textbf{alpha} (transparency).
+    \item Match the aesthetic to the variable type: continuous $\rightarrow$
+          position or gradient; categorical $\rightarrow$ hue or shape.
+    \item \textbf{Layering geoms} with \texttt{+} creates composite charts:
+          point+smooth, boxplot+jitter, col+errorbar.
+    \item \textbf{Overplotting} is solved by alpha ($n<500$), jitter
+          (discrete x), hex/density ($n>500$).
+    \item \textbf{Special geoms}: text/label for annotation,
+          segment+point for lollipop and dumbbell charts.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Essential Readings}
+  \begin{itemize}
+    \item Wickham, H. (2016). \emph{ggplot2}, Chapters 4--5
+          (Mastering Aesthetics, Geom Catalogue).
+    \item Wilke, C.~O. (2019). \emph{Fundamentals of Data Visualization},
+          Chapters 2, 18 (Aesthetics, Handling Overlapping Points).
+    \item Chang, W. (2024). \emph{R Graphics Cookbook}, 2nd ed., Chapters
+          5--6 (Scatter Plots, Bar Charts).
+  \end{itemize}
+  \vspace{6pt}
+  \textbf{Next Module}: Scales \& Coordinate Systems (W02-M04)
+\end{frame}
+
+\end{document}

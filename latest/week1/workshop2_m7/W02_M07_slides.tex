@@ -1,0 +1,399 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codeblue}{HTML}{1565C0}
+
+\lstdefinestyle{pythonstyle}{
+  language=Python, backgroundcolor=\color{codebg}, basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries, stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape, breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=4,
+  morekeywords={import,from,as,pd,plt,sns,np,fig,ax,ggplot,aes,
+    geom_point,geom_line,geom_col,geom_histogram,geom_boxplot,geom_smooth,
+    geom_density,geom_violin,geom_bar,geom_jitter,
+    scale_color_brewer,scale_fill_manual,facet_wrap,facet_grid,
+    theme_minimal,theme,labs,coord_flip,
+    scatterplot,boxplot,violinplot,histplot,kdeplot,heatmap,
+    regplot,lmplot,catplot,relplot,displot,pairplot,
+    FacetGrid,set_theme,set_style,set_context}
+}
+\lstdefinestyle{rstyle}{
+  language=R, backgroundcolor=\color{codebg}, basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries, stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape, breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=2,
+  morekeywords={library,ggplot,aes,geom_point,geom_smooth,geom_histogram,
+    geom_boxplot,facet_wrap,theme_minimal,labs,scale_color_brewer}
+}
+
+\title{seaborn \& plotnine for Python}
+\subtitle{Workshop 2 --- Module 7}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item Three Python viz libraries: matplotlib, seaborn, plotnine
+    \item seaborn: figure-level vs axes-level functions
+    \item seaborn gallery: scatter, box, violin, histogram, heatmap, pairplot
+    \item plotnine: the ggplot2 clone for Python
+    \item Decision tree: which library for which task
+    \item R $\leftrightarrow$ Python Rosetta Stone
+  \end{enumerate}
+  \begin{exampleblock}{Learning Outcome}
+    You will choose the right Python viz library for each task and
+    translate any ggplot2 chart into seaborn or plotnine with minimal
+    code changes.
+  \end{exampleblock}
+\end{frame}
+
+\section{Three Python Libraries}
+
+\begin{frame}{matplotlib vs seaborn vs plotnine}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w02m07/three_libraries}
+  \end{center}
+\end{frame}
+
+\begin{frame}{When to Use Each}
+  \begin{center}
+    \includegraphics[width=0.85\textwidth]{figures_w02m07/decision_tree}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    If you are already fluent in ggplot2 (R), start with \textbf{plotnine}
+    --- the syntax is identical. If you want built-in statistical aggregation
+    and faceting, use \textbf{seaborn}. Fall back to \textbf{matplotlib}
+    only for full manual control or highly customised layouts.
+  \end{alertblock}
+\end{frame}
+
+\section{seaborn}
+
+\begin{frame}{Function Taxonomy: Figure-Level vs Axes-Level}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w02m07/sns_function_types}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Figure-Level: Built-In Faceting}
+\begin{lstlisting}[style=pythonstyle]
+import seaborn as sns
+
+# Figure-level: creates its own Figure + facets automatically
+g = sns.relplot(
+    data=apps, x="Reviews", y="Rating",
+    hue="Type",                  # colour aesthetic
+    col="Content_Rating",        # facet by column
+    col_wrap=3,                  # wrap after 3 columns
+    kind="scatter",              # scatter (or "line")
+    height=3, aspect=1.2,        # panel size
+    alpha=0.3, s=15)
+g.set(xscale="log")             # log scale on all panels
+g.set_titles("{col_name}")      # strip label format
+g.tight_layout()
+g.savefig("faceted_scatter.png", dpi=300)
+\end{lstlisting}
+  \begin{exampleblock}{Data Insight}
+    Figure-level functions (\texttt{relplot}, \texttt{catplot}, \texttt{displot})
+    create the entire figure and handle faceting with \texttt{col=} and
+    \texttt{row=}. Axes-level functions (\texttt{scatterplot}, \texttt{boxplot})
+    plot onto a single existing axes --- use them inside \texttt{plt.subplots()}.
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{Axes-Level: Embed in Custom Layouts}
+\begin{lstlisting}[style=pythonstyle]
+# Axes-level: plot onto an existing axes
+fig, axes = plt.subplots(1, 3, figsize=(12, 4), sharey=True)
+
+# Panel 1: scatter
+sns.scatterplot(data=df, x="x", y="y", hue="group", ax=axes[0])
+axes[0].set_title("Scatter")
+
+# Panel 2: box
+sns.boxplot(data=df, x="group", y="y", palette="Set2", ax=axes[1])
+axes[1].set_title("Box")
+
+# Panel 3: violin
+sns.violinplot(data=df, x="group", y="y", palette="Set2", ax=axes[2])
+axes[2].set_title("Violin")
+
+plt.tight_layout()
+\end{lstlisting}
+  \begin{alertblock}{Pro-Tip}
+    The \texttt{ax=} parameter is the key: it tells seaborn to draw on
+    your axes instead of creating a new figure. This is how you combine
+    seaborn with matplotlib's \texttt{GridSpec} for custom layouts.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{seaborn Gallery: Six Chart Types}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w02m07/sns_gallery}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{seaborn: Multi-Aesthetic Encoding}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+sns.scatterplot(
+    data=df,
+    x="gdp",
+    y="life_exp",
+    hue="continent",    # colour
+    style="income",     # shape
+    size="population",  # size
+    sizes=(20, 300),    # size range
+    alpha=0.6,
+    palette="Set2")
+\end{lstlisting}
+      \vspace{4pt}
+      {\small seaborn's \texttt{hue}, \texttt{style},
+      and \texttt{size} map directly to ggplot2's
+      \texttt{aes(color=, shape=, size=)}. Legends
+      are generated automatically.}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_w02m07/sns_multi_aes}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{seaborn: Statistical Aggregation}
+\begin{lstlisting}[style=pythonstyle]
+# catplot with built-in mean + CI (like stat_summary in ggplot2)
+g = sns.catplot(
+    data=apps, x="Category", y="Rating",
+    kind="bar",        # computes mean + CI automatically
+    ci=95,             # 95% confidence interval
+    palette="Set2",
+    height=5, aspect=1.5)
+g.set_xticklabels(rotation=45, ha="right")
+
+# regplot: scatter + regression line + CI (like geom_smooth)
+sns.regplot(data=df, x="x", y="y",
+    ci=95, scatter_kws={"alpha": 0.3, "s": 15},
+    line_kws={"color": "#E53935"})
+
+# lmplot: regplot + faceting
+sns.lmplot(data=df, x="x", y="y",
+    hue="group", col="region", col_wrap=3,
+    ci=95, height=3, aspect=1.2)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{seaborn FacetGrid: Built-In Faceting}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w02m07/sns_facetgrid}
+  \end{center}
+\end{frame}
+
+\section{plotnine}
+
+\begin{frame}{ggplot2 $\rightarrow$ plotnine: Line-by-Line}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w02m07/plotnine_syntax}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{plotnine: Complete Example}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+from plotnine import *
+import pandas as pd
+
+apps = pd.read_csv(
+    "googleplaystore.csv")
+
+(ggplot(apps.dropna(
+        subset=["Rating"]),
+    aes(x="Reviews", y="Rating",
+        color="Type"))
+
+ + geom_point(alpha=0.3, size=0.8)
+
+ + geom_smooth(method="lm",
+     se=True, color="grey")
+
+ + scale_x_log10()
+
+ + scale_color_manual(
+     values={"Free": "#1565C0",
+             "Paid": "#E53935"})
+
+ + facet_wrap("~Content_Rating",
+     ncol=2)
+
+ + theme_minimal()
+
+ + labs(title="Reviews vs Rating",
+     x="Reviews (log)",
+     y="Rating")
+).save("chart.pdf",
+    width=8, height=6, dpi=300)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_w02m07/plotnine_output}
+
+      \vspace{4pt}
+      {\small Every ggplot2 feature has
+      a plotnine equivalent:
+      \texttt{aes()}, \texttt{geom\_*()},
+      \texttt{scale\_*()}, \texttt{facet\_*()},
+      \texttt{theme\_*()}, \texttt{labs()}.
+      The only differences are strings
+      for column names and \texttt{+}
+      at line start.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{plotnine vs ggplot2: The Three Differences}
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Feature} & \textbf{R (ggplot2)} & \textbf{Python (plotnine)} \\
+    \midrule
+    Column names & Bare symbols: \texttt{aes(x = displ)} & Strings: \texttt{aes(x="displ")} \\
+    Line continuation & \texttt{+} at end of line & \texttt{+} at start, inside \texttt{()} \\
+    Save & \texttt{ggsave("p.pdf")} & \texttt{p.save("p.pdf")} \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{8pt}
+  \begin{exampleblock}{Data Insight}
+    Everything else --- geom names, scale functions, facet syntax, theme
+    elements --- is character-for-character identical. If you can write
+    ggplot2, you can write plotnine in under 5 minutes.
+  \end{exampleblock}
+\end{frame}
+
+\section{Rosetta Stone}
+
+\begin{frame}{R $\leftrightarrow$ Python Translation Table}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w02m07/rosetta}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Same Chart, Three Ways}
+  \begin{columns}[T]
+    \begin{column}{0.32\textwidth}
+      \textbf{R (ggplot2)}
+\begin{lstlisting}[style=rstyle]
+ggplot(df, aes(
+    x = displ, y = hwy,
+    color = class)) +
+  geom_point(alpha=0.6) +
+  geom_smooth(
+    method = "lm") +
+  scale_color_brewer(
+    palette = "Set2") +
+  facet_wrap(~cyl) +
+  theme_minimal()
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.32\textwidth}
+      \textbf{Python (plotnine)}
+\begin{lstlisting}[style=pythonstyle]
+(ggplot(df, aes(
+    x="displ", y="hwy",
+    color="class"))
+ + geom_point(alpha=0.6)
+ + geom_smooth(
+     method="lm")
+ + scale_color_brewer(
+     type="qual",
+     palette="Set2")
+ + facet_wrap("~cyl")
+ + theme_minimal())
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.32\textwidth}
+      \textbf{Python (seaborn)}
+\begin{lstlisting}[style=pythonstyle]
+g = sns.lmplot(
+    data=df,
+    x="displ",
+    y="hwy",
+    hue="class",
+    col="cyl",
+    col_wrap=2,
+    palette="Set2",
+    height=3,
+    aspect=1.2,
+    ci=95,
+    scatter_kws={
+      "alpha": 0.6})
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Synthesis}
+
+\begin{frame}{Library Selection Summary}
+  \centering
+  \begin{tabular}{lp{6cm}}
+    \toprule
+    \textbf{Use Case} & \textbf{Recommended Library} \\
+    \midrule
+    Want ggplot2 syntax in Python & \texttt{plotnine} \\
+    Statistical charts with auto-aggregation & \texttt{seaborn} \\
+    Faceted statistical charts & \texttt{seaborn} (figure-level) or \texttt{plotnine} \\
+    Custom multi-panel dashboard & \texttt{matplotlib} + \texttt{GridSpec} \\
+    Embed seaborn in custom layout & \texttt{seaborn} axes-level + \texttt{ax=} \\
+    Heatmaps, pairplots, clusterplots & \texttt{seaborn} \\
+    Maximum customisation & \texttt{matplotlib} \\
+    \bottomrule
+  \end{tabular}
+\end{frame}
+
+\begin{frame}{Key Takeaways}
+  \begin{enumerate}
+    \item \textbf{matplotlib}: low-level, full control, verbose.
+          \textbf{seaborn}: statistical, auto-aggregation, faceting.
+          \textbf{plotnine}: ggplot2 clone, grammar syntax.
+    \item seaborn has two API levels: \textbf{figure-level} (creates figure,
+          has faceting) and \textbf{axes-level} (draws on existing ax).
+    \item seaborn's \textbf{hue/style/size} map to ggplot2's
+          \textbf{color/shape/size} aesthetics.
+    \item plotnine syntax is \textbf{identical} to ggplot2 except: strings
+          for column names, \texttt{+} at line start, \texttt{.save()}.
+    \item The \textbf{Rosetta Stone} table translates any ggplot2 chart
+          to seaborn or matplotlib with known equivalences.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Essential Readings}
+  \begin{itemize}
+    \item seaborn tutorial: \texttt{https://seaborn.pydata.org/tutorial.html}
+    \item plotnine documentation: \texttt{https://plotnine.org}
+    \item VanderPlas, J. (2016). \emph{Python Data Science Handbook},
+          Chapter 4 (Visualization with Matplotlib).
+    \item Waskom, M. (2021). ``seaborn: statistical data visualization.''
+          \emph{JOSS}, 6(60), 3021.
+  \end{itemize}
+  \vspace{6pt}
+  \textbf{Next Module}: labs(), Annotations \& Storytelling Layers (W02-M08)
+\end{frame}
+
+\end{document}

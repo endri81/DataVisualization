@@ -1,0 +1,385 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codeblue}{HTML}{1565C0}
+
+\lstdefinestyle{rstyle}{
+  language=R, backgroundcolor=\color{codebg}, basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries, stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape, breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=2,
+  morekeywords={library,ggplot,aes,geom_point,geom_line,geom_col,geom_histogram,
+    geom_smooth,geom_boxplot,geom_density,
+    facet_wrap,facet_grid,vars,scales,labeller,label_both,label_value,
+    theme_minimal,theme,element_text,element_blank,strip.text,
+    labs,coord_flip,scale_y_continuous,nrow,ncol}
+}
+\lstdefinestyle{pythonstyle}{
+  language=Python, backgroundcolor=\color{codebg}, basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries, stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape, breaklines=true, frame=single,
+  rulecolor=\color{codegray!30}, showstringspaces=false, tabsize=4,
+  morekeywords={import,from,as,ggplot,aes,geom_point,geom_line,geom_histogram,
+    geom_smooth,facet_wrap,facet_grid,theme_minimal,labs,
+    FacetGrid,catplot,relplot,subplots,GridSpec}
+}
+
+\title{Faceting \& Small Multiples}
+\subtitle{Workshop 2 --- Module 5}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item Tufte's small multiples revisited via the grammar
+    \item \texttt{facet\_wrap()}: one variable, wrapped grid
+    \item \texttt{facet\_grid()}: two variables, rows $\times$ columns
+    \item Fixed vs free scales: the critical trade-off
+    \item Facet vs colour: when to use which
+    \item Faceting in Python: plotnine, seaborn FacetGrid, matplotlib
+  \end{enumerate}
+  \begin{exampleblock}{Learning Outcome}
+    You will use faceting to produce Tufte-quality small multiples that
+    separate groups into independent panels while preserving shared axes
+    for fair comparison.
+  \end{exampleblock}
+\end{frame}
+
+\section{Small Multiples via the Grammar}
+
+\begin{frame}{From Spaghetti to Small Multiples}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w02m05/facet_vs_color}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    Colour works for $\leq$3 groups. For 4+ groups, faceting produces
+    cleaner separation by exploiting Gestalt proximity (W01-M03)
+    instead of hue discrimination.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{facet\_wrap: Concept}
+  \begin{center}
+    \includegraphics[width=0.85\textwidth]{figures_w02m05/facet_wrap_concept}
+  \end{center}
+\end{frame}
+
+\section{facet\_wrap()}
+
+\begin{frame}{facet\_wrap Demo: Six Regions}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w02m05/facet_wrap_demo}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{facet\_wrap in R}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+ggplot(df, aes(x = month,
+               y = revenue)) +
+  geom_line(color = "#1565C0",
+            linewidth = 1) +
+  geom_area(fill = "#1565C0",
+            alpha = 0.06) +
+
+  # One panel per region
+  facet_wrap(
+    ~ region,
+    ncol = 3,         # 3 columns
+    scales = "fixed"  # shared y
+  ) +
+
+  scale_x_continuous(
+    breaks = c(1, 6, 12),
+    labels = c("Jan","Jun","Dec")) +
+  theme_minimal(base_size = 9) +
+  theme(strip.text =
+    element_text(face = "bold")) +
+  labs(title = "Revenue by Region",
+       x = NULL, y = "Revenue ($K)")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_w02m05/r_facet}
+
+      \vspace{4pt}
+      {\small Key arguments:
+      \texttt{ncol} / \texttt{nrow} control
+      the grid layout.
+      \texttt{scales = "fixed"} (default)
+      ensures fair comparison.
+      The strip text above each panel
+      shows the faceting variable's level.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{facet\_wrap in Python}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+      \textbf{plotnine (ggplot2 clone)}
+\begin{lstlisting}[style=pythonstyle]
+from plotnine import *
+
+(ggplot(df, aes(x="month",
+                y="revenue"))
+ + geom_line(color="#1565C0")
+ + facet_wrap("~region", ncol=3)
+ + theme_minimal())
+\end{lstlisting}
+
+      \vspace{6pt}
+      \textbf{seaborn FacetGrid}
+\begin{lstlisting}[style=pythonstyle]
+import seaborn as sns
+
+g = sns.FacetGrid(df,
+    col="region", col_wrap=3,
+    sharey=True, height=3)
+g.map(plt.plot, "month","revenue",
+      color="#1565C0")
+g.set_titles("{col_name}")
+\end{lstlisting}
+
+      \vspace{6pt}
+      \textbf{matplotlib (manual)}
+\begin{lstlisting}[style=pythonstyle]
+fig, axes = plt.subplots(
+    2, 3, sharey=True)
+for ax, region in zip(
+    axes.flatten(), regions):
+    sub = df.query(
+        "region == @region")
+    ax.plot(sub["month"],
+            sub["revenue"])
+    ax.set_title(region)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_w02m05/py_facet}
+
+      \vspace{4pt}
+      {\small Three Python approaches
+      for faceting, ordered by
+      automation level:
+      \begin{enumerate}
+        \item \texttt{plotnine}: identical
+              to ggplot2 syntax
+        \item \texttt{seaborn.FacetGrid}:
+              map function to panels
+        \item \texttt{plt.subplots}:
+              full manual control
+      \end{enumerate}}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{facet\_grid()}
+
+\begin{frame}{facet\_grid: Rows $\times$ Columns}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w02m05/facet_grid_demo}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    \texttt{facet\_grid(Type \textasciitilde{} Content\_Rating)} creates a
+    matrix: rows = Type (Free, Paid), columns = Content Rating (Everyone,
+    Teen, Mature). Every cell shows the same chart type for that
+    combination. Use \texttt{facet\_grid} when you have two categorical
+    variables; use \texttt{facet\_wrap} when you have one.
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{facet\_grid in Code}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{R}
+\begin{lstlisting}[style=rstyle]
+ggplot(apps, aes(x = Rating)) +
+  geom_histogram(bins = 20,
+    fill = "#1565C0",
+    color = "white") +
+
+  # rows = Type, cols = Content Rating
+  facet_grid(
+    Type ~ `Content Rating`,
+    scales = "fixed") +
+
+  theme_minimal(base_size = 9) +
+  labs(title = "Rating by Type
+       x Content Rating")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Python (plotnine)}
+\begin{lstlisting}[style=pythonstyle]
+(ggplot(apps, aes(x="Rating"))
+ + geom_histogram(bins=20,
+     fill="#1565C0", color="white")
+ + facet_grid("Type~Content_Rating")
+ + theme_minimal())
+\end{lstlisting}
+
+      \vspace{4pt}
+      \textbf{seaborn}
+\begin{lstlisting}[style=pythonstyle]
+g = sns.FacetGrid(apps,
+    row="Type",
+    col="Content_Rating",
+    sharey=True, sharex=True)
+g.map(plt.hist, "Rating",
+      bins=20, color="#1565C0")
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Fixed vs Free Scales}
+
+\begin{frame}{The Critical Trade-Off}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w02m05/scales_fixed_vs_free}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Scale Options}
+  \centering
+  \begin{tabular}{lp{5.5cm}}
+    \toprule
+    \textbf{Setting} & \textbf{Effect} \\
+    \midrule
+    \texttt{scales = "fixed"} & All panels share x and y (default). Best for fair comparison across groups. \\
+    \texttt{scales = "free\_x"} & Each panel has its own x range. Y stays shared. \\
+    \texttt{scales = "free\_y"} & Each panel has its own y range. X stays shared. \\
+    \texttt{scales = "free"} & Both axes independent. Best for showing within-group detail. \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{6pt}
+  \begin{alertblock}{Pro-Tip}
+    \textbf{Default to fixed scales} for comparison tasks. Use free scales
+    only when groups have vastly different ranges (e.g., countries with
+    populations from 1K to 1B). When using free scales, warn the reader
+    with an annotation: ``Note: axes differ across panels.''
+  \end{alertblock}
+\end{frame}
+
+\section{Facet + Geom Combinations}
+
+\begin{frame}{Facet + Smooth: Per-Panel Trends}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w02m05/facet_smooth}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    When \texttt{geom\_smooth()} is combined with \texttt{facet\_wrap()},
+    the smoother is fitted independently within each panel. This
+    reveals group-specific trends that would be averaged out in a
+    single-panel, colour-coded plot.
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Custom Strip Labels}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w02m05/strip_labels}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    Use \texttt{labeller = label\_both} to show ``Variable: Level''
+    or a custom labeller function to add sample sizes. In matplotlib,
+    use \texttt{ax.set\_title(f"\{name\} (n=\{count\})")}.
+  \end{alertblock}
+\end{frame}
+
+\section{Facet vs Patchwork}
+
+\begin{frame}{When to Facet vs When to Compose}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{figures_w02m05/patchwork_vs_facet}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Decision Rule in Code}
+\begin{lstlisting}[style=rstyle]
+# FACET: Same geom, same aes, different group
+ggplot(df, aes(x = month, y = revenue)) +
+  geom_line() +
+  facet_wrap(~region, ncol = 3)
+
+# PATCHWORK: Different geom or different aes per panel
+library(patchwork)
+p_bar <- ggplot(df, aes(x = cat, y = n)) + geom_col()
+p_hist <- ggplot(df, aes(x = rating)) + geom_histogram()
+p_scatter <- ggplot(df, aes(x = reviews, y = rating)) + geom_point()
+p_box <- ggplot(df, aes(x = type, y = rating)) + geom_boxplot()
+
+# Compose: | = side by side, / = stack
+(p_bar | p_hist) / (p_scatter | p_box) +
+  plot_annotation(tag_levels = "a")
+\end{lstlisting}
+\end{frame}
+
+\section{Synthesis}
+
+\begin{frame}{Faceting Decision Checklist}
+  \begin{enumerate}
+    \item \textbf{How many groups?} 1--3: colour. 4+: facet.
+    \item \textbf{How many faceting variables?} 1: \texttt{facet\_wrap}.
+          2: \texttt{facet\_grid}.
+    \item \textbf{Comparable ranges?} Yes: \texttt{scales = "fixed"}.
+          No: \texttt{scales = "free"} + warning label.
+    \item \textbf{Same geom across panels?} Yes: facet.
+          No: patchwork / GridSpec.
+    \item \textbf{Need independent smoothers?} Yes: facet +
+          \texttt{geom\_smooth()} fits per panel automatically.
+    \item \textbf{Need context in strip labels?} Use
+          \texttt{labeller = label\_both} or custom function.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Key Takeaways}
+  \begin{enumerate}
+    \item \textbf{facet\_wrap(\textasciitilde{}var)} splits by one variable into a
+          wrapped grid; \textbf{facet\_grid(row\textasciitilde{}col)} splits by two
+          variables into a matrix.
+    \item \textbf{Fixed scales} (default) enable fair comparison;
+          \textbf{free scales} reveal within-group detail at the cost of
+          cross-panel comparability.
+    \item Faceting produces Tufte's \textbf{small multiples} automatically:
+          same chart, same axes, different data subset per panel.
+    \item \textbf{Colour} for $\leq$3 groups; \textbf{facet} for 4+.
+    \item \textbf{Facet} when all panels use the same geom;
+          \textbf{patchwork/GridSpec} when panels use different geoms.
+    \item In Python: \texttt{plotnine.facet\_wrap}, \texttt{sns.FacetGrid},
+          or \texttt{plt.subplots} with a loop.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Essential Readings}
+  \begin{itemize}
+    \item Wickham, H. (2016). \emph{ggplot2}, Chapter 7 (Facets).
+    \item Tufte, E.~R. (1983). \emph{The Visual Display of Quantitative
+          Information}, pp.\ 170--174 (Small Multiples).
+    \item Wilke, C.~O. (2019). \emph{Fundamentals of Data Visualization},
+          Chapter 21 (Multi-Panel Figures).
+    \item Wickham, H. \& Grolemund, G. (2023). \emph{R for Data Science},
+          2nd ed., Chapter 9.5 (Facets).
+  \end{itemize}
+  \vspace{6pt}
+  \textbf{Next Module}: Themes \& Publication-Quality Styling (W02-M06)
+\end{frame}
+
+\end{document}
