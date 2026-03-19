@@ -1,0 +1,151 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}\usepackage{listings}\usepackage{booktabs}\usepackage{xcolor}
+\definecolor{codebg}{HTML}{F5F5F5}\definecolor{codegreen}{HTML}{2E7D32}\definecolor{codegray}{HTML}{757575}\definecolor{codeblue}{HTML}{1565C0}
+\lstdefinestyle{rstyle}{language=R,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,keywordstyle=\color{codeblue}\bfseries,commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,rulecolor=\color{codegray!30},showstringspaces=false,morekeywords={library,ggplot,aes,geom_point,geom_polygon,geom_voronoi,sf,st_read,st_voronoi,st_as_sf,leaflet,addMarkers,addCircleMarkers}}
+\lstdefinestyle{pythonstyle}{language=Python,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,keywordstyle=\color{codeblue}\bfseries,commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,rulecolor=\color{codegray!30},showstringspaces=false,morekeywords={import,from,as,gpd,plt,folium,Voronoi,voronoi_plot_2d,scatter,plot}}
+\title{Snow's Cholera Map: Saving Lives with Data}
+\subtitle{Workshop 5 --- Module 9}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+\begin{document}
+\begin{frame}\titlepage\end{frame}
+\begin{frame}{Module Roadmap}
+\begin{enumerate}
+\item The 1854 Broad Street cholera outbreak
+\item John Snow's original map: deaths $\times$ pump locations
+\item The Voronoi tessellation argument
+\item Modern GIS recreation: what Snow could do today
+\item Data visualization as a tool for public health
+\end{enumerate}
+\begin{exampleblock}{Learning Outcome}
+You will understand how spatial visualization directly influenced public health policy, reproduce Snow's map with modern tools, and apply Voronoi tessellation to nearest-facility analysis.
+\end{exampleblock}
+\end{frame}
+\section{The Story}
+\begin{frame}{London, 1854: The Broad Street Outbreak}
+\begin{itemize}
+\item August--September 1854: 616 cholera deaths in Soho, London
+\item Prevailing theory: miasma (``bad air'')
+\item John Snow's hypothesis: waterborne transmission via contaminated pump
+\item His method: \textbf{map the deaths, map the pumps, look for spatial clustering}
+\item Result: deaths clustered around the Broad Street pump
+\item Action: pump handle removed September 8, outbreak ended
+\end{itemize}
+\begin{alertblock}{Pro-Tip}
+Snow's map is the founding example of \textbf{spatial epidemiology} and one of the earliest uses of data visualization to drive a policy decision. The same logic applies today: map disease cases + map environmental features $\rightarrow$ identify spatial association.
+\end{alertblock}
+\end{frame}
+\begin{frame}{Snow's Map: Deaths Cluster Around the Pump}
+\begin{center}\includegraphics[width=0.62\textwidth]{figures_w05m09/snow_concept}\end{center}
+\end{frame}
+\section{Voronoi Tessellation}
+\begin{frame}{Nearest-Pump Assignment}
+\begin{center}\includegraphics[width=0.55\textwidth]{figures_w05m09/voronoi}\end{center}
+\begin{exampleblock}{Data Insight}
+Voronoi tessellation partitions space so every point is assigned to its nearest pump. If cholera were random, deaths would be evenly distributed across Voronoi cells. Instead, the Broad Street cell contains a disproportionate share --- strong evidence that \emph{this pump} is the source.
+\end{exampleblock}
+\end{frame}
+\begin{frame}[fragile]{Voronoi in Code}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{R}
+\begin{lstlisting}[style=rstyle]
+library(sf); library(ggvoronoi)
+# Pumps as sf points
+pumps_sf <- st_as_sf(pumps,
+  coords = c("lon", "lat"),
+  crs = 4326)
+# Voronoi polygons
+voronoi <- st_voronoi(
+  st_union(pumps_sf),
+  envelope = st_bbox(deaths_sf))
+# Plot
+ggplot() +
+  geom_sf(data = voronoi,
+    fill = NA, color = "#1565C0") +
+  geom_point(data = deaths,
+    aes(x = lon, y = lat),
+    size = 0.5, alpha = 0.5) +
+  geom_point(data = pumps,
+    aes(x = lon, y = lat),
+    size = 4, shape = 17,
+    color = "#E53935")
+\end{lstlisting}
+\end{column}
+\begin{column}{0.48\textwidth}
+\textbf{Python}
+\begin{lstlisting}[style=pythonstyle]
+from scipy.spatial import Voronoi
+from scipy.spatial import voronoi_plot_2d
+
+pump_coords = np.array([
+    [lon1, lat1],
+    [lon2, lat2], ...])
+vor = Voronoi(pump_coords)
+
+fig, ax = plt.subplots()
+voronoi_plot_2d(vor, ax=ax,
+    show_vertices=False,
+    line_colors="#1565C0")
+ax.scatter(deaths.lon, deaths.lat,
+    s=3, c="#333", marker="x")
+ax.scatter(pump_coords[:,0],
+    pump_coords[:,1],
+    s=100, c="#E53935",
+    marker="^", zorder=5)
+\end{lstlisting}
+\end{column}
+\end{columns}
+\end{frame}
+\section{Modern Recreation}
+\begin{frame}{What Snow Could Do Today}
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{1854 (Snow)} & \textbf{2025 (Modern GIS)} & \textbf{Advantage} \\
+\midrule
+Hand-drawn map & \texttt{leaflet/folium} interactive & Pan, zoom, hover \\
+Visual clustering & KDE density surface & Quantitative hotspot \\
+Manual pump distance & Voronoi + buffer analysis & Automated assignment \\
+Miasma debate & Statistical spatial tests & Formal hypothesis testing \\
+One-time report & Reproducible Quarto report & Updatable, shareable \\
+\bottomrule
+\end{tabular}
+\vspace{6pt}
+\begin{exampleblock}{Data Insight}
+Snow's genius was not the technology but the \textbf{logic}: overlay event data on facility data, look for spatial clustering, and use the visual evidence to drive policy. The tools change; the reasoning is timeless.
+\end{exampleblock}
+\end{frame}
+\begin{frame}{Beyond Cholera: Spatial Viz in Public Health Today}
+\begin{itemize}
+\item \textbf{COVID-19 dashboards}: Johns Hopkins, WHO --- choropleth + time series
+\item \textbf{Environmental health}: pollution sources + disease clusters (Erin Brockovich pattern)
+\item \textbf{Healthcare access}: travel time to nearest hospital (Voronoi / isochrone)
+\item \textbf{Vaccination coverage}: district-level choropleth + equity analysis
+\end{itemize}
+\vspace{6pt}
+In every case, the logic is Snow's: \textbf{map the outcome, map the exposure, look for spatial association}.
+\end{frame}
+\section{Synthesis}
+\begin{frame}{Key Takeaways}
+\begin{enumerate}
+\item Snow's 1854 cholera map = founding example of \textbf{spatial epidemiology} and data-driven policy.
+\item The map's power: \textbf{overlay} deaths (points) on pumps (points) to reveal spatial clustering.
+\item \textbf{Voronoi tessellation} formalises ``nearest pump'' assignment. Disproportionate deaths in one cell = evidence of source.
+\item Modern tools (leaflet, KDE, Voronoi) automate what Snow did by hand, but the \textbf{reasoning is identical}.
+\item The lesson for all data viz: a good map can \textbf{save lives}.
+\end{enumerate}
+\end{frame}
+\begin{frame}{Essential Readings}
+\begin{itemize}
+\item Snow, J. (1855). \emph{On the Mode of Communication of Cholera}, 2nd ed.
+\item Johnson, S. (2006). \emph{The Ghost Map}. Riverhead Books.
+\item Tufte, E. (1997). \emph{Visual Explanations}, Chapter 2 (Snow's map).
+\item UCLA dataset: \texttt{https://blog.rtwilson.com/john-snows-cholera-data/}
+\end{itemize}
+\vspace{6pt}
+\textbf{Next Module}: Lab --- Multivariate EDA on Real Estate Data (W05-M10)
+\end{frame}
+\end{document}

@@ -1,0 +1,170 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}\usepackage{listings}\usepackage{booktabs}\usepackage{xcolor}
+\definecolor{codebg}{HTML}{F5F5F5}\definecolor{codegreen}{HTML}{2E7D32}\definecolor{codegray}{HTML}{757575}\definecolor{codeblue}{HTML}{1565C0}
+\lstdefinestyle{rstyle}{language=R,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,keywordstyle=\color{codeblue}\bfseries,commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,rulecolor=\color{codegray!30},showstringspaces=false,morekeywords={library,leaflet,addTiles,addProviderTiles,addCircleMarkers,addPolygons,addLegend,setView,addHeatmap,tmap,tmap_mode,plotly,plot_ly,ggplotly}}
+\lstdefinestyle{pythonstyle}{language=Python,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,keywordstyle=\color{codeblue}\bfseries,commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,rulecolor=\color{codegray!30},showstringspaces=false,morekeywords={import,from,as,folium,Map,Marker,CircleMarker,Choropleth,HeatMap,GeoJson,Popup,Tooltip,plugins,px,plotly}}
+\title{Interactive Maps}
+\subtitle{Workshop 5 --- Module 8}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+\begin{document}
+\begin{frame}\titlepage\end{frame}
+\begin{frame}{Module Roadmap}
+\begin{enumerate}
+\item Why interactive maps: pan, zoom, hover, click
+\item The tile-map stack: base tiles + overlays
+\item leaflet (R) and folium (Python): the core libraries
+\item Markers, popups, tooltips, and layer control
+\item Interactive choropleth and heatmaps
+\item When interactive beats static (and vice versa)
+\end{enumerate}
+\begin{exampleblock}{Learning Outcome}
+You will build interactive web maps with markers, popups, choropleth layers, and heatmaps using leaflet (R) and folium (Python), and export them as standalone HTML files.
+\end{exampleblock}
+\end{frame}
+\section{Interactive Map Tools}
+\begin{frame}{The Interactive Map Landscape}
+\begin{center}\includegraphics[width=0.88\textwidth]{figures_w05m08/interactive_tools}\end{center}
+\end{frame}
+\begin{frame}{The Tile-Map Stack}
+\centering
+\begin{tabular}{llp{4.5cm}}
+\toprule
+\textbf{Layer} & \textbf{What} & \textbf{Example} \\
+\midrule
+Base tiles & Background map imagery & OpenStreetMap, CartoDB, Stamen \\
+Vector overlay & Points, lines, polygons & Markers, GeoJSON boundaries \\
+Raster overlay & Heatmap, choropleth fill & KDE surface, coloured regions \\
+Controls & Legend, layer toggle, zoom & Layer switcher, scale bar \\
+Interaction & Pan, zoom, click, hover & Popups, tooltips \\
+\bottomrule
+\end{tabular}
+\end{frame}
+\section{leaflet (R)}
+\begin{frame}[fragile]{leaflet in R: Markers + Popups}
+\begin{lstlisting}[style=rstyle]
+library(leaflet)
+
+leaflet(cities) |>
+  addProviderTiles("CartoDB.Positron") |>      # light base tiles
+  setView(lng = 19.82, lat = 41.33, zoom = 7) |>
+  addCircleMarkers(
+    lng = ~lon, lat = ~lat,
+    radius = ~sqrt(population) / 100,            # proportional
+    color = "#1565C0", fillOpacity = 0.5,
+    popup = ~paste0("<b>", name, "</b><br>",      # HTML popup
+                    "Pop: ", format(population, big.mark=",")),
+    label = ~name) |>                             # hover tooltip
+  addLegend(position = "bottomright",
+    colors = "#1565C0", labels = "Cities", title = "Albania")
+
+# Instant interactive from tmap
+library(tmap); tmap_mode("view")
+tm_shape(districts) + tm_fill("gdp") + tm_dots(cities)
+\end{lstlisting}
+\end{frame}
+\begin{frame}[fragile]{leaflet: Choropleth + Heatmap}
+\begin{lstlisting}[style=rstyle]
+# Interactive choropleth
+leaflet(districts) |>
+  addProviderTiles("CartoDB.Positron") |>
+  addPolygons(fillColor = ~pal(gdp),           # choropleth fill
+    fillOpacity = 0.7, weight = 1, color = "white",
+    highlight = highlightOptions(weight = 3),   # hover highlight
+    popup = ~paste0(name, ": ", gdp, " EUR")) |>
+  addLegend(pal = pal, values = ~gdp, title = "GDP/cap")
+
+# Heatmap (requires leaflet.extras)
+library(leaflet.extras)
+leaflet(events) |>
+  addProviderTiles("CartoDB.DarkMatter") |>
+  addHeatmap(lng = ~lon, lat = ~lat, intensity = ~magnitude,
+    blur = 20, radius = 15, max = 0.05)
+\end{lstlisting}
+\end{frame}
+\section{folium (Python)}
+\begin{frame}[fragile]{folium in Python: Markers + Popups}
+\begin{lstlisting}[style=pythonstyle]
+import folium
+
+m = folium.Map(location=[41.33, 19.82], zoom_start=7,
+    tiles="CartoDB positron")
+
+for _, row in cities.iterrows():
+    folium.CircleMarker(
+        location=[row["lat"], row["lon"]],
+        radius=row["population"] ** 0.5 / 100,
+        color="#1565C0", fill=True, fill_opacity=0.5,
+        popup=folium.Popup(
+            f"<b>{row['name']}</b><br>Pop: {row['population']:,}"),
+        tooltip=row["name"]
+    ).add_to(m)
+
+m.save("albania_cities.html")  # standalone HTML
+\end{lstlisting}
+\end{frame}
+\begin{frame}[fragile]{folium: Choropleth + HeatMap}
+\begin{lstlisting}[style=pythonstyle]
+# Interactive choropleth
+folium.Choropleth(
+    geo_data="districts.geojson",
+    data=districts_df,
+    columns=["id", "gdp"],
+    key_on="feature.properties.id",
+    fill_color="YlOrRd",
+    legend_name="GDP per capita (EUR)"
+).add_to(m)
+
+# Heatmap (folium.plugins)
+from folium.plugins import HeatMap
+heat_data = list(zip(events["lat"], events["lon"],
+    events["magnitude"]))
+HeatMap(heat_data, radius=15, blur=20,
+    max_zoom=12).add_to(m)
+
+m.save("albania_interactive.html")
+\end{lstlisting}
+\end{frame}
+\section{Static vs Interactive}
+\begin{frame}{When to Use Which}
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{Context} & \textbf{Format} & \textbf{Why} \\
+\midrule
+PDF report / journal & Static & Print-ready, no tech dependency \\
+Presentation slides & Static & Reproducible, no internet needed \\
+Web dashboard & Interactive & Pan, zoom, hover = exploration \\
+Exploratory analysis & Interactive & Drill into specific locations \\
+Public communication & Interactive & Engagement, accessibility \\
+Large $n$ ($>$50K) & Interactive + tiles & Lazy loading, WebGL render \\
+\bottomrule
+\end{tabular}
+\vspace{6pt}
+\begin{alertblock}{Pro-Tip}
+Produce \textbf{both}: a static version for the PDF report and an interactive HTML alongside. In R, \texttt{tmap\_mode()} switches between the two with one command. In Python, produce \texttt{geopandas.plot()} for static and \texttt{folium} for interactive from the same data.
+\end{alertblock}
+\end{frame}
+\section{Synthesis}
+\begin{frame}{Key Takeaways}
+\begin{enumerate}
+\item Interactive maps add \textbf{pan, zoom, hover, click} --- exploration impossible in static maps.
+\item The stack: \textbf{base tiles} (OSM, CartoDB) + \textbf{vector overlay} (markers, GeoJSON) + \textbf{controls} (legend, layer toggle).
+\item \textbf{R}: \texttt{leaflet()} for full control, \texttt{tmap\_mode("view")} for instant switch from static.
+\item \textbf{Python}: \texttt{folium.Map()} + \texttt{.add\_to()} chain. \texttt{folium.plugins.HeatMap()} for density.
+\item Export as \textbf{standalone HTML} (\texttt{m.save("map.html")}): no server needed, shareable by email.
+\item Produce \textbf{both static and interactive} versions for every spatial analysis.
+\end{enumerate}
+\end{frame}
+\begin{frame}{Essential Readings}
+\begin{itemize}
+\item leaflet for R: \texttt{https://rstudio.github.io/leaflet/}
+\item folium: \texttt{https://python-visualization.github.io/folium/}
+\item Lovelace, R. et al. (2019). \emph{Geocomputation with R}, Chapter 8.
+\end{itemize}
+\vspace{6pt}
+\textbf{Next Module}: Snow's Cholera Map --- Saving Lives with Data (W05-M09)
+\end{frame}
+\end{document}

@@ -1,0 +1,352 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codeblue}{HTML}{1565C0}
+\lstdefinestyle{rstyle}{language=R,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,
+  rulecolor=\color{codegray!30},showstringspaces=false,tabsize=2,
+  morekeywords={library,ggplot,aes,geom_boxplot,geom_point,geom_jitter,geom_smooth,
+    stat_summary,scale_color_manual,theme_minimal,labs,
+    cooks.distance,hatvalues,rstandard,augment,influence}}
+\lstdefinestyle{pythonstyle}{language=Python,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,
+  rulecolor=\color{codegray!30},showstringspaces=false,tabsize=4,
+  morekeywords={import,from,as,pd,np,plt,sns,zscore,mahalanobis,
+    IsolationForest,LocalOutlierFactor,EllipticEnvelope}}
+\title{Outlier Detection \& Visual Diagnostics}
+\subtitle{Workshop 4 --- Module 5}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item Outlier taxonomy: univariate, multivariate, contextual
+    \item IQR fences and the boxplot as a detection tool
+    \item Z-score vs IQR: parametric vs robust detection
+    \item Mahalanobis distance: multivariate outlier detection
+    \item Regression diagnostics: leverage, influence, Cook's $D$
+    \item What to do with outliers: cause determines action
+  \end{enumerate}
+  \begin{exampleblock}{Learning Outcome}
+    You will detect outliers using both robust (IQR) and parametric
+    (z-score, Mahalanobis) methods, diagnose influential observations
+    in regression with Cook's distance, and make principled decisions
+    about whether to keep, flag, or remove each outlier.
+  \end{exampleblock}
+\end{frame}
+
+\section{Outlier Taxonomy}
+
+\begin{frame}{Three Types of Outliers}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w04m05/taxonomy}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    A point normal in each variable individually can still be a
+    \textbf{multivariate outlier} (panel b). And a point normal
+    globally can be a \textbf{contextual outlier} --- anomalous only
+    in its local context (panel c). Different types require different
+    detection strategies.
+  \end{alertblock}
+\end{frame}
+
+\section{IQR \& Z-Score Detection}
+
+\begin{frame}{The IQR Method: Tukey's Fences}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{figures_w04m05/iqr_fences}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Z-Score vs IQR}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w04m05/zscore_vs_iqr}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    Z-score assumes normality: $z = (x - \bar{x}) / s$. If the data is
+    skewed, the mean and SD are pulled by outliers, making z-scores
+    unreliable. IQR is \textbf{robust}: it uses medians and quartiles,
+    which are resistant to extreme values. Default to IQR for EDA;
+    use z-scores only for approximately normal data.
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{Detection in Code}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{R}
+\begin{lstlisting}[style=rstyle]
+# IQR method
+q1 <- quantile(x, 0.25)
+q3 <- quantile(x, 0.75)
+iqr <- q3 - q1
+outlier <- x < q1 - 1.5*iqr |
+           x > q3 + 1.5*iqr
+
+# Built into boxplot
+ggplot(df, aes(y = Rating)) +
+  geom_boxplot(outlier.colour =
+    "#E53935", outlier.size = 2)
+
+# Z-score
+z <- scale(x)  # standardise
+outlier_z <- abs(z) > 2
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Python}
+\begin{lstlisting}[style=pythonstyle]
+# IQR method
+q1 = np.percentile(x, 25)
+q3 = np.percentile(x, 75)
+iqr = q3 - q1
+outlier = (x < q1 - 1.5*iqr) | \
+          (x > q3 + 1.5*iqr)
+
+# Built into boxplot
+ax.boxplot(rating,
+    flierprops=dict(
+        markerfacecolor="#E53935"))
+
+# Z-score
+from scipy.stats import zscore
+z = zscore(x)
+outlier_z = np.abs(z) > 2
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Multivariate Detection}
+
+\begin{frame}{Mahalanobis Distance}
+  \begin{center}
+    \includegraphics[width=0.72\textwidth]{figures_w04m05/mahalanobis}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    Mahalanobis distance measures how far a point is from the centre
+    of the data cloud, accounting for correlations. A point can be
+    within normal range on each axis separately but far from the
+    elliptical cloud. Threshold: $\chi^2(p, 0.95)$ where $p$ =
+    number of variables.
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{Multivariate Detection in Code}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{R}
+\begin{lstlisting}[style=rstyle]
+# Mahalanobis (base R)
+md <- mahalanobis(
+  df[, c("x1", "x2")],
+  colMeans(df[, c("x1", "x2")]),
+  cov(df[, c("x1", "x2")]))
+threshold <- qchisq(0.95, df = 2)
+outlier <- md > threshold
+
+# Robust (MCD estimator)
+library(robustbase)
+mcd <- covMcd(df[, c("x1","x2")])
+md_robust <- mahalanobis(
+  df[,c("x1","x2")],
+  mcd$center, mcd$cov)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Python}
+\begin{lstlisting}[style=pythonstyle]
+from scipy.spatial.distance import (
+    mahalanobis)
+mu = np.mean(X, axis=0)
+cov = np.cov(X.T)
+cov_inv = np.linalg.inv(cov)
+md = [mahalanobis(xi, mu, cov_inv)
+      for xi in X]
+threshold = np.sqrt(
+    chi2.ppf(0.95, df=2))
+
+# Robust: EllipticEnvelope
+from sklearn.covariance import (
+    EllipticEnvelope)
+clf = EllipticEnvelope(
+    contamination=0.05)
+labels = clf.fit_predict(X)
+# -1 = outlier, 1 = inlier
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Regression Diagnostics}
+
+\begin{frame}{Leverage vs Influence}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w04m05/leverage_influence}
+  \end{center}
+\end{frame}
+
+\begin{frame}{The Four Diagnostic Plots for Regression}
+  \begin{center}
+    \includegraphics[width=0.82\textwidth]{figures_w04m05/residual_diagnostics}
+  \end{center}
+\end{frame}
+
+\begin{frame}{What Each Diagnostic Reveals}
+  \centering
+  \begin{tabular}{lp{5.5cm}l}
+    \toprule
+    \textbf{Plot} & \textbf{What It Checks} & \textbf{Bad Sign} \\
+    \midrule
+    (a) Resid. vs Fitted & Linearity, homoscedasticity & Funnel, curve \\
+    (b) Q-Q of Residuals & Normality of errors & S-shape, heavy tails \\
+    (c) Scale-Location & Constant variance (spread vs level) & Upward trend \\
+    (d) Cook's Distance & Influence on fitted model & Spikes $> 4/n$ \\
+    \bottomrule
+  \end{tabular}
+  \vspace{6pt}
+  \begin{alertblock}{Pro-Tip}
+    In R: \texttt{plot(lm\_model)} produces all four automatically.
+    In Python: \texttt{statsmodels.graphics.plot\_regress\_exog()} or
+    manual construction. Cook's $D > 4/n$ flags influential points.
+    High leverage + high residual = high influence.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Regression Diagnostics in Code}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{R}
+\begin{lstlisting}[style=rstyle]
+model <- lm(Rating ~ log(Reviews),
+  data = apps_clean)
+
+# All 4 plots at once
+par(mfrow = c(2, 2))
+plot(model)
+
+# Or with broom + ggplot
+library(broom)
+diag <- augment(model)
+# diag has: .fitted, .resid,
+#   .hat (leverage), .cooksd
+
+ggplot(diag, aes(x = .fitted,
+    y = .resid)) +
+  geom_point(alpha = 0.3) +
+  geom_hline(yintercept = 0,
+    linetype = "dashed") +
+  geom_smooth(se = FALSE,
+    color = "#E53935")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Python}
+\begin{lstlisting}[style=pythonstyle]
+import statsmodels.api as sm
+
+X = sm.add_constant(
+    np.log(apps["Reviews"]+1))
+model = sm.OLS(apps["Rating"],
+    X).fit()
+
+# Influence measures
+infl = model.get_influence()
+cooks = infl.cooks_distance[0]
+leverage = infl.hat_matrix_diag
+
+# Manual diagnostic plots
+fig, axes = plt.subplots(2, 2)
+axes[0,0].scatter(
+    model.fittedvalues,
+    model.resid, s=5, alpha=0.3)
+# ... Q-Q, Scale-Loc, Cook's ...
+
+# Quick: plot_regress_exog
+from statsmodels.graphics import (
+    regressionplots as rp)
+rp.plot_regress_exog(model, 1)
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{What to Do}
+
+\begin{frame}{Cause Determines Action}
+  \begin{center}
+    \includegraphics[width=0.85\textwidth]{figures_w04m05/decision}
+  \end{center}
+\end{frame}
+
+\begin{frame}{The ``Fit With and Without'' Protocol}
+  For any influential outlier, run the analysis \textbf{twice}:
+  \centering
+  \begin{tabular}{lp{5cm}}
+    \toprule
+    \textbf{Step} & \textbf{Action} \\
+    \midrule
+    1 & Fit model with all data \\
+    2 & Identify influential points (Cook's $D > 4/n$) \\
+    3 & Refit model \textbf{without} those points \\
+    4 & Compare coefficients and $R^2$ \\
+    5 & Report both results \\
+    \bottomrule
+  \end{tabular}
+  \vspace{6pt}
+
+  If conclusions change $\Rightarrow$ the finding depends on a few
+  points. This is a \textbf{fragility signal}: the result is not
+  robust. Report this honestly rather than silently deleting outliers.
+\end{frame}
+
+\section{Synthesis}
+
+\begin{frame}{Key Takeaways}
+  \begin{enumerate}
+    \item Three outlier types: \textbf{univariate} (extreme on one axis),
+          \textbf{multivariate} (normal per-variable, extreme jointly),
+          \textbf{contextual} (anomalous in local context only).
+    \item \textbf{IQR fences} (Tukey) are robust to skew; \textbf{z-scores}
+          assume normality. Default to IQR for EDA.
+    \item \textbf{Mahalanobis distance} detects multivariate outliers by
+          measuring distance from the data cloud's elliptical centre.
+    \item \textbf{Leverage} $\neq$ \textbf{influence}. High leverage +
+          high residual = high influence (Cook's $D$). Check with
+          \texttt{plot(lm())} in R or \texttt{get\_influence()} in Python.
+    \item \textbf{Never delete outliers blindly}. Determine the cause
+          first: data error $\rightarrow$ fix; real extreme $\rightarrow$
+          keep; influential $\rightarrow$ fit with and without.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Essential Readings}
+  \begin{itemize}
+    \item Tukey, J.~W. (1977). \emph{Exploratory Data Analysis},
+          Chapter 2 (Box-and-Whisker Plots, Fences).
+    \item Rousseeuw, P.~J. \& van Zomeren, B.~C. (1990). ``Unmasking
+          multivariate outliers.'' \emph{JASA}, 85(411).
+    \item Cook, R.~D. (1977). ``Detection of influential observations
+          in linear regression.'' \emph{Technometrics}, 19(1).
+    \item Wilke, C.~O. (2019). \emph{Fundamentals of Data Visualization},
+          Chapter 9 (Robust Statistics).
+  \end{itemize}
+  \vspace{6pt}
+  \textbf{Next Module}: Correlation \& Association Visualization (W04-M06)
+\end{frame}
+
+\end{document}

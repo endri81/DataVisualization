@@ -1,0 +1,288 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}\usepackage{listings}\usepackage{booktabs}\usepackage{xcolor}
+\definecolor{codebg}{HTML}{F5F5F5}\definecolor{codegreen}{HTML}{2E7D32}\definecolor{codegray}{HTML}{757575}\definecolor{codeblue}{HTML}{1565C0}
+\lstdefinestyle{rstyle}{language=R,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,keywordstyle=\color{codeblue}\bfseries,commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,rulecolor=\color{codegray!30},showstringspaces=false,morekeywords={library,ggplot,aes,geom_line,geom_area,geom_step,scale_x_date,date_breaks,date_labels,theme_minimal,labs,stl,decompose,ts,as.Date,ymd,year,month}}
+\lstdefinestyle{pythonstyle}{language=Python,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,keywordstyle=\color{codeblue}\bfseries,commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,rulecolor=\color{codegray!30},showstringspaces=false,morekeywords={import,from,as,pd,np,plt,to_datetime,resample,DateFormatter,seasonal_decompose,statsmodels}}
+\title{Time as a Visual Dimension}
+\subtitle{Workshop 6 --- Module 1}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Workshop 6 Overview}
+  \begin{center}
+    \includegraphics[width=0.78\textwidth]{figures_w06m01/w06_overview}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item What makes time special as a visual dimension
+    \item Temporal granularity: daily, weekly, monthly, yearly
+    \item Time series decomposition: trend + seasonal + residual
+    \item The temporal chart taxonomy: five core types
+    \item Time-axis pitfalls: spacing, truncation, missing dates
+  \end{enumerate}
+  \begin{exampleblock}{Learning Outcome}
+    You will identify the appropriate temporal granularity for a dataset,
+    decompose a time series into trend, seasonal, and residual components,
+    and choose the right temporal chart type based on the data structure.
+  \end{exampleblock}
+\end{frame}
+
+\section{Why Time Is Special}
+
+\begin{frame}{Time as the Organising Axis}
+  Time is unique among variables:
+  \begin{itemize}
+    \item It is \textbf{ordered} and \textbf{continuous} (unlike categories)
+    \item It has \textbf{natural units} (second, hour, day, week, month, year)
+    \item It enables \textbf{causal reasoning}: before $\rightarrow$ after
+    \item It has \textbf{hierarchical granularity}: zoom in/out
+  \end{itemize}
+  \vspace{6pt}
+  Because of these properties, temporal data demands specialised chart types
+  (line, area, step) and specialised axis formatting (date breaks, labels,
+  proper spacing). A scatter plot of date vs value ``works'' but wastes
+  time's natural structure.
+  \begin{alertblock}{Pro-Tip}
+    The x-axis of a time series chart is \textbf{not a categorical axis}.
+    It must use a true date/time scale so that gaps between observations
+    reflect real elapsed time. Never convert dates to strings and plot
+    as categories.
+  \end{alertblock}
+\end{frame}
+
+\section{Temporal Granularity}
+
+\begin{frame}{Same Data, Four Granularities}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{figures_w06m01/granularity}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Choosing Granularity}
+  \centering
+  \begin{tabular}{llp{4.5cm}}
+    \toprule
+    \textbf{Granularity} & \textbf{Best For} & \textbf{Risk} \\
+    \midrule
+    Daily & Short spans ($<$3 months), event detection & Noisy for longer spans \\
+    Weekly & Medium spans (3--12 months), smooths weekday effects & Loses within-week patterns \\
+    Monthly & Annual comparisons, seasonal analysis & Loses event timing \\
+    Quarterly & Financial reporting, macro trends & Very coarse \\
+    Yearly & Multi-decade trends, cross-country comparison & Loses all sub-annual patterns \\
+    \bottomrule
+  \end{tabular}
+  \vspace{6pt}
+  {\small Rule: start at the \textbf{finest available granularity}, then
+  aggregate up. You can always smooth daily $\rightarrow$ monthly, but
+  you cannot recover daily detail from monthly data.}
+\end{frame}
+
+\begin{frame}[fragile]{Resampling in Code}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{R}
+\begin{lstlisting}[style=rstyle]
+library(lubridate); library(dplyr)
+
+daily <- read_csv("data.csv") |>
+  mutate(date = ymd(date))
+
+# Weekly mean
+weekly <- daily |>
+  mutate(week = floor_date(date,
+    "week")) |>
+  group_by(week) |>
+  summarise(value = mean(value))
+
+# Monthly
+monthly <- daily |>
+  mutate(month = floor_date(date,
+    "month")) |>
+  group_by(month) |>
+  summarise(value = mean(value))
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Python}
+\begin{lstlisting}[style=pythonstyle]
+df["date"] = pd.to_datetime(df["date"])
+df = df.set_index("date")
+
+# Weekly mean
+weekly = df.resample("W").mean()
+
+# Monthly
+monthly = df.resample("ME").mean()
+
+# Quarterly
+quarterly = df.resample("QE").mean()
+
+# Custom: 2-week rolling average
+rolling_14 = df.rolling("14D").mean()
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Time Series Decomposition}
+
+\begin{frame}{Trend + Seasonal + Residual}
+  \begin{center}
+    \includegraphics[width=0.82\textwidth]{figures_w06m01/decomposition}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Two Decomposition Models}
+  \centering
+  \begin{tabular}{llp{4.5cm}}
+    \toprule
+    \textbf{Model} & \textbf{Formula} & \textbf{When to Use} \\
+    \midrule
+    Additive & $Y = T + S + R$ & Seasonal amplitude is constant (temperature) \\
+    Multiplicative & $Y = T \times S \times R$ & Seasonal amplitude grows with trend (retail sales) \\
+    \bottomrule
+  \end{tabular}
+  \vspace{8pt}
+  \begin{alertblock}{Pro-Tip}
+    If the ``peaks and valleys'' get taller as the trend rises, use
+    multiplicative. If they stay the same height regardless of the
+    level, use additive. Quick test: plot the data --- if the envelope
+    widens over time, it is multiplicative.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Decomposition in Code}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{R}
+\begin{lstlisting}[style=rstyle]
+# Base R
+ts_data <- ts(daily$value,
+  frequency = 365)
+decomp <- decompose(ts_data,
+  type = "additive")
+plot(decomp)
+
+# STL (robust, flexible)
+stl_fit <- stl(ts_data,
+  s.window = "periodic")
+plot(stl_fit)
+
+# Extract components
+trend    <- stl_fit$time.series[,"trend"]
+seasonal <- stl_fit$time.series[,"seasonal"]
+residual <- stl_fit$time.series[,"remainder"]
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Python}
+\begin{lstlisting}[style=pythonstyle]
+from statsmodels.tsa.seasonal import (
+    seasonal_decompose, STL)
+
+# Classical decomposition
+result = seasonal_decompose(
+    df["value"],
+    model="additive",
+    period=365)
+result.plot()
+
+# STL (robust)
+stl = STL(df["value"], period=365)
+res = stl.fit()
+res.plot()
+
+# Extract
+trend    = res.trend
+seasonal = res.seasonal
+residual = res.resid
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Temporal Chart Taxonomy}
+
+\begin{frame}{Five Core Temporal Chart Types}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w06m01/taxonomy}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Choosing the Right Chart}
+  \centering
+  \begin{tabular}{llll}
+    \toprule
+    \textbf{Question} & \textbf{Chart} & \textbf{Why} \\
+    \midrule
+    How does Y change over time? & Line & Continuous trajectory \\
+    What is the cumulative total? & Stacked area & Parts sum to whole \\
+    When did Y change discretely? & Step & Rate changes, policies \\
+    What are the period totals? & Bar (temporal) & Monthly/yearly sums \\
+    What is the daily pattern? & Heatmap calendar & Day-level grid \\
+    How do many series compare? & Sparklines & Compact, Tufte-style \\
+    \bottomrule
+  \end{tabular}
+\end{frame}
+
+\section{Pitfalls}
+
+\begin{frame}{Time-Axis Pitfalls}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{figures_w06m01/pitfalls}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    Three more pitfalls: (1) \textbf{Truncated y-axis} --- starting at
+    a high value exaggerates small changes. (2) \textbf{Missing dates}
+    --- gaps in the data should appear as gaps in the line, not as
+    connected straight segments. (3) \textbf{Ignoring time zones} ---
+    always record and document the time zone.
+  \end{alertblock}
+\end{frame}
+
+\section{Synthesis}
+
+\begin{frame}{Key Takeaways}
+  \begin{enumerate}
+    \item Time is \textbf{ordered, continuous, hierarchical, and causal}
+          --- demanding specialised chart types and axis formatting.
+    \item \textbf{Granularity}: start fine (daily), aggregate up.
+          Daily for events, weekly for medium spans, monthly for
+          seasonal analysis, yearly for long trends.
+    \item \textbf{Decomposition}: $Y = T + S + R$ (additive) or
+          $Y = T \times S \times R$ (multiplicative). Use STL for
+          robust decomposition. R: \texttt{stl()}. Python:
+          \texttt{statsmodels.tsa.seasonal.STL()}.
+    \item Five temporal chart types: \textbf{line} (trend), \textbf{area}
+          (cumulative), \textbf{step} (discrete changes), \textbf{bar}
+          (period totals), \textbf{heatmap calendar} (daily patterns).
+    \item \textbf{Never} use categorical spacing for dates. Always
+          use a true date/time axis.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Essential Readings}
+  \begin{itemize}
+    \item Cleveland, R.~B. et al. (1990). ``STL: A Seasonal-Trend
+          Decomposition Procedure Based on Loess.'' \emph{Journal
+          of Official Statistics}, 6(1).
+    \item Hyndman, R.~J. \& Athanasopoulos, G. (2021). \emph{Forecasting:
+          Principles and Practice}, 3rd ed. OTexts.
+          \texttt{https://otexts.com/fpp3/}
+    \item Wilke, C.~O. (2019). \emph{Fundamentals of Data Visualization},
+          Chapter 13 (Visualizing Time Series).
+  \end{itemize}
+  \vspace{6pt}
+  \textbf{Next Module}: Line Charts --- Theory \& Best Practices (W06-M02)
+\end{frame}
+
+\end{document}

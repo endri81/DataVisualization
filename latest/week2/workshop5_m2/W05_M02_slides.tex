@@ -1,0 +1,353 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codeblue}{HTML}{1565C0}
+\lstdefinestyle{rstyle}{language=R,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,
+  rulecolor=\color{codegray!30},showstringspaces=false,tabsize=2,
+  morekeywords={library,ggplot,aes,GGally,ggparcoord,ggradar,
+    scale_color_viridis,theme_minimal,labs,coord_radar,geom_polygon,
+    geom_point,geom_line,rescale}}
+\lstdefinestyle{pythonstyle}{language=Python,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,
+  rulecolor=\color{codegray!30},showstringspaces=false,tabsize=4,
+  morekeywords={import,from,as,pd,np,plt,parallel_coordinates,
+    MinMaxScaler,polar,fill,plot}}
+\title{Parallel Coordinates \& Radar Charts}
+\subtitle{Workshop 5 --- Module 2}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item Parallel coordinates: each axis = one variable
+    \item Reading patterns: clusters, crossings, and outliers
+    \item Best practices: axis order, colour, highlighting
+    \item Radar/spider charts: when they work ($\leq$3 profiles)
+    \item When radar fails: area distortion and spaghetti
+    \item Choosing: parallel coordinates vs radar vs pairs plot
+  \end{enumerate}
+  \begin{exampleblock}{Learning Outcome}
+    You will produce parallel coordinate plots for 5--20 variables with
+    colour-grouped highlighting, radar charts for profile comparisons
+    ($\leq$3 entities), and correctly choose between the two based on
+    the number of profiles and variables.
+  \end{exampleblock}
+\end{frame}
+
+\section{Parallel Coordinates}
+
+\begin{frame}{Each Axis = One Variable}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{figures_w05m02/parcoord}
+  \end{center}
+\end{frame}
+
+\begin{frame}{How to Read Parallel Coordinates}
+  \centering
+  \begin{tabular}{lp{6.5cm}}
+    \toprule
+    \textbf{Pattern} & \textbf{Meaning} \\
+    \midrule
+    Parallel lines (same slope between axes) & Positive correlation between those variables \\
+    Crossing lines (X pattern) & Negative correlation --- values flip ranks \\
+    Cluster of lines (same colour, similar path) & A group with similar multivariate profile \\
+    Single line far from the cluster & Multivariate outlier \\
+    Bottleneck (all lines pass through one point) & That variable has low variance (near-constant) \\
+    \bottomrule
+  \end{tabular}
+  \vspace{6pt}
+  \begin{alertblock}{Pro-Tip}
+    Adjacent axes are compared most easily (Gestalt proximity). Place
+    the two variables you most want to compare \textbf{next to each
+    other}. Axis reordering is the single most impactful design decision
+    in parallel coordinates.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{Best Practices: Grey + Accent}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w05m02/parcoord_practices}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Parallel Coordinates in Code}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{R (GGally)}
+\begin{lstlisting}[style=rstyle]
+library(GGally)
+
+ggparcoord(ecar,
+  columns = c("FICO", "Rate",
+    "Amount", "Term", "Spread"),
+  groupColumn = "Tier",
+  scale = "uniminmax",  # 0-1
+  alphaLines = 0.15,
+  showPoints = FALSE,
+  order = "anyClass") + # reorder
+  scale_color_viridis_d() +
+  theme_minimal() +
+  labs(title = "Parallel Coords",
+       color = "Tier")
+
+# Highlight one group
+ggparcoord(ecar,
+  columns = 1:5,
+  groupColumn = "highlight",
+  alphaLines = 0.05) +
+  scale_color_manual(values =
+    c("TRUE"="#E53935",
+      "FALSE"="#CCCCCC"))
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Python (manual or pandas)}
+\begin{lstlisting}[style=pythonstyle]
+from sklearn.preprocessing import (
+    MinMaxScaler)
+
+cols = ["FICO","Rate","Amount",
+        "Term","Spread"]
+scaler = MinMaxScaler()
+normed = scaler.fit_transform(
+    df[cols])
+
+fig, ax = plt.subplots(figsize=(10,5))
+for i in range(min(200, len(df))):
+    ax.plot(range(len(cols)),
+        normed[i],
+        color=cmap(norm(df["Tier"][i])),
+        alpha=0.12, lw=0.6)
+
+ax.set_xticks(range(len(cols)))
+ax.set_xticklabels(cols)
+
+# pandas built-in (simpler)
+from pandas.plotting import (
+    parallel_coordinates)
+parallel_coordinates(df_normed,
+    class_column="Tier",
+    colormap="viridis", alpha=0.2)
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Axis Reordering: The Key Design Decision}
+  \centering
+  \begin{tabular}{lp{5.5cm}}
+    \toprule
+    \textbf{Strategy} & \textbf{When to Use} \\
+    \midrule
+    Domain order & When variables have a natural sequence (e.g., time steps, pipeline stages) \\
+    Correlation order & Place highly correlated pairs adjacent to reveal parallel/crossing patterns \\
+    Variance order & Place highest-variance axes at edges for visual anchoring \\
+    Algorithmic (clusterpath) & \texttt{ggparcoord(order="anyClass")} finds the order that best separates groups \\
+    \bottomrule
+  \end{tabular}
+  \vspace{6pt}
+  {\small Try at least 2--3 orderings before settling. The ``right''
+  order depends on the question you are investigating.}
+\end{frame}
+
+\section{Radar Charts}
+
+\begin{frame}{Radar: Profile Comparison ($\leq$3 Profiles)}
+  \begin{center}
+    \includegraphics[width=0.55\textwidth]{figures_w05m02/radar}
+  \end{center}
+\end{frame}
+
+\begin{frame}{When Radar Fails}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{figures_w05m02/radar_fails}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    Radar charts have three known problems: (1) \textbf{area is
+    misleading} --- the enclosed area depends on axis order, not just
+    the values. (2) \textbf{Axis order is arbitrary} for non-sequential
+    variables, so the shape is meaningless. (3) Beyond 3 profiles,
+    they become spaghetti. Use radar only for \textbf{2--3 profiles
+    with $\leq$8 axes} where the goal is holistic comparison, not
+    precise value reading.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Radar in Code}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{R (ggradar or manual)}
+\begin{lstlisting}[style=rstyle]
+# ggradar (simple)
+# install.packages("ggradar")
+library(ggradar)
+ggradar(profiles,
+  grid.min = 0, grid.max = 1,
+  group.line.width = 1.5,
+  group.point.size = 3,
+  fill = TRUE, fill.alpha = 0.1,
+  legend.position = "bottom")
+
+# Manual with coord_polar
+ggplot(df_long, aes(x = variable,
+    y = value, group = profile,
+    color = profile)) +
+  geom_polygon(fill = NA,
+    linewidth = 1.2) +
+  geom_point(size = 2) +
+  coord_polar() +
+  scale_color_manual(values =
+    c("#1565C0","#E53935")) +
+  theme_minimal()
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Python (manual polar)}
+\begin{lstlisting}[style=pythonstyle]
+categories = ["FICO","Rate",
+    "Amount","Term","Spread","Appr"]
+N = len(categories)
+angles = [n/N * 2 * np.pi
+          for n in range(N)]
+angles += angles[:1]  # close polygon
+
+fig, ax = plt.subplots(
+    subplot_kw=dict(polar=True))
+
+for profile, color, label in [
+    (vals1, "#1565C0", "Tier 1"),
+    (vals2, "#E53935", "Tier 5")]:
+    values = profile + profile[:1]
+    ax.fill(angles, values,
+        alpha=0.1, color=color)
+    ax.plot(angles, values, "-o",
+        color=color, lw=2,
+        label=label)
+
+ax.set_xticks(angles[:-1])
+ax.set_xticklabels(categories)
+ax.legend()
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Choosing the Right Chart}
+
+\begin{frame}{Parallel Coordinates vs Radar vs Pairs}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w05m02/comparison}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Decision Rules}
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Question} & \textbf{Answer} & \textbf{Chart} \\
+    \midrule
+    How many profiles to compare? & 2--3 & Radar \\
+    How many profiles? & Many (100s+) & Parallel coordinates \\
+    How many variables? & 3--8 & Radar or pairs \\
+    How many variables? & 8--20 & Parallel coordinates \\
+    Need precise value reading? & Yes & Pairs plot (scatter) \\
+    Need holistic ``shape'' comparison? & Yes & Radar \\
+    Need group separation? & Yes & Parallel coords + colour \\
+    \bottomrule
+  \end{tabular}
+  \vspace{6pt}
+  \begin{exampleblock}{Data Insight}
+    In practice, \textbf{parallel coordinates} are far more common in
+    data science than radar charts. Radar charts are popular in sports
+    analytics (player profiles) and product comparisons but are
+    statistically problematic. Default to parallel coordinates unless
+    you have exactly 2--3 profiles for a general audience.
+  \end{exampleblock}
+\end{frame}
+
+\section{Interactive Extensions}
+
+\begin{frame}[fragile]{Interactive Parallel Coordinates}
+\begin{lstlisting}[style=rstyle]
+# R: plotly (brushable axes)
+library(plotly)
+plot_ly(ecar, type = "parcoords",
+  line = list(color = ~Tier,
+    colorscale = "Viridis"),
+  dimensions = list(
+    list(label = "FICO", values = ~FICO),
+    list(label = "Rate", values = ~Rate),
+    list(label = "Amount", values = ~Amount),
+    list(label = "Term", values = ~Term),
+    list(label = "Spread", values = ~Spread)))
+\end{lstlisting}
+\begin{lstlisting}[style=pythonstyle]
+# Python: plotly
+import plotly.express as px
+fig = px.parallel_coordinates(
+    ecar, color="Tier",
+    dimensions=["FICO","Rate","Amount","Term","Spread"],
+    color_continuous_scale="Viridis")
+fig.show()  # interactive: brush each axis to filter
+\end{lstlisting}
+  \begin{alertblock}{Pro-Tip}
+    Interactive parallel coordinates (plotly) allow \textbf{brushing}:
+    drag on any axis to select a range, and all lines outside that
+    range fade. This is the most powerful exploratory use of parallel
+    coordinates --- impossible in static plots.
+  \end{alertblock}
+\end{frame}
+
+\section{Synthesis}
+
+\begin{frame}{Key Takeaways}
+  \begin{enumerate}
+    \item \textbf{Parallel coordinates}: each vertical axis = one
+          variable; lines connect one observation across all axes.
+          Best for 5--20 variables, many observations.
+    \item \textbf{Reading patterns}: parallel = positive correlation,
+          crossing = negative, cluster = group, stray line = outlier.
+    \item \textbf{Axis order is critical}: place correlated pairs
+          adjacent. Try \texttt{ggparcoord(order="anyClass")} for
+          algorithmic reordering.
+    \item \textbf{Grey+accent} prevents spaghetti: draw all lines grey,
+          highlight one group in colour.
+    \item \textbf{Radar charts} work only for $\leq$3 profiles,
+          $\leq$8 axes. Area is misleading; axis order is arbitrary.
+    \item \textbf{Interactive} parallel coordinates (plotly) with
+          axis brushing is the most powerful multivariate exploration
+          tool available.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Essential Readings}
+  \begin{itemize}
+    \item Inselberg, A. (2009). \emph{Parallel Coordinates: Visual
+          Multidimensional Geometry}. Springer.
+    \item Wilke, C.~O. (2019). \emph{Fundamentals of Data Visualization},
+          Chapter 6 (Parallel Coordinates).
+    \item Few, S. (2006). ``Radar Graphs: Not So Useful After All.''
+          Visual Business Intelligence Newsletter.
+    \item plotly documentation: \texttt{https://plotly.com/r/parallel-coordinates-plot/}
+  \end{itemize}
+  \vspace{6pt}
+  \textbf{Next Module}: Dimensionality Reduction Visualization ---
+  PCA, t-SNE, UMAP (W05-M03)
+\end{frame}
+
+\end{document}

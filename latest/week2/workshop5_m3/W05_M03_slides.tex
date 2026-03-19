@@ -1,0 +1,338 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codeblue}{HTML}{1565C0}
+\lstdefinestyle{rstyle}{language=R,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,
+  rulecolor=\color{codegray!30},showstringspaces=false,tabsize=2,
+  morekeywords={library,prcomp,summary,biplot,autoplot,ggfortify,Rtsne,
+    umap,ggplot,aes,geom_point,geom_segment,geom_text,scale_color_manual,
+    theme_minimal,labs}}
+\lstdefinestyle{pythonstyle}{language=Python,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,
+  rulecolor=\color{codegray!30},showstringspaces=false,tabsize=4,
+  morekeywords={import,from,as,pd,np,plt,PCA,TSNE,UMAP,StandardScaler,
+    fit_transform,explained_variance_ratio_,components_}}
+\title{Dimensionality Reduction Visualization}
+\subtitle{Workshop 5 --- Module 3}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item Why reduce: making the invisible visible
+    \item PCA: linear projection onto maximum-variance axes
+    \item The scree plot: how many components to keep
+    \item The biplot: scores + loadings in one figure
+    \item t-SNE: nonlinear, local structure preservation
+    \item UMAP: nonlinear, global + local topology
+  \end{enumerate}
+  \begin{exampleblock}{Learning Outcome}
+    You will interpret PCA biplots (loading arrows = variable
+    contribution), produce scree plots to choose the number of
+    components, and compare PCA / t-SNE / UMAP projections
+    to understand their different preservation properties.
+  \end{exampleblock}
+\end{frame}
+
+\section{Why Reduce?}
+
+\begin{frame}{Make the Invisible Visible}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{figures_w05m03/why_reduce}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    Dimension reduction is \textbf{not} about discarding information.
+    It is about finding the 2D view that preserves the most important
+    structure (variance for PCA, neighbourhoods for t-SNE, topology
+    for UMAP). Think of it as choosing the best camera angle for a
+    3D object.
+  \end{alertblock}
+\end{frame}
+
+\section{PCA}
+
+\begin{frame}{PCA: Linear Projection onto Max-Variance Axes}
+  \begin{center}
+    \includegraphics[width=0.72\textwidth]{figures_w05m03/pca_biplot}
+  \end{center}
+\end{frame}
+
+\begin{frame}{How to Read a Biplot}
+  \centering
+  \begin{tabular}{lp{6cm}}
+    \toprule
+    \textbf{Element} & \textbf{Interpretation} \\
+    \midrule
+    Points (scores) & Observations projected into PC space. Close points = similar multivariate profiles. \\
+    Arrows (loadings) & Original variables. Arrow direction = which PC the variable contributes to. Arrow length = strength of contribution. \\
+    Angle between arrows & $\cos(\theta) \approx$ correlation. Parallel = positive corr. Opposite = negative. Perpendicular = uncorrelated. \\
+    Distance from origin & Extremity. Points far from centre are unusual in PC space (potential outliers). \\
+    \% variance on axes & How much of total variance this view captures. PC1+PC2 $> 70\%$ = good 2D summary. \\
+    \bottomrule
+  \end{tabular}
+\end{frame}
+
+\begin{frame}{Scree Plot: How Many Components?}
+  \begin{center}
+    \includegraphics[width=0.68\textwidth]{figures_w05m03/scree}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    Two rules of thumb: (1) \textbf{Elbow rule}: keep components before
+    the scree ``flattens.'' (2) \textbf{80\% rule}: keep enough
+    components to explain $\geq$80\% of cumulative variance. Here, 2--3
+    components suffice for the 6D data.
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{PCA in Code}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{R}
+\begin{lstlisting}[style=rstyle]
+# PCA
+pca <- prcomp(df[, num_cols],
+  scale. = TRUE)  # always scale!
+
+# Scree
+summary(pca)  # proportion of var
+
+# Quick biplot
+biplot(pca)   # base R
+
+# ggplot biplot (ggfortify)
+library(ggfortify)
+autoplot(pca,
+  data = df,
+  colour = "Cluster",
+  loadings = TRUE,
+  loadings.label = TRUE,
+  loadings.colour = "#E65100") +
+  theme_minimal()
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Python}
+\begin{lstlisting}[style=pythonstyle]
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import (
+    StandardScaler)
+
+X_scaled = StandardScaler().fit_transform(
+    df[num_cols])
+pca = PCA(n_components=2)
+scores = pca.fit_transform(X_scaled)
+
+# Scree
+var_exp = pca.explained_variance_ratio_
+
+# Biplot (manual)
+fig, ax = plt.subplots()
+ax.scatter(scores[:,0], scores[:,1],
+    c=labels, cmap="viridis", s=15)
+# Loading arrows
+loadings = pca.components_.T * 3
+for i, name in enumerate(num_cols):
+    ax.annotate("", xy=loadings[i],
+        xytext=(0,0), arrowprops=
+        dict(arrowstyle="->",
+             color="#E65100"))
+    ax.text(*loadings[i]*1.1, name)
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{t-SNE}
+
+\begin{frame}{t-SNE: Nonlinear, Local Structure}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w05m03/tsne_perplexity}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    t-SNE (van der Maaten \& Hinton, 2008) preserves \textbf{local}
+    neighbourhoods: nearby points stay nearby. But \textbf{distances
+    between clusters are meaningless} --- cluster size and gap width
+    are artefacts. The \textbf{perplexity} hyperparameter ($\sim$5--50)
+    controls the effective neighbourhood size. Always try 2--3 values.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{t-SNE: What You Can and Cannot Conclude}
+  \centering
+  \begin{tabular}{lcc}
+    \toprule
+    \textbf{Conclusion} & \textbf{Valid?} & \textbf{Why} \\
+    \midrule
+    ``These points form a cluster'' & \textcolor{codegreen}{\checkmark} & Local structure preserved \\
+    ``Cluster A is closer to B than C'' & \textcolor{red}{\texttimes} & Inter-cluster distances arbitrary \\
+    ``Cluster A is larger than B'' & \textcolor{red}{\texttimes} & Size is an artefact of density \\
+    ``This point is an outlier'' & \textcolor{codegreen}{\checkmark} & Isolated points = dissimilar \\
+    ``PC1 correlates with variable X'' & \textcolor{red}{\texttimes} & No axes interpretation (unlike PCA) \\
+    \bottomrule
+  \end{tabular}
+\end{frame}
+
+\section{UMAP}
+
+\begin{frame}{PCA vs t-SNE vs UMAP: Same Data, Three Views}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w05m03/three_methods}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{t-SNE and UMAP in Code}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{R}
+\begin{lstlisting}[style=rstyle]
+# t-SNE
+library(Rtsne)
+tsne <- Rtsne(X_scaled,
+  dims = 2, perplexity = 30,
+  check_duplicates = FALSE)
+plot(tsne$Y, col = labels, pch = 16)
+
+# UMAP
+library(umap)
+um <- umap(X_scaled)
+plot(um$layout, col = labels, pch=16)
+
+# ggplot wrapper
+tibble(x = tsne$Y[,1],
+       y = tsne$Y[,2],
+       cluster = factor(labels)) |>
+  ggplot(aes(x, y, color = cluster)) +
+  geom_point(alpha = 0.5, size = 1) +
+  theme_minimal() +
+  labs(title = "t-SNE (perp=30)")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Python}
+\begin{lstlisting}[style=pythonstyle]
+# t-SNE
+from sklearn.manifold import TSNE
+tsne = TSNE(n_components=2,
+    perplexity=30, random_state=42)
+X_tsne = tsne.fit_transform(X_scaled)
+plt.scatter(X_tsne[:,0], X_tsne[:,1],
+    c=labels, cmap="viridis", s=10)
+
+# UMAP
+# pip install umap-learn
+from umap import UMAP
+um = UMAP(n_components=2,
+    random_state=42)
+X_umap = um.fit_transform(X_scaled)
+plt.scatter(X_umap[:,0], X_umap[:,1],
+    c=labels, cmap="viridis", s=10)
+
+# Key hyperparameters:
+# t-SNE: perplexity (5-50)
+# UMAP:  n_neighbors (5-50),
+#        min_dist (0.0-1.0)
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Choosing a Method}
+
+\begin{frame}{PCA vs t-SNE vs UMAP}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w05m03/comparison}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Decision Rules}
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Goal} & \textbf{Method} & \textbf{Why} \\
+    \midrule
+    Understand variable contributions & PCA & Loadings are interpretable \\
+    Find the ``best 2D summary'' & PCA & Max-variance projection \\
+    Discover clusters visually & t-SNE or UMAP & Nonlinear separation \\
+    Large dataset ($>$50K rows) & UMAP & $O(n \log n)$ vs $O(n^2)$ \\
+    Need reproducibility & PCA & Deterministic \\
+    Preserve global distances & PCA or UMAP & t-SNE distorts global \\
+    \bottomrule
+  \end{tabular}
+  \vspace{6pt}
+  \begin{alertblock}{Pro-Tip}
+    \textbf{Best practice}: start with PCA (interpretable, fast), check
+    the scree plot. If the first 2 PCs capture $<$50\% variance, the
+    data has complex nonlinear structure --- then try t-SNE or UMAP.
+    Always show PCA alongside t-SNE/UMAP so the reader can compare.
+  \end{alertblock}
+\end{frame}
+
+\section{Common Pitfalls}
+
+\begin{frame}{Five Pitfalls of Dimension Reduction}
+  \centering
+  \begin{tabular}{rlp{5cm}}
+    \toprule
+    \textbf{\#} & \textbf{Pitfall} & \textbf{Solution} \\
+    \midrule
+    1 & Forgetting to scale & Always \texttt{scale. = TRUE} (R) or \texttt{StandardScaler()} (Python) \\
+    2 & Over-interpreting t-SNE distances & State: ``distances between clusters are not meaningful'' \\
+    3 & Single perplexity / n\_neighbors & Try 3+ values; show in a panel \\
+    4 & Treating PCs as ``real'' variables & PCs are combinations; interpret via loadings \\
+    5 & Running t-SNE on $>$50K rows & Use UMAP or subsample first \\
+    \bottomrule
+  \end{tabular}
+\end{frame}
+
+\section{Synthesis}
+
+\begin{frame}{Key Takeaways}
+  \begin{enumerate}
+    \item \textbf{PCA} = linear, interpretable (biplot + scree),
+          deterministic. Use when you need to understand \emph{which
+          variables drive} the structure. Always scale first.
+    \item \textbf{Scree plot}: elbow rule or 80\% cumulative variance
+          to choose the number of components.
+    \item \textbf{Biplot}: points = observations, arrows = variable
+          contributions, angle between arrows $\approx$ correlation.
+    \item \textbf{t-SNE}: nonlinear, excellent at revealing clusters.
+          But distances between clusters are meaningless; always
+          report perplexity.
+    \item \textbf{UMAP}: nonlinear like t-SNE but faster and better at
+          preserving global structure. Preferred for large datasets.
+    \item \textbf{Best practice}: PCA first (interpretable baseline),
+          then t-SNE/UMAP if nonlinear structure suspected.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Essential Readings}
+  \begin{itemize}
+    \item Jolliffe, I.~T. (2002). \emph{Principal Component Analysis},
+          2nd ed. Springer.
+    \item van der Maaten, L. \& Hinton, G. (2008). ``Visualizing Data
+          using t-SNE.'' \emph{JMLR}, 9, 2579--2605.
+    \item McInnes, L. et al. (2018). ``UMAP: Uniform Manifold
+          Approximation and Projection.'' arXiv:1802.03426.
+    \item Wattenberg, M. et al. (2016). ``How to Use t-SNE Effectively.''
+          \emph{Distill}. \texttt{https://distill.pub/2016/misread-tsne/}
+  \end{itemize}
+  \vspace{6pt}
+  \textbf{Next Module}: Heatmaps \& Clustered Displays (W05-M04)
+\end{frame}
+
+\end{document}

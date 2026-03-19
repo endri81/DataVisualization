@@ -1,0 +1,248 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codeblue}{HTML}{1565C0}
+\lstdefinestyle{rstyle}{language=R,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,
+  rulecolor=\color{codegray!30},showstringspaces=false,tabsize=2,
+  morekeywords={library,read_csv,filter,mutate,group_by,summarise,ggplot,aes,
+    geom_histogram,geom_boxplot,geom_violin,geom_point,geom_smooth,geom_line,
+    geom_ribbon,geom_col,stat_summary,facet_wrap,coord_flip,scale_fill_manual,
+    theme_minimal,labs,patchwork,plot_annotation}}
+\lstdefinestyle{pythonstyle}{language=Python,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,
+  rulecolor=\color{codegray!30},showstringspaces=false,tabsize=4,
+  morekeywords={import,from,as,pd,np,plt,sns,query,assign,groupby,agg,
+    to_numeric,to_datetime,sample,dropna,fillna,merge}}
+\title{EDA Case Study: e-Car Loan Pricing}
+\subtitle{Workshop 4 --- Module 8}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item A new domain: auto loan pricing (208K applications)
+    \item Apply the same EDA framework to a financial dataset
+    \item FICO as a continuous predictor discretised into tiers
+    \item Time-series dimension: spread compression post-2008
+    \item Structural missingness: MNAR in Previous Rate
+  \end{enumerate}
+  \begin{exampleblock}{Learning Outcome}
+    You will apply the identical EDA workflow from M07 to a completely
+    different domain (consumer finance), demonstrating that the
+    seven-section report structure is domain-agnostic.
+  \end{exampleblock}
+\end{frame}
+
+\section{The Dataset}
+
+\begin{frame}{e-Car Loan: 208K Applications, 12 Variables}
+  \begin{center}
+    \includegraphics[width=0.82\textwidth]{figures_w04m08/profile}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    This dataset differs from Google Play Store in three ways:
+    (1) it is \textbf{large} (208K vs 10K), requiring sampling for
+    scatter plots; (2) it has a \textbf{time dimension} (2002--2012);
+    (3) it contains \textbf{structural MNAR} in Previous Rate
+    (new customers simply have no prior rate).
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{Domain Context: How Auto Loan Pricing Works}
+  \centering
+  \begin{tabular}{lp{7cm}}
+    \toprule
+    \textbf{Concept} & \textbf{Meaning} \\
+    \midrule
+    FICO & Credit score (300--850). Higher = lower risk. \\
+    Tier & Bank's risk bucket (1 = best, 5 = worst). Maps FICO ranges to discrete groups. \\
+    Rate & Interest rate offered to borrower (\%). \\
+    Cost of Funds & Bank's cost of capital (\%). Varies with macro rates. \\
+    Spread & Rate $-$ Cost of Funds. The bank's \textbf{margin}. \\
+    Competition Rate & Competitor's rate for same profile. \\
+    Outcome & 0 = borrower declined offer; 1 = accepted. \\
+    Previous Rate & Returning customer's prior rate (missing for new customers). \\
+    \bottomrule
+  \end{tabular}
+\end{frame}
+
+\section{The Nine-Panel Dashboard}
+
+\begin{frame}{Complete EDA Dashboard}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w04m08/eda_dashboard}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Reading the Dashboard}
+  \centering
+  {\small
+  \begin{tabular}{rlll}
+    \toprule
+    \textbf{\#} & \textbf{Panel} & \textbf{EDA Question} & \textbf{Insight} \\
+    \midrule
+    (a) & FICO histogram & Shape of credit quality & Bimodal: peaks at $\sim$680 and $\sim$750 \\
+    (b) & Rate histogram & Shape of pricing & Right-skewed, mode at $\sim$5\% \\
+    (c) & FICO vs Rate & Key relationship & Strong $\rho \approx -0.65$ \\
+    (d) & Rate by Tier & Tier = rate driver & Clear step function \\
+    (e) & Approval by Tier & Selection effect & Tier 1: 30\%, Tier 5: 60\%+ \\
+    (f) & Spread over time & Macro effect & Post-2008 compression \\
+    (g) & Amount dist. & Loan size & Right-skewed, median $\sim$\$20K \\
+    (h) & New vs Used & Car type effect & Used $\approx$ +1.5pp higher \\
+    (i) & Correlation & Full picture & FICO--Rate dominates \\
+    \bottomrule
+  \end{tabular}}
+\end{frame}
+
+\section{Deep-Dives}
+
+\begin{frame}{FICO vs Rate: Faceted by Tier}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w04m08/fico_rate_tier}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    Within each tier, FICO still has a negative slope on Rate. This
+    means the tier system \textbf{does not fully capture} the FICO
+    information --- there is residual predictive power within tiers.
+    A pricing model could improve by using continuous FICO directly
+    rather than the discretised tier.
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Structural Missingness: Previous Rate (MNAR)}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{figures_w04m08/missing_prevrate}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    Previous Rate is missing for 53\% of rows --- but this is not random.
+    It is structurally absent for \textbf{new customers} who have no
+    prior loan history. The shadow analysis shows that the ``no prior
+    rate'' group has a different FICO distribution (more dispersed) and
+    different offered Rate. This is textbook \textbf{MNAR}: the
+    missingness is informative, not ignorable.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{Handling Structural MNAR}
+  \centering
+  \begin{tabular}{lp{5.5cm}}
+    \toprule
+    \textbf{Approach} & \textbf{When to Use} \\
+    \midrule
+    Create an indicator & Add \texttt{is\_new\_customer = is.na(Previous Rate)}. Treat as a feature, not a gap. \\
+    Analyse separately & Split into new vs returning customers. Each group has complete data within its scope. \\
+    Don't impute & Mean/median imputation is meaningless: there \emph{is} no previous rate. \\
+    Document & Report the 53\% structural NA in your EDA report. \\
+    \bottomrule
+  \end{tabular}
+  \vspace{6pt}
+  {\small Key insight: structural MNAR is different from accidental
+  missingness. The absence itself carries information (``this is a new
+  customer''), so the correct action is to \textbf{encode it as a
+  variable}, not impute it away.}
+\end{frame}
+
+\section{Key Findings}
+
+\begin{frame}{Four Key Findings}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w04m08/findings}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{The Pipeline (R sketch)}
+\begin{lstlisting}[style=rstyle]
+ecar <- read_csv("ecar.csv") |>
+  rename(CarType = `Car  Type`) |>
+  mutate(
+    PreviousRate = as.numeric(`Previous Rate`),
+    ApproveDate  = mdy(`Approve Date`),
+    Year = year(ApproveDate),
+    Spread = Rate - `Cost of Funds`,
+    is_new = is.na(PreviousRate)  # structural MNAR -> indicator
+  ) |>
+  filter(FICO >= 300, FICO <= 850, Rate > 0) |>
+  mutate(Tier = factor(Tier, levels = 1:5, ordered = TRUE))
+
+# Dashboard: same patchwork structure as M07
+(p_fico | p_rate | p_scatter) /
+  (p_tier_box | p_approval | p_spread) /
+  (p_amount | p_cartype | p_corr) +
+  plot_annotation(title = "e-Car Loan: EDA Dashboard",
+    tag_levels = "a")
+\end{lstlisting}
+\end{frame}
+
+\section{Comparing the Two Case Studies}
+
+\begin{frame}{Google Play Store vs e-Car: Same Framework, Different Insights}
+  \centering
+  {\small
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Dimension} & \textbf{Google Play} & \textbf{e-Car} \\
+    \midrule
+    $n$ & 9,360 & 208,087 \\
+    Domain & App marketplace & Consumer finance \\
+    Key relationship & Reviews $\leftrightarrow$ Rating (weak) & FICO $\leftrightarrow$ Rate (strong) \\
+    Missingness & Rating: MCAR (8\%) & Previous Rate: MNAR (53\%) \\
+    Outlier type & Rating floor (real) & Rate spikes (possible errors) \\
+    Time dimension & None & 11 years (macro cycles) \\
+    Imbalance & Free 93\% / Paid 7\% & Tier 1 (35\%) dominates \\
+    \midrule
+    EDA structure & \multicolumn{2}{c}{\textbf{Identical 7-section report}} \\
+    \bottomrule
+  \end{tabular}}
+  \vspace{6pt}
+  {\small The same dashboard template, the same cleaning audit, the same
+  finding$\rightarrow$evidence$\rightarrow$implication format. The
+  \textbf{framework is domain-agnostic}; only the content changes.}
+\end{frame}
+
+\section{Synthesis}
+
+\begin{frame}{Key Takeaways}
+  \begin{enumerate}
+    \item The \textbf{EDA framework is portable}: same 7-section structure
+          works for app stores and auto loans.
+    \item \textbf{208K rows} requires sampling for scatter plots but
+          enables precise CI estimation.
+    \item \textbf{Structural MNAR} (Previous Rate) should be encoded as
+          an indicator variable, never imputed.
+    \item The \textbf{tier system discretises} a continuous FICO--Rate
+          relationship; within-tier slopes prove residual information.
+    \item \textbf{Macro effects} (2008 crisis) compress spreads ---
+          time-series EDA reveals patterns invisible in cross-sections.
+    \item \textbf{Domain context} is essential: ``Spread'' is meaningless
+          without understanding Cost of Funds.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Essential Readings}
+  \begin{itemize}
+    \item Thomas, L.~C. (2009). \emph{Consumer Credit Models: Pricing,
+          Profit, and Portfolios}. Oxford University Press.
+    \item FICO Score documentation:
+          \texttt{https://www.myfico.com/credit-education}
+    \item Peng, R. (2016). \emph{Exploratory Data Analysis with R}.
+  \end{itemize}
+  \vspace{6pt}
+  \textbf{Next Module}: EDA Automation \& Reproducible Reports (W04-M09)
+\end{frame}
+
+\end{document}

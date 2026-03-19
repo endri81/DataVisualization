@@ -1,0 +1,401 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codeblue}{HTML}{1565C0}
+\lstdefinestyle{rstyle}{language=R,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,
+  rulecolor=\color{codegray!30},showstringspaces=false,tabsize=2,
+  morekeywords={library,ggplot,aes,geom_histogram,geom_boxplot,geom_point,geom_qq,
+    geom_qq_line,summary,glimpse,str,head,tail,dim,nrow,ncol,
+    theme_minimal,labs,skimr,skim,DataExplorer,create_report}}
+\lstdefinestyle{pythonstyle}{language=Python,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,
+  rulecolor=\color{codegray!30},showstringspaces=false,tabsize=4,
+  morekeywords={import,from,as,pd,plt,sns,np,fig,ax,describe,info,shape,head,
+    probplot,hist,boxplot,violinplot}}
+\title{Tukey's EDA Philosophy}
+\subtitle{Workshop 4 --- Module 1}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item Confirmatory vs exploratory: two cultures of data analysis
+    \item Tukey's detective metaphor (1977)
+    \item The original EDA toolkit: stem-and-leaf, boxplot, residuals
+    \item Letter-value plots: extending the box for large $n$
+    \item The 4-plot diagnostic panel
+    \item The modern EDA workflow
+  \end{enumerate}
+  \begin{exampleblock}{Learning Outcome}
+    You will understand EDA as a philosophy (not a technique), adopt
+    Tukey's iterative ``look at the data first'' mindset, and apply
+    the 4-phase EDA workflow to any new dataset.
+  \end{exampleblock}
+\end{frame}
+
+\section{Two Cultures}
+
+\begin{frame}{Confirmatory vs Exploratory}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{figures_w04m01/cda_vs_eda}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    Most statistics courses teach CDA: hypothesis $\rightarrow$ test $\rightarrow$
+    $p$-value. Tukey argued that this skips the most important step:
+    \textbf{looking at the data}. EDA generates the hypotheses that CDA
+    then tests. Both are necessary; EDA comes first.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{Tukey's Own Words}
+  \begin{quote}
+    ``Exploratory data analysis is detective work --- numerical detective
+    work --- or counting detective work --- or graphical detective work.''
+  \end{quote}
+  \hfill --- John W. Tukey, \emph{Exploratory Data Analysis} (1977)
+  \vspace{8pt}
+
+  \begin{quote}
+    ``The greatest value of a picture is when it forces us to notice
+    what we never expected to see.''
+  \end{quote}
+  \hfill --- John W. Tukey
+  \vspace{8pt}
+
+  \begin{exampleblock}{Data Insight}
+    Tukey invented the boxplot, the stem-and-leaf display, the term
+    ``bit'' (with Shannon), and the FFT algorithm (with Cooley). His
+    1977 book \emph{Exploratory Data Analysis} founded the field.
+  \end{exampleblock}
+\end{frame}
+
+\section{The Detective Metaphor}
+
+\begin{frame}{EDA as Investigation: Five Steps}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w04m01/detective}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Key Principles of EDA}
+  \centering
+  \begin{tabular}{lp{6cm}}
+    \toprule
+    \textbf{Principle} & \textbf{Implication} \\
+    \midrule
+    Scepticism & Assume nothing about the data; let it speak \\
+    Iteration & One plot leads to the next question \\
+    Robustness & Use medians over means; resist outlier influence \\
+    Residuals & After fitting a pattern, examine what remains \\
+    Graphical primacy & Tables summarise; plots reveal \\
+    Re-expression & Transform to simplify (log, sqrt, reciprocal) \\
+    \bottomrule
+  \end{tabular}
+\end{frame}
+
+\section{Tukey's Original Toolkit}
+
+\begin{frame}{Stem-and-Leaf: Every Value + Shape}
+  \begin{center}
+    \includegraphics[width=0.55\textwidth]{figures_w04m01/stem_leaf}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    The stem-and-leaf preserves every data value (unlike a histogram which
+    bins) while showing the distribution shape. Modern equivalent:
+    \texttt{stem()} in R, or simply a high-resolution histogram. Useful
+    for $n < 100$ in teaching contexts.
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}{From Tukey (1977) to Modern R/Python}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w04m01/tukey_toolkit}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Letter-Value Plot: Beyond the 5-Number Summary}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{figures_w04m01/letter_value}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    For large $n$ ($> 200$), the standard boxplot wastes information:
+    it shows only 5 quantiles. The \textbf{letter-value plot} (Hofmann
+    et al., 2017) adds nested boxes at the eighths (E), sixteenths (D),
+    etc., revealing tail behaviour. In R: \texttt{ggplot2::geom\_lv()}.
+    In Python: \texttt{sns.boxenplot()}.
+  \end{alertblock}
+\end{frame}
+
+\section{The 4-Plot}
+
+\begin{frame}{Tukey's 4-Plot Diagnostic Panel}
+  \begin{center}
+    \includegraphics[width=0.82\textwidth]{figures_w04m01/four_plot}
+  \end{center}
+\end{frame}
+
+\begin{frame}{What Each Panel Reveals}
+  \centering
+  \begin{tabular}{lp{5.5cm}}
+    \toprule
+    \textbf{Panel} & \textbf{What It Checks} \\
+    \midrule
+    (a) Run sequence & Are there shifts, trends, or cycles over time/index? \\
+    (b) Lag-1 plot & Is there autocorrelation? (If cloud $\approx$ circle: no) \\
+    (c) Histogram & What is the shape? Unimodal, skewed, bimodal? \\
+    (d) Normal Q-Q & Do the data follow a normal distribution? Departures at tails? \\
+    \bottomrule
+  \end{tabular}
+  \vspace{6pt}
+
+  {\small If (a) shows no trend, (b) shows no autocorrelation, (c) looks
+  unimodal, and (d) follows the diagonal --- the data are well-behaved
+  for parametric analysis. Deviations guide further EDA.}
+\end{frame}
+
+\begin{frame}[fragile]{The 4-Plot in R vs Python}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{R}
+\begin{lstlisting}[style=rstyle]
+library(patchwork)
+
+p_run <- ggplot(df, aes(x = 1:n(),
+    y = value)) + geom_line() +
+  geom_hline(yintercept = mean(
+    df$value), color = "#E53935",
+    linetype = "dashed") +
+  labs(title = "(a) Run Sequence")
+
+p_lag <- ggplot(df, aes(
+    x = lag(value), y = value)) +
+  geom_point(alpha = 0.3) +
+  labs(title = "(b) Lag-1 Plot")
+
+p_hist <- ggplot(df, aes(
+    x = value)) +
+  geom_histogram(bins = 25) +
+  labs(title = "(c) Histogram")
+
+p_qq <- ggplot(df, aes(
+    sample = value)) +
+  geom_qq() + geom_qq_line(
+    color = "#E53935") +
+  labs(title = "(d) Q-Q Plot")
+
+(p_run | p_lag) / (p_hist | p_qq)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Python}
+\begin{lstlisting}[style=pythonstyle]
+from scipy.stats import probplot
+
+fig, axes = plt.subplots(2, 2)
+
+# (a) Run sequence
+axes[0,0].plot(range(n), values)
+axes[0,0].axhline(
+    y=np.mean(values),
+    color="#E53935", ls="--")
+axes[0,0].set_title("(a) Run")
+
+# (b) Lag-1
+axes[0,1].scatter(
+    values[:-1], values[1:],
+    s=8, alpha=0.3)
+axes[0,1].set_title("(b) Lag-1")
+
+# (c) Histogram
+axes[1,0].hist(values, bins=25)
+axes[1,0].set_title("(c) Hist")
+
+# (d) Q-Q
+probplot(values, dist="norm",
+    plot=axes[1,1])
+axes[1,1].set_title("(d) Q-Q")
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Modern EDA Workflow}
+
+\begin{frame}{The Four-Phase EDA Workflow}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w04m01/eda_workflow}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Phase 1: Import \& Inspect}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{R}
+\begin{lstlisting}[style=rstyle]
+library(tidyverse)
+
+df <- read_csv("data.csv")
+dim(df)           # rows x cols
+glimpse(df)       # types + preview
+summary(df)       # 5-num + NA count
+
+# Comprehensive EDA report
+library(skimr)
+skim(df)           # grouped stats
+
+# Or auto-generated report
+library(DataExplorer)
+create_report(df)  # HTML report
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Python}
+\begin{lstlisting}[style=pythonstyle]
+import pandas as pd
+
+df = pd.read_csv("data.csv")
+df.shape           # (rows, cols)
+df.info()          # types + non-null
+df.describe()      # stats for numeric
+df.head()          # first 5 rows
+
+# Comprehensive EDA
+# pip install ydata-profiling
+from ydata_profiling import (
+    ProfileReport)
+report = ProfileReport(df)
+report.to_file("eda_report.html")
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Complete Examples}
+
+\begin{frame}[fragile]{R: EDA First Look}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=rstyle]
+library(tidyverse); library(patchwork)
+apps <- read_csv(
+  "googleplaystore.csv") |>
+  filter(!is.na(Rating))
+
+p1 <- ggplot(apps, aes(x=Rating))+
+  geom_histogram(bins=30,
+    fill="#1565C0", color="white") +
+  theme_minimal() +
+  labs(title="(a) Histogram")
+
+p2 <- ggplot(apps, aes(x="",
+    y=Rating)) +
+  geom_boxplot(fill="#BBDEFB",
+    width=0.3) +
+  theme_minimal() +
+  labs(title="(b) Boxplot", x=NULL)
+
+p3 <- ggplot(apps,
+    aes(sample=Rating)) +
+  geom_qq(alpha=0.1, size=0.5) +
+  geom_qq_line(color="#E53935") +
+  theme_minimal() +
+  labs(title="(c) Q-Q Plot")
+
+p1 | p2 | p3
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_w04m01/r_output}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Python: EDA First Look}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy.stats import probplot
+
+apps = pd.read_csv(
+    "googleplaystore.csv")
+ratings = apps["Rating"].dropna()
+
+fig, axes = plt.subplots(1, 3,
+    figsize=(10, 3.5))
+
+axes[0].hist(ratings, bins=30,
+    color="#2E7D32",
+    edgecolor="white", lw=0.3)
+axes[0].set_title("Histogram")
+
+parts = axes[1].violinplot(
+    [ratings],
+    showmeans=True,
+    showmedians=True)
+axes[1].set_title("Violin")
+
+probplot(ratings, dist="norm",
+    plot=axes[2])
+axes[2].set_title("Q-Q Plot")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width=\textwidth]{figures_w04m01/py_output}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Synthesis}
+
+\begin{frame}{Key Takeaways}
+  \begin{enumerate}
+    \item \textbf{EDA is a philosophy}, not a technique: look at the data
+          before modelling. CDA tests hypotheses; EDA generates them.
+    \item Tukey's \textbf{detective metaphor}: investigate, form hypotheses,
+          check residuals, iterate. Never trust a single plot.
+    \item The \textbf{4-plot} (run sequence + lag-1 + histogram + Q-Q) is
+          the first diagnostic panel for any univariate analysis.
+    \item \textbf{Letter-value plots} extend boxplots for large $n$ by
+          showing nested quantile boxes: \texttt{geom\_lv()} or
+          \texttt{sns.boxenplot()}.
+    \item The \textbf{modern EDA workflow}: Import/Inspect $\rightarrow$
+          Clean/Transform $\rightarrow$ Visualize/Explore $\rightarrow$
+          Document/Communicate.
+    \item Automate Phase 1 with \texttt{skimr::skim()} (R) or
+          \texttt{ydata-profiling} (Python) for instant EDA reports.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Essential Readings}
+  \begin{itemize}
+    \item Tukey, J.~W. (1977). \emph{Exploratory Data Analysis}.
+          Addison-Wesley. (The founding text.)
+    \item Hofmann, H., Wickham, H. \& Kafadar, K. (2017). ``Letter-value
+          plots.'' \emph{Journal of Computational and Graphical Statistics}.
+    \item Wickham, H. \& Grolemund, G. (2023). \emph{R for Data Science},
+          2nd ed., Chapters 2, 10 (Workflow, EDA).
+    \item Wilke, C.~O. (2019). \emph{Fundamentals of Data Visualization},
+          Chapter 7 (Histograms and Density).
+  \end{itemize}
+  \vspace{6pt}
+  \textbf{Next Module}: Data Wrangling for Visualization in R (W04-M02)
+\end{frame}
+
+\end{document}

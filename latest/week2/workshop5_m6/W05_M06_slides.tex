@@ -1,0 +1,107 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codeblue}{HTML}{1565C0}
+\lstdefinestyle{rstyle}{language=R,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,keywordstyle=\color{codeblue}\bfseries,commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,rulecolor=\color{codegray!30},showstringspaces=false,morekeywords={library,sf,tmap,tm_shape,tm_polygons,tm_fill,tm_borders,tm_layout,ggplot,geom_sf,scale_fill_viridis,theme_void,labs,tmap_mode}}
+\lstdefinestyle{pythonstyle}{language=Python,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,keywordstyle=\color{codeblue}\bfseries,commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,rulecolor=\color{codegray!30},showstringspaces=false,morekeywords={import,from,as,gpd,plt,folium,Choropleth,plot,Map}}
+\title{Choropleth Maps}
+\subtitle{Workshop 5 --- Module 6}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+\begin{document}
+\begin{frame}\titlepage\end{frame}
+\begin{frame}{Module Roadmap}
+\begin{enumerate}
+\item Choropleth concept: regions coloured by data
+\item Classification methods: equal interval, quantile, Jenks
+\item Palette selection: sequential, diverging, qualitative
+\item Implementation in R and Python
+\item Five common pitfalls
+\end{enumerate}
+\begin{exampleblock}{Learning Outcome}
+You will produce choropleth maps with appropriate classification and palette, using both static and interactive tools.
+\end{exampleblock}
+\end{frame}
+\section{Concept}
+\begin{frame}{Choropleth: Colour = Value per Region}
+\begin{center}\includegraphics[width=0.92\textwidth]{figures_w05m06/choropleth_concept}\end{center}
+\end{frame}
+\begin{frame}{Palette Selection}
+\begin{center}\includegraphics[width=0.88\textwidth]{figures_w05m06/palette_choice}\end{center}
+\begin{alertblock}{Pro-Tip}
+Sequential data $\rightarrow$ sequential palette. Deviation $\rightarrow$ diverging centred at 0. Categories $\rightarrow$ qualitative. Never qualitative for numeric data.
+\end{alertblock}
+\end{frame}
+\section{Code}
+\begin{frame}[fragile]{Choropleth in R (ggplot2 + sf, tmap)}
+\begin{lstlisting}[style=rstyle]
+library(sf); library(tmap)
+districts <- st_read("albania.geojson")
+# ggplot2 static
+ggplot(districts) +
+  geom_sf(aes(fill = population), color = "white") +
+  scale_fill_viridis_c(name = "Pop.") +
+  theme_void() + labs(title = "Albania: Population")
+# tmap static
+tm_shape(districts) +
+  tm_fill("gdp", style = "jenks", n = 5, palette = "Blues") +
+  tm_borders(col = "white") +
+  tm_layout(title = "GDP per Capita")
+# tmap interactive (one command switch!)
+tmap_mode("view")
+tm_shape(districts) + tm_fill("gdp", style = "jenks")
+\end{lstlisting}
+\end{frame}
+\begin{frame}[fragile]{Choropleth in Python (geopandas, folium)}
+\begin{lstlisting}[style=pythonstyle]
+import geopandas as gpd
+districts = gpd.read_file("albania.geojson")
+# Static
+fig, ax = plt.subplots(figsize=(6, 8))
+districts.plot(column="population", cmap="plasma",
+    legend=True, edgecolor="white", ax=ax,
+    scheme="NaturalBreaks", k=5)
+ax.axis("off")
+# Interactive (folium)
+import folium
+m = folium.Map(location=[41.33, 19.82], zoom_start=7)
+folium.Choropleth(
+    geo_data="albania.geojson",
+    data=districts,
+    columns=["id", "population"],
+    key_on="feature.properties.id",
+    fill_color="YlOrRd").add_to(m)
+m.save("choropleth.html")
+\end{lstlisting}
+\end{frame}
+\section{Pitfalls}
+\begin{frame}{Five Choropleth Pitfalls}
+\begin{center}\includegraphics[width=0.82\textwidth]{figures_w05m06/pitfalls}\end{center}
+\end{frame}
+\section{Synthesis}
+\begin{frame}{Key Takeaways}
+\begin{enumerate}
+\item Choropleths colour \textbf{regions} by a variable. Best for rates; misleading for raw counts (large regions dominate).
+\item \textbf{Jenks} (natural breaks) is the default classification. Quantile for skewed data. 5--7 classes maximum.
+\item \textbf{Sequential} palette for magnitude; \textbf{diverging} for deviation; never qualitative for numeric data.
+\item \textbf{R}: \texttt{geom\_sf()} for static, \texttt{tmap\_mode("view")} for interactive.
+\item \textbf{Python}: \texttt{geopandas.plot(scheme=)} for static, \texttt{folium.Choropleth()} for interactive.
+\end{enumerate}
+\end{frame}
+\begin{frame}{Essential Readings}
+\begin{itemize}
+\item Lovelace, R. et al. (2019). \emph{Geocomputation with R}, Chapter 8.
+\item Brewer, C.~A. (2005). \emph{Designing Better Maps}.
+\item \texttt{colorbrewer2.org} --- palette tool for cartography.
+\end{itemize}
+\vspace{6pt}
+\textbf{Next Module}: Point Maps \& Spatial Patterns (W05-M07)
+\end{frame}
+\end{document}

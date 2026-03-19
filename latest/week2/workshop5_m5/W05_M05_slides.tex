@@ -1,0 +1,83 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}\usepackage{listings}\usepackage{booktabs}\usepackage{xcolor}
+\definecolor{codebg}{HTML}{F5F5F5}\definecolor{codegreen}{HTML}{2E7D32}\definecolor{codegray}{HTML}{757575}\definecolor{codeblue}{HTML}{1565C0}
+\lstdefinestyle{rstyle}{language=R,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,keywordstyle=\color{codeblue}\bfseries,commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,rulecolor=\color{codegray!30},showstringspaces=false,morekeywords={library,sf,st_read,st_transform,st_crs,st_as_sf,ggplot,geom_sf,tmap,tm_shape,tm_polygons,tm_dots,tmap_mode}}
+\lstdefinestyle{pythonstyle}{language=Python,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,keywordstyle=\color{codeblue}\bfseries,commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,rulecolor=\color{codegray!30},showstringspaces=false,morekeywords={import,from,as,gpd,geopandas,read_file,to_crs,plot,folium,Map,Choropleth,Marker}}
+\title{Introduction to Spatial Data}\subtitle{Workshop 5 --- Module 5}\author{Prof.Asoc.\ Endri Raco}\institute{Data Visualization for Data Scientists \\ UNYT Tirana}\date{2025/26}
+\begin{document}
+\begin{frame}\titlepage\end{frame}
+\begin{frame}{Module Roadmap}
+\begin{enumerate}\item Four spatial data types: point, line, polygon, raster\item Coordinate reference systems: geographic vs projected\item File formats: GeoJSON, Shapefile, GeoPackage\item The sf/geopandas ecosystem\item From CSV to map: converting tabular data to spatial\end{enumerate}
+\begin{exampleblock}{Learning Outcome}You will distinguish geographic from projected CRS, read spatial files in R (sf) and Python (geopandas), and convert a CSV with lat/lon columns into a mappable spatial object.\end{exampleblock}
+\end{frame}
+\section{Spatial Data Types}
+\begin{frame}{Point, Line, Polygon, Raster}\begin{center}\includegraphics[width=0.92\textwidth]{figures_w05m05/spatial_types}\end{center}\end{frame}
+\begin{frame}{Albania: Points + Polygon}\begin{center}\includegraphics[width=0.48\textwidth]{figures_w05m05/albania_concept}\end{center}
+\begin{exampleblock}{Data Insight}Cities are \textbf{points} (lat/lon pairs). The country border is a \textbf{polygon} (closed ring of coordinates). Both reference the same CRS (WGS 84, EPSG:4326). Every spatial operation requires matching CRS between layers.\end{exampleblock}\end{frame}
+\section{Coordinate Reference Systems}
+\begin{frame}{Geographic vs Projected}\begin{center}\includegraphics[width=0.92\textwidth]{figures_w05m05/crs}\end{center}
+\begin{alertblock}{Pro-Tip}Use \textbf{EPSG:4326} (lat/lon) for storage and web maps. Transform to a \textbf{projected CRS} (UTM) before computing distances or areas. In R: \texttt{st\_transform(sf, 32634)}. In Python: \texttt{gdf.to\_crs(epsg=32634)}.\end{alertblock}\end{frame}
+\section{File Formats}
+\begin{frame}{GeoJSON, Shapefile, GeoPackage}\begin{center}\includegraphics[width=0.88\textwidth]{figures_w05m05/file_formats}\end{center}\end{frame}
+\section{The Ecosystem}
+\begin{frame}{Spatial Packages: R \& Python}\begin{center}\includegraphics[width=0.88\textwidth]{figures_w05m05/packages}\end{center}\end{frame}
+\begin{frame}[fragile]{Reading Spatial Data}
+\begin{columns}[T]\begin{column}{0.48\textwidth}\textbf{R (sf)}
+\begin{lstlisting}[style=rstyle]
+library(sf)
+# Read any spatial format
+alb <- st_read("albania.geojson")
+st_crs(alb)  # check CRS
+# Transform to UTM
+alb_utm <- st_transform(alb, 32634)
+# Plot with ggplot
+ggplot(alb) + geom_sf(fill="#E3F2FD") +
+  theme_minimal()
+# CSV -> spatial
+cities <- read_csv("cities.csv") |>
+  st_as_sf(coords=c("lon","lat"),
+           crs=4326)
+\end{lstlisting}\end{column}
+\begin{column}{0.48\textwidth}\textbf{Python (geopandas)}
+\begin{lstlisting}[style=pythonstyle]
+import geopandas as gpd
+# Read any spatial format
+alb = gpd.read_file("albania.geojson")
+alb.crs  # check CRS
+# Transform
+alb_utm = alb.to_crs(epsg=32634)
+# Plot
+alb.plot(color="#E3F2FD",
+    edgecolor="#1565C0")
+# CSV -> spatial
+from shapely.geometry import Point
+cities["geometry"] = cities.apply(
+    lambda r: Point(r.lon, r.lat),
+    axis=1)
+gdf = gpd.GeoDataFrame(cities, crs=4326)
+\end{lstlisting}\end{column}\end{columns}
+\end{frame}
+\begin{frame}[fragile]{tmap: Grammar of Maps (R)}
+\begin{lstlisting}[style=rstyle]
+library(tmap)
+# Static map
+tm_shape(alb) +
+  tm_polygons(col = "population", palette = "Blues", title = "Pop.") +
+  tm_layout(title = "Albania: Population by District")
+# Switch to interactive
+tmap_mode("view")  # now all tmap calls produce leaflet maps
+tm_shape(alb) + tm_polygons(col = "population") + tm_dots(cities)
+# Switch back
+tmap_mode("plot")
+\end{lstlisting}
+\begin{alertblock}{Pro-Tip}\texttt{tmap} is the spatial equivalent of ggplot2: layered grammar (\texttt{tm\_shape + tm\_polygons + tm\_dots}). One command (\texttt{tmap\_mode("view")}) switches between static PDF and interactive leaflet.\end{alertblock}
+\end{frame}
+\section{Synthesis}
+\begin{frame}{Key Takeaways}
+\begin{enumerate}\item Four spatial types: \textbf{point} (locations), \textbf{line} (paths), \textbf{polygon} (areas), \textbf{raster} (grids).\item \textbf{CRS matters}: geographic (degrees) for storage, projected (metres) for distance/area. Always check and match CRS.\item \textbf{GeoJSON} for web, \textbf{GeoPackage} for modern work, \textbf{Shapefile} for legacy. All readable by \texttt{st\_read()} and \texttt{gpd.read\_file()}.\item \textbf{sf} (R) and \textbf{geopandas} (Python) are the core packages. \textbf{tmap} (R) and \textbf{folium} (Python) add map-specific grammar.\item CSV with lat/lon columns $\rightarrow$ spatial via \texttt{st\_as\_sf()} or \texttt{gpd.GeoDataFrame(geometry=Point())}.\end{enumerate}
+\end{frame}
+\begin{frame}{Essential Readings}
+\begin{itemize}\item Lovelace, R. et al. (2019). \emph{Geocomputation with R}. CRC Press. \texttt{https://geocompr.robinlovelace.net}\item Rey, S. et al. (2020). \emph{Geographic Data Science with Python}. \texttt{https://geographicdata.science}\item sf documentation: \texttt{https://r-spatial.github.io/sf/}\end{itemize}\vspace{6pt}\textbf{Next Module}: Choropleth Maps (W05-M06)
+\end{frame}
+\end{document}

@@ -1,0 +1,227 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}\usepackage{listings}\usepackage{booktabs}\usepackage{xcolor}
+\definecolor{codebg}{HTML}{F5F5F5}\definecolor{codegreen}{HTML}{2E7D32}\definecolor{codegray}{HTML}{757575}\definecolor{codeblue}{HTML}{1565C0}
+\lstdefinestyle{rstyle}{language=R,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,keywordstyle=\color{codeblue}\bfseries,commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,rulecolor=\color{codegray!30},showstringspaces=false,morekeywords={library,readxl,read_excel,ggplot,aes,geom_point,geom_sf,prcomp,autoplot,pheatmap,ggparcoord,GGally,ggpairs,leaflet,addCircleMarkers,tmap,patchwork}}
+\lstdefinestyle{pythonstyle}{language=Python,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,keywordstyle=\color{codeblue}\bfseries,commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,rulecolor=\color{codegray!30},showstringspaces=false,morekeywords={import,from,as,pd,np,plt,sns,gpd,folium,PCA,clustermap,read_excel}}
+\title{Lab: Multivariate EDA on Real Estate}
+\subtitle{Workshop 5 --- Module 10}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+\begin{document}
+\begin{frame}\titlepage\end{frame}
+\begin{frame}{Module Roadmap}
+\begin{enumerate}
+\item The real estate dataset: spatial + multivariate
+\item Integrate W04 EDA + W05 multivariate + spatial techniques
+\item PCA biplot of property features
+\item Correlation heatmap + clustered display
+\item Point map of properties coloured by price
+\item Workshop 5 review: 10-module summary
+\end{enumerate}
+\begin{exampleblock}{Learning Outcome}
+You will execute a complete multivariate + spatial EDA on the real estate dataset, combining PCA, heatmaps, parallel coordinates, and point maps into one integrated analysis.
+\end{exampleblock}
+\end{frame}
+\section{The Dataset}
+\begin{frame}{Real Estate: Spatial + Multivariate}
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{Property} & \textbf{Value} \\
+\midrule
+Source & \texttt{real\_estate.xlsx} (course dataset) \\
+Rows & Property listings with coordinates \\
+Numeric & Price, area (sqm), bedrooms, bathrooms, year built \\
+Categorical & Type (house/apartment), neighbourhood, condition \\
+Spatial & Latitude, longitude (mappable) \\
+Multi-valued & Amenities (comma-separated) \\
+\bottomrule
+\end{tabular}
+\vspace{6pt}
+\begin{alertblock}{Pro-Tip}
+This dataset is both \textbf{multivariate} (many numeric features for PCA, heatmaps, parallel coords) and \textbf{spatial} (lat/lon for point maps and neighbourhood choropleth). The lab integrates all W05 techniques into one analysis.
+\end{alertblock}
+\end{frame}
+\section{Multivariate Analysis}
+\begin{frame}[fragile]{PCA Biplot of Property Features}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{R}
+\begin{lstlisting}[style=rstyle]
+library(readxl); library(ggfortify)
+re <- read_excel("real_estate.xlsx")
+num_cols <- re |>
+  select(price, area, bedrooms,
+    bathrooms, year_built)
+pca <- prcomp(num_cols, scale. = TRUE)
+autoplot(pca, data = re,
+  colour = "type",
+  loadings = TRUE,
+  loadings.label = TRUE) +
+  theme_minimal()
+\end{lstlisting}
+\end{column}
+\begin{column}{0.48\textwidth}
+\textbf{Python}
+\begin{lstlisting}[style=pythonstyle]
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import (
+    StandardScaler)
+re = pd.read_excel("real_estate.xlsx")
+X = StandardScaler().fit_transform(
+    re[["price","area","bedrooms",
+        "bathrooms","year_built"]])
+pca = PCA(n_components=2)
+scores = pca.fit_transform(X)
+plt.scatter(scores[:,0], scores[:,1],
+    c=re["type"].map(
+        {"house":"#1565C0",
+         "apartment":"#E53935"}),
+    s=10, alpha=0.5)
+\end{lstlisting}
+\end{column}
+\end{columns}
+\end{frame}
+\begin{frame}[fragile]{Correlation Heatmap + Parallel Coordinates}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{R}
+\begin{lstlisting}[style=rstyle]
+# Clustered heatmap
+library(pheatmap)
+corr <- cor(num_cols, use = "complete")
+pheatmap(corr,
+  color = colorRampPalette(
+    c("#1565C0","white","#E53935")
+  )(100),
+  display_numbers = TRUE,
+  number_format = "%.2f")
+# Parallel coordinates
+library(GGally)
+ggparcoord(re,
+  columns = c("price","area",
+    "bedrooms","bathrooms"),
+  groupColumn = "type",
+  scale = "uniminmax",
+  alphaLines = 0.1) +
+  scale_color_manual(values =
+    c(house="#1565C0",
+      apartment="#E53935"))
+\end{lstlisting}
+\end{column}
+\begin{column}{0.48\textwidth}
+\textbf{Python}
+\begin{lstlisting}[style=pythonstyle]
+# Clustered heatmap
+sns.clustermap(
+    re[num_cols].corr(),
+    annot=True, fmt=".2f",
+    cmap="RdBu_r", vmin=-1, vmax=1,
+    figsize=(7, 6))
+# Parallel coordinates
+from pandas.plotting import (
+    parallel_coordinates)
+cols = ["price","area","bedrooms",
+        "bathrooms","type"]
+df_norm = re[cols].copy()
+for c in cols[:-1]:
+    df_norm[c] = (df_norm[c] -
+        df_norm[c].min()) / (
+        df_norm[c].max() -
+        df_norm[c].min())
+parallel_coordinates(df_norm, "type",
+    colormap="coolwarm", alpha=0.1)
+\end{lstlisting}
+\end{column}
+\end{columns}
+\end{frame}
+\section{Spatial Analysis}
+\begin{frame}[fragile]{Point Map: Properties Coloured by Price}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{R (leaflet)}
+\begin{lstlisting}[style=rstyle]
+library(leaflet)
+pal <- colorNumeric("YlOrRd",
+  domain = re$price)
+leaflet(re) |>
+  addProviderTiles(
+    "CartoDB.Positron") |>
+  addCircleMarkers(
+    lng = ~lon, lat = ~lat,
+    radius = 3,
+    color = ~pal(price),
+    fillOpacity = 0.7,
+    popup = ~paste0(
+      "Price: $", price, "<br>",
+      "Area: ", area, " sqm")) |>
+  addLegend(pal = pal,
+    values = ~price,
+    title = "Price ($)")
+\end{lstlisting}
+\end{column}
+\begin{column}{0.48\textwidth}
+\textbf{Python (folium)}
+\begin{lstlisting}[style=pythonstyle]
+import folium
+m = folium.Map(
+    location=[re.lat.mean(),
+              re.lon.mean()],
+    zoom_start=12,
+    tiles="CartoDB positron")
+for _, r in re.iterrows():
+    folium.CircleMarker(
+        [r["lat"], r["lon"]],
+        radius=3,
+        color="red",
+        fill=True,
+        fill_opacity=0.7,
+        popup=(f"${r['price']:,.0f}"
+               f"<br>{r['area']} sqm")
+    ).add_to(m)
+m.save("real_estate_map.html")
+\end{lstlisting}
+\end{column}
+\end{columns}
+\end{frame}
+\section{Workshop 5 Review}
+\begin{frame}{Workshop 5 Complete: 10-Module Summary}
+\begin{center}\includegraphics[width=0.85\textwidth]{figures_w05m10/w05_summary}\end{center}
+\end{frame}
+\begin{frame}{The Multivariate + Spatial Toolkit}
+\centering
+{\small
+\begin{tabular}{llr}
+\toprule
+\textbf{Capability} & \textbf{Tools} & \textbf{Module} \\
+\midrule
+Multi-encoded scatter & Colour, size, shape & M01 \\
+Multi-axis profiles & Parallel coordinates, radar & M02 \\
+Dimension reduction & PCA biplot, t-SNE, UMAP & M03 \\
+Matrix display & Clustered heatmap, z-score & M04 \\
+Read spatial data & sf, geopandas, CRS & M05 \\
+Choropleth & Classification, palette & M06 \\
+Point maps & Dot, proportional, KDE & M07 \\
+Interactive maps & leaflet, folium, plotly & M08 \\
+Spatial reasoning & Voronoi, Snow's logic & M09 \\
+\bottomrule
+\end{tabular}}
+\end{frame}
+\begin{frame}{Workshop 5 Homework}
+\begin{alertblock}{Due: Before Workshop 6}
+Perform a \textbf{complete multivariate + spatial EDA} on the real estate dataset:
+\begin{enumerate}
+\item PCA biplot coloured by property type (R + Python)
+\item Clustered correlation heatmap (pheatmap + sns.clustermap)
+\item Parallel coordinates of price, area, bedrooms, bathrooms by type
+\item Interactive point map of properties coloured by price (leaflet + folium)
+\item Four numbered findings in Finding $\rightarrow$ Evidence $\rightarrow$ Implication format
+\end{enumerate}
+Weight: 5\% of total grade.
+\end{alertblock}
+\vspace{4pt}
+\textbf{Next}: Workshop 6 --- Time Series \& Temporal Visualization
+\end{frame}
+\end{document}

@@ -1,0 +1,279 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codeblue}{HTML}{1565C0}
+\lstdefinestyle{rstyle}{language=R,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,
+  rulecolor=\color{codegray!30},showstringspaces=false,tabsize=2,
+  morekeywords={library,read_csv,filter,mutate,group_by,summarise,count,
+    separate_rows,ggplot,aes,geom_histogram,geom_boxplot,geom_line,geom_col,
+    geom_point,geom_bar,facet_wrap,coord_flip,theme_minimal,labs,patchwork,
+    plot_annotation,str_extract,mdy,year}}
+\lstdefinestyle{pythonstyle}{language=Python,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,
+  rulecolor=\color{codegray!30},showstringspaces=false,tabsize=4,
+  morekeywords={import,from,as,pd,np,plt,sns,query,assign,groupby,agg,
+    to_datetime,explode,str,extract,value_counts,GridSpec}}
+\title{Lab: Full EDA on Netflix}
+\subtitle{Workshop 4 --- Module 10}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item Apply the complete EDA pipeline to the Netflix dataset
+    \item Handle multi-valued columns (genres, countries) via explode
+    \item Separate Movie vs TV Show analysis (different target variables)
+    \item Build a nine-panel EDA dashboard
+    \item Workshop 4 review: three datasets, one framework
+  \end{enumerate}
+  \begin{exampleblock}{Learning Outcome}
+    You will execute a complete, independent EDA on the Netflix dataset,
+    demonstrating mastery of cleaning, missingness, outlier detection,
+    correlation, and dashboard composition from Workshops 3--4.
+  \end{exampleblock}
+\end{frame}
+
+\section{The Netflix Dataset}
+
+\begin{frame}{Dataset Profile}
+  \centering
+  \begin{tabular}{ll}
+    \toprule
+    \textbf{Property} & \textbf{Value} \\
+    \midrule
+    Rows & 8,807 titles \\
+    Movies / TV Shows & $\sim$6,131 (70\%) / $\sim$2,676 (30\%) \\
+    Variables & 12 (type, title, director, cast, country, date\_added, \\
+              & release\_year, rating, duration, listed\_in, description) \\
+    Multi-valued & listed\_in (genres), country, cast \\
+    Duration & Movies: minutes; TV Shows: seasons (different units!) \\
+    Missing & director (30\%), country (10\%), date\_added (1\%) \\
+    \bottomrule
+  \end{tabular}
+  \vspace{6pt}
+  \begin{alertblock}{Pro-Tip}
+    Netflix has two unique EDA challenges: (1) multi-valued columns
+    require \texttt{separate\_rows()} / \texttt{.explode()} before
+    counting; (2) ``duration'' means minutes for movies but seasons
+    for TV shows --- never analyse them together without splitting.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Wrangling: The Netflix Cleaning Pipeline}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{R}
+\begin{lstlisting}[style=rstyle]
+nf <- read_csv("netflix.csv") |>
+  mutate(
+    date_added = mdy(str_trim(
+      date_added)),
+    year_added = year(date_added),
+    # Split duration by type
+    dur_min = ifelse(
+      type == "Movie",
+      parse_number(duration), NA),
+    seasons = ifelse(
+      type == "TV Show",
+      parse_number(duration), NA),
+    # First genre / country
+    primary_genre = str_trim(
+      str_extract(listed_in,
+        "^[^,]+")),
+    primary_country = str_trim(
+      str_extract(country,
+        "^[^,]+")))
+
+# Genre explosion (one row per genre)
+nf_genres <- nf |>
+  separate_rows(listed_in,
+    sep = ", ")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Python}
+\begin{lstlisting}[style=pythonstyle]
+nf = pd.read_csv("netflix.csv")
+nf["date_added"] = pd.to_datetime(
+    nf["date_added"].str.strip(),
+    errors="coerce")
+nf["year_added"] = (
+    nf["date_added"].dt.year)
+
+# Split duration by type
+nf["dur_min"] = (nf
+    .loc[nf["type"]=="Movie",
+         "duration"]
+    .str.extract(r"(\d+)")
+    .astype(float))
+nf["seasons"] = (nf
+    .loc[nf["type"]=="TV Show",
+         "duration"]
+    .str.extract(r"(\d+)")
+    .astype(float))
+
+nf["primary_genre"] = (nf["listed_in"]
+    .str.split(",").str[0].str.strip())
+
+# Genre explosion
+nf_genres = (nf.assign(
+    genre=nf["listed_in"]
+    .str.split(", ")).explode("genre"))
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{The Dashboard}
+
+\begin{frame}{Netflix: Nine-Panel EDA Dashboard}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w04m10/netflix_dashboard}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Reading the Dashboard}
+  \centering
+  {\small
+  \begin{tabular}{rlll}
+    \toprule
+    \textbf{\#} & \textbf{Panel} & \textbf{EDA Question} & \textbf{Key Insight} \\
+    \midrule
+    (a) & Missing \% bar & Missingness audit & Director 30\%, country 10\% \\
+    (b) & Donut & Movie/TV split & 70\% Movie, 30\% TV \\
+    (c) & Line by type & Content growth over time & TV surged post-2016 \\
+    (d) & Genre bar & Which genres dominate? & Int'l Movies \#1 \\
+    (e) & Duration hist & Movie length shape & Near-normal, mean$\approx$100 \\
+    (f) & Rating bar & Content rating dist. & TV-MA dominates \\
+    (g) & Country lollipop & Geographic origin & US 37\%, India 14\% \\
+    (h) & Duration by rating & Rating $\rightarrow$ length? & R-rated = longer \\
+    (i) & Seasons bar & TV season counts & 72\% are single-season \\
+    \bottomrule
+  \end{tabular}}
+\end{frame}
+
+\section{Key Findings}
+
+\begin{frame}{Four Key Findings}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w04m10/findings}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Finding 1: The TV Pivot}
+  \begin{itemize}
+    \item Movie additions peaked around 2017, then declined
+    \item TV Show additions grew steadily through 2020--2021
+    \item This mirrors Netflix's public strategy shift toward original
+          series (``bingeable'' content)
+    \item \textbf{Implication}: any time-series analysis should account
+          for this structural break. Pre-2016 and post-2016 are
+          different populations.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Finding 2: Director Missingness is Structural (MAR)}
+  \begin{itemize}
+    \item 30\% of titles have no director listed
+    \item TV Shows are far more likely to have missing directors than
+          Movies (TV often has multiple directors per episode)
+    \item This is \textbf{MAR}: missingness depends on the observed
+          variable ``type''
+    \item \textbf{Implication}: analyse director only for Movies;
+          for TV Shows, encode \texttt{has\_director} as a binary
+          feature or use the show's creator instead
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Finding 3: Duration Is Near-Normal for Movies}
+  \begin{itemize}
+    \item Mean $\approx$ 100 minutes, SD $\approx$ 28 minutes
+    \item Histogram is approximately symmetric, slight right tail
+    \item Q-Q plot follows the diagonal reasonably well
+    \item \textbf{Implication}: parametric methods (t-tests, ANOVA) are
+          appropriate for movie duration comparisons. No log transform
+          needed (unlike Reviews in Google Play).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Finding 4: Extreme Geographic Concentration}
+  \begin{itemize}
+    \item US produces 37\% of Netflix content; India 14\%
+    \item Top 2 countries = 51\% of all titles
+    \item Long tail: 100+ countries each produce $<$1\%
+    \item \textbf{Implication}: group rare countries into ``Other'' for
+          any categorical analysis. Use \texttt{fct\_lump\_n()} (R) or
+          \texttt{.where(isin(top\_n))} (Python).
+  \end{itemize}
+\end{frame}
+
+\section{Three Datasets Compared}
+
+\begin{frame}{One Framework, Three Domains}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w04m10/three_datasets}
+  \end{center}
+\end{frame}
+
+\section{Workshop 4 Review}
+
+\begin{frame}{Workshop 4 Complete: Exploratory Data Analysis}
+  \begin{center}
+    \includegraphics[width=0.85\textwidth]{figures_w04m10/w04_summary}
+  \end{center}
+\end{frame}
+
+\begin{frame}{The EDA Toolkit You Now Command}
+  \centering
+  {\small
+  \begin{tabular}{llr}
+    \toprule
+    \textbf{Capability} & \textbf{Tools} & \textbf{Module} \\
+    \midrule
+    Inspect \& clean & dplyr, pandas, pipe chains & M02--M03 \\
+    Diagnose missingness & naniar, missingno, shadow & M04 \\
+    Detect outliers & IQR, z-score, Mahalanobis, Cook's $D$ & M05 \\
+    Measure association & Pearson, Spearman, Cram\'{e}r's $V$ & M06 \\
+    Build dashboards & patchwork, GridSpec, 9-panel & M07--M08 \\
+    Extract findings & Finding $\rightarrow$ Evidence $\rightarrow$ Implication & M07--M08 \\
+    Automate \& report & skimr, ydata-profiling, Quarto & M09 \\
+    \bottomrule
+  \end{tabular}}
+\end{frame}
+
+\begin{frame}{Workshop 4 Homework Summary}
+  \begin{alertblock}{Due: Before Workshop 5}
+    Perform a \textbf{complete EDA} on the Netflix dataset, following
+    the seven-section report structure:
+    \begin{enumerate}
+      \item Data description \& cleaning audit trail
+      \item Missingness audit (matrix + shadow analysis of director)
+      \item Univariate EDA (duration, rating, genre distributions)
+      \item Bivariate EDA (release year vs count, duration by rating)
+      \item Six-panel dashboard (patchwork + GridSpec)
+      \item Four numbered findings (Finding $\rightarrow$ Evidence
+            $\rightarrow$ Implication)
+      \item Limitations and next steps
+    \end{enumerate}
+    Total weight: 5\% of course grade.
+  \end{alertblock}
+  \vspace{4pt}
+  \textbf{Next}: Workshop 5 --- Multivariate \& Spatial Visualization
+\end{frame}
+
+\end{document}

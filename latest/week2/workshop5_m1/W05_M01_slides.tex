@@ -1,0 +1,316 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codeblue}{HTML}{1565C0}
+\lstdefinestyle{rstyle}{language=R,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,
+  rulecolor=\color{codegray!30},showstringspaces=false,tabsize=2,
+  morekeywords={library,ggplot,aes,geom_point,scale_color_viridis,scale_size,
+    scale_shape_manual,theme_minimal,labs,ggMarginal,ggExtra}}
+\lstdefinestyle{pythonstyle}{language=Python,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,
+  rulecolor=\color{codegray!30},showstringspaces=false,tabsize=4,
+  morekeywords={import,from,as,pd,np,plt,sns,scatter,jointplot,hexbin}}
+\title{High-Dimensional Data: Challenges \& Strategies}
+\subtitle{Workshop 5 --- Module 1}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item The curse of dimensionality: why high-D data is hard to plot
+    \item Visual encoding channels ranked by perceptual accuracy
+    \item Multi-encoded scatter: 5 variables on one chart
+    \item Aesthetic overload: when encoding fails
+    \item Five strategies for high-dimensional visualization
+    \item Aggregation techniques for large $n$
+  \end{enumerate}
+  \begin{exampleblock}{Learning Outcome}
+    You will understand why standard 2D plots fail for high-dimensional
+    data, apply multiple encoding channels without overload, and choose
+    the right strategy (reduce, encode, facet, parallel, cluster) for
+    any multivariate analysis.
+  \end{exampleblock}
+\end{frame}
+
+\section{The Curse of Dimensionality}
+
+\begin{frame}{Same $n$, More Dimensions $\rightarrow$ Sparser Data}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w05m01/curse}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    With $p$ dimensions and $n$ points, the proportion of the
+    unit hypercube covered falls as $n^{-1/p}$. With 20 points in
+    10D, each point is essentially alone --- there are no ``neighbours''
+    to compare it with. This is why we need \textbf{dimension reduction}
+    or \textbf{clever encoding} to visualize high-D data.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{What Changes at High Dimensions?}
+  \centering
+  \begin{tabular}{lp{4cm}p{4cm}}
+    \toprule
+    \textbf{Dimension} & \textbf{Standard Approach} & \textbf{High-D Challenge} \\
+    \midrule
+    1 variable & Histogram, boxplot & Still works (marginally) \\
+    2 variables & Scatter plot & Still works \\
+    3 variables & Scatter + colour/size & Starts getting cluttered \\
+    5--10 variables & Pairs plot ($p^2$ panels) & Becomes unwieldy \\
+    10--100 variables & ??? & Need dimension reduction \\
+    100+ variables & ??? & Need algorithmic reduction + summary vis \\
+    \bottomrule
+  \end{tabular}
+\end{frame}
+
+\section{Visual Encoding Channels}
+
+\begin{frame}{Ranked by Perceptual Accuracy}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w05m01/encoding_channels}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Encoding Budget: How Many Variables Per Chart?}
+  \centering
+  \begin{tabular}{lp{5cm}r}
+    \toprule
+    \textbf{Encoding} & \textbf{Channel} & \textbf{Effective Capacity} \\
+    \midrule
+    Position x & Horizontal axis & 1 continuous \\
+    Position y & Vertical axis & 1 continuous \\
+    Colour hue & Categorical groups & 1 categorical ($\leq$8 levels) \\
+    Colour value & Continuous intensity & 1 continuous (limited precision) \\
+    Size & Bubble diameter & 1 continuous (3--5 distinguishable sizes) \\
+    Shape & Point marker & 1 categorical ($\leq$6 shapes) \\
+    Facet & Small multiples & 1--2 categorical \\
+    \midrule
+    \textbf{Total per chart} & & \textbf{5--7 variables max} \\
+    \bottomrule
+  \end{tabular}
+  \vspace{6pt}
+  {\small Beyond 5 variables on a single chart, add \textbf{faceting}
+  or switch to a fundamentally different chart type (parallel coordinates,
+  heatmap, PCA).}
+\end{frame}
+
+\section{Multi-Encoded Scatter}
+
+\begin{frame}{Five Variables on One Scatter Plot}
+  \begin{center}
+    \includegraphics[width=0.72\textwidth]{figures_w05m01/multi_scatter}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Building the Multi-Encoded Scatter}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{R}
+\begin{lstlisting}[style=rstyle]
+ggplot(ecar, aes(
+    x = FICO,           # position x
+    y = Rate,           # position y
+    color = Tier,       # colour
+    size = Amount,      # size
+    shape = CarType)) + # shape
+  geom_point(alpha = 0.4) +
+  scale_color_viridis_c() +
+  scale_size(range = c(1, 8)) +
+  scale_shape_manual(values =
+    c(N = 16, U = 17)) +
+  theme_minimal() +
+  labs(title = "5 Variables,
+    1 Scatter")
+
+# Marginal distributions
+library(ggExtra)
+ggMarginal(p, type = "histogram")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Python}
+\begin{lstlisting}[style=pythonstyle]
+fig, ax = plt.subplots()
+for ct, marker in [("N","o"),("U","s")]:
+    mask = ecar["CarType"] == ct
+    sc = ax.scatter(
+        ecar.loc[mask, "FICO"],
+        ecar.loc[mask, "Rate"],
+        c=ecar.loc[mask, "Tier"],
+        s=ecar.loc[mask, "Amount"]/300,
+        marker=marker,
+        alpha=0.4, cmap="viridis",
+        label=ct)
+plt.colorbar(sc, label="Tier")
+ax.legend(title="Car Type")
+
+# Marginal: seaborn jointplot
+sns.jointplot(data=ecar,
+    x="FICO", y="Rate",
+    hue="CarType",
+    kind="scatter", height=6)
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Aesthetic Overload}
+
+\begin{frame}{More Encodings $\neq$ More Information}
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{figures_w05m01/overload}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    The human visual system can track $\sim$4 encoding channels
+    simultaneously (Healey \& Enns, 2012). Beyond that, the chart
+    becomes a puzzle rather than a communication tool.
+    \textbf{Cognitive limit}: $\leq$8 colour hues, $\leq$6 shapes,
+    $\leq$5 size levels. If you need more groups, \textbf{facet}
+    instead of encoding.
+  \end{alertblock}
+\end{frame}
+
+\section{Five Strategies}
+
+\begin{frame}{Strategies for High-Dimensional Visualization}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w05m01/strategies}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Choosing a Strategy}
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Situation} & \textbf{Strategy} & \textbf{Module} \\
+    \midrule
+    $\leq$5 variables & Multi-encoded scatter & This module \\
+    5--10 variables & Parallel coordinates & M02 \\
+    5--10 variables (ranks) & Radar / spider chart & M02 \\
+    10--100 variables & PCA / t-SNE / UMAP & M03 \\
+    Variables $\times$ observations matrix & Heatmap + clustering & M04 \\
+    Geographic data & Maps (choropleth, point) & M05--M08 \\
+    $>$5 categorical groups & Small multiples (facet) & W03-M08 \\
+    \bottomrule
+  \end{tabular}
+\end{frame}
+
+\section{Aggregation for Large $n$}
+
+\begin{frame}{When $n$ Is Too Large for Scatter}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth]{figures_w05m01/aggregation}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Aggregation in Practice}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{R}
+\begin{lstlisting}[style=rstyle]
+# Hexbin (for 50K+ points)
+ggplot(ecar, aes(x = FICO,
+    y = Rate)) +
+  geom_hex(bins = 50) +
+  scale_fill_viridis_c() +
+  theme_minimal()
+
+# Sample + scatter
+ecar |> slice_sample(n = 2000) |>
+  ggplot(aes(x = FICO, y = Rate)) +
+  geom_point(alpha = 0.1, size=0.5)
+
+# Smooth (LOESS through cloud)
+ggplot(ecar, aes(x=FICO, y=Rate)) +
+  geom_smooth() +
+  theme_minimal()
+
+# Marginal histograms
+library(ggExtra)
+p <- ggplot(ecar, aes(x=FICO,
+    y=Rate)) + geom_point(alpha=0.05)
+ggMarginal(p, type = "histogram")
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Python}
+\begin{lstlisting}[style=pythonstyle]
+# Hexbin
+ax.hexbin(ecar["FICO"], ecar["Rate"],
+    gridsize=50, cmap="viridis",
+    mincnt=1)
+plt.colorbar(label="Count")
+
+# Sample + scatter
+sub = ecar.sample(2000)
+ax.scatter(sub["FICO"], sub["Rate"],
+    s=3, alpha=0.1)
+
+# 2D KDE
+sns.kdeplot(data=ecar, x="FICO",
+    y="Rate", fill=True,
+    cmap="Blues", levels=10)
+
+# Jointplot (marginals included)
+sns.jointplot(data=ecar,
+    x="FICO", y="Rate",
+    kind="hex", height=6)
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Synthesis}
+
+\begin{frame}{Key Takeaways}
+  \begin{enumerate}
+    \item The \textbf{curse of dimensionality}: same $n$ in more
+          dimensions = sparser coverage. Standard scatter fails
+          beyond $\sim$3 variables.
+    \item \textbf{Encoding channels} are ranked: position $>$ length
+          $>$ angle $>$ area $>$ colour hue $>$ saturation $>$ shape.
+          Use the highest-ranked channels for the most important variables.
+    \item \textbf{Budget}: a single scatter can encode $\sim$5 variables
+          (x, y, colour, size, shape). Beyond that, \textbf{facet}
+          or switch chart types.
+    \item \textbf{Aesthetic overload} ($>$8 colours, $>$6 shapes)
+          overwhelms the visual system. Simpler $>$ denser.
+    \item Five strategies: \textbf{reduce} (PCA), \textbf{encode} (multi-scatter),
+          \textbf{facet} (small multiples), \textbf{parallel} coordinates,
+          \textbf{heatmap} + clustering.
+    \item For large $n$: \textbf{hexbin}, \textbf{sample}, \textbf{smooth},
+          \textbf{2D KDE}, \textbf{marginal} distributions.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Essential Readings}
+  \begin{itemize}
+    \item Cleveland, W.~S. \& McGill, R. (1984). ``Graphical Perception.''
+          \emph{JASA}, 79(387). (Encoding channel ranking.)
+    \item Healey, C.~G. \& Enns, J.~T. (2012). ``Attention and Visual
+          Memory in Visualization.'' \emph{IEEE TVCG}, 18(7).
+    \item Munzner, T. (2014). \emph{Visualization Analysis and Design}.
+          CRC Press. (Channel effectiveness, task taxonomy.)
+    \item Wilke, C.~O. (2019). \emph{Fundamentals of Data Visualization},
+          Chapter 2 (Encoding Channels).
+  \end{itemize}
+  \vspace{6pt}
+  \textbf{Next Module}: Parallel Coordinates \& Radar Charts (W05-M02)
+\end{frame}
+
+\end{document}

@@ -1,0 +1,282 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codegreen}{HTML}{2E7D32}
+\definecolor{codegray}{HTML}{757575}
+\definecolor{codeblue}{HTML}{1565C0}
+\lstdefinestyle{rstyle}{language=R,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,
+  rulecolor=\color{codegray!30},showstringspaces=false,tabsize=2,
+  morekeywords={library,read_csv,filter,select,mutate,group_by,summarise,count,
+    distinct,drop_na,str_remove_all,as.numeric,fct_reorder,fct_lump_n,fct_infreq,
+    ggplot,aes,geom_histogram,geom_boxplot,geom_violin,geom_col,geom_point,geom_smooth,
+    geom_errorbar,geom_qq,geom_qq_line,stat_summary,
+    coord_flip,scale_x_log10,theme_minimal,labs,patchwork,plot_annotation}}
+\lstdefinestyle{pythonstyle}{language=Python,backgroundcolor=\color{codebg},basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{codeblue}\bfseries,stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,breaklines=true,frame=single,
+  rulecolor=\color{codegray!30},showstringspaces=false,tabsize=4,
+  morekeywords={import,from,as,pd,np,plt,sns,query,assign,groupby,agg,
+    drop_duplicates,dropna,to_numeric,value_counts,nlargest,sort_values,
+    GridSpec,add_subplot,errorbar,hist,scatter,violinplot,barh}}
+\title{EDA Case Study: Google Play Store}
+\subtitle{Workshop 4 --- Module 7}
+\author{Prof.Asoc.\ Endri Raco}
+\institute{Data Visualization for Data Scientists \\ UNYT Tirana}
+\date{2025/26}
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Module Roadmap}
+  \begin{enumerate}
+    \item Data cleaning audit trail: 10,841 $\rightarrow$ 9,360 rows
+    \item Apply the four-phase EDA workflow to a real dataset
+    \item Build a nine-panel EDA dashboard
+    \item Extract and communicate four key findings
+    \item Outlier deep-dive by category
+  \end{enumerate}
+  \begin{exampleblock}{Learning Outcome}
+    You will execute a complete EDA pipeline on the Google Play Store
+    dataset, integrating every technique from W04-M01 through M06
+    (cleaning, missingness, outliers, correlation) into a single
+    coherent analysis.
+  \end{exampleblock}
+\end{frame}
+
+\section{Phase 1: Clean \& Document}
+
+\begin{frame}{Data Cleaning Audit Trail}
+  \begin{center}
+    \includegraphics[width=0.78\textwidth]{figures_w04m07/cleaning_audit}
+  \end{center}
+  \begin{alertblock}{Pro-Tip}
+    Every cleaning step must be \textbf{documented and justified}.
+    An audit trail (raw $\rightarrow$ dedup $\rightarrow$ type-fix
+    $\rightarrow$ NA drop $\rightarrow$ filter) makes your analysis
+    reproducible and defensible. Include row counts at each step.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{The Cleaning Pipeline (R)}
+\begin{lstlisting}[style=rstyle]
+apps_clean <- read_csv("googleplaystore.csv") |>
+  # Step 1: Remove 1,181 duplicate app entries
+  distinct(App, .keep_all = TRUE) |>
+  # Step 2: Fix column types
+  mutate(
+    Reviews  = as.numeric(Reviews),
+    Installs = str_remove_all(Installs, "[+,]") |> as.numeric(),
+    Price    = str_remove(Price, "\\$") |> as.numeric(),
+    log_reviews = log10(pmax(Reviews, 1)),
+    log_installs = log10(pmax(Installs, 1))
+  ) |>
+  # Step 3: Drop missing Rating (293 rows)
+  drop_na(Rating) |>
+  # Step 4: Keep valid Type
+  filter(Type %in% c("Free", "Paid"), Rating >= 1, Rating <= 5) |>
+  # Step 5: Factor ordering for ggplot
+  mutate(Category = fct_lump_n(Category, 8) |> fct_infreq())
+# Result: 9,360 rows x 15 columns (audit: 10841 -> 9660 -> 9367 -> 9360)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{The Cleaning Pipeline (Python equivalent)}
+\begin{lstlisting}[style=pythonstyle]
+apps_clean = (
+    pd.read_csv("googleplaystore.csv")
+    .drop_duplicates(subset="App", keep="first")          # 10841 -> 9660
+    .assign(
+        Reviews=lambda d: pd.to_numeric(d["Reviews"], errors="coerce"),
+        Installs=lambda d: d["Installs"].str.replace(r"[+,]", "", regex=True)
+            .pipe(pd.to_numeric, errors="coerce"),
+        Price=lambda d: d["Price"].str.replace("$", "", regex=False)
+            .pipe(pd.to_numeric, errors="coerce"))
+    .dropna(subset=["Rating"])                             # -> 9367
+    .query("Type in ['Free','Paid'] and Rating>=1 and Rating<=5")  # -> 9360
+    .assign(
+        log_reviews=lambda d: np.log10(d["Reviews"].clip(lower=1)),
+        log_installs=lambda d: np.log10(d["Installs"].clip(lower=1)))
+)
+\end{lstlisting}
+\end{frame}
+
+\section{Phase 2: The Nine-Panel Dashboard}
+
+\begin{frame}{Complete EDA Dashboard}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w04m07/eda_dashboard}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Reading the Dashboard: Panel by Panel}
+  \centering
+  {\small
+  \begin{tabular}{rlll}
+    \toprule
+    \textbf{\#} & \textbf{Panel} & \textbf{EDA Question} & \textbf{Technique (Module)} \\
+    \midrule
+    (a) & Missing \% bar & How much is missing? & M04 (naniar/missingno) \\
+    (b) & Histogram + lines & What shape is Rating? & M01 (Tukey 4-plot) \\
+    (c) & Violin by Type & Do Free/Paid differ? & W03-M02 (violin) \\
+    (d) & Sorted bar & Which categories dominate? & W03-M03 (bar) \\
+    (e) & Scatter + trend & Reviews $\rightarrow$ Rating? & M06 (correlation) \\
+    (f) & Corr. heatmap & Which vars correlate? & M06 (heatmap) \\
+    (g) & Pointrange & Group means differ? & W03-M07 (CI) \\
+    (h) & Waffle & Free/Paid split? & W03-M05 (proportion) \\
+    (i) & Q-Q plot & Is Rating normal? & M01 (diagnostics) \\
+    \bottomrule
+  \end{tabular}}
+\end{frame}
+
+\begin{frame}[fragile]{Building the Dashboard (R)}
+\begin{lstlisting}[style=rstyle]
+library(patchwork)
+# (a) Missing audit   (b) Histogram       (c) Violin
+# (d) Sorted bar      (e) Scatter          (f) Heatmap
+# (g) Pointrange      (h) Proportion       (i) Q-Q
+
+# Compose: 3 x 3 grid
+dashboard <- (p_miss | p_hist | p_violin) /
+             (p_bar  | p_scatter | p_heat) /
+             (p_point | p_waffle | p_qq) +
+  plot_annotation(
+    title = "Google Play Store: Complete EDA Dashboard",
+    subtitle = "9,360 apps | 33 categories | Cleaned & Wrangled",
+    caption = "Source: Kaggle | UNYT Data Viz Course",
+    tag_levels = "a") &
+  theme_minimal(base_size = 8)
+
+ggsave("eda_dashboard.pdf", dashboard, width = 16, height = 11)
+\end{lstlisting}
+\end{frame}
+
+\section{Phase 3: Extract Findings}
+
+\begin{frame}{Four Key Findings}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{figures_w04m07/findings}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Finding 1: Left-Skewed Ratings (Ceiling Effect)}
+  \begin{itemize}
+    \item Mean Rating = 4.17, Median = 4.30 (median $>$ mean
+          $\Rightarrow$ left skew)
+    \item Most apps cluster at 4.0--4.5; very few below 3.0
+    \item Q-Q plot confirms departure from normality at both tails
+    \item \textbf{Implication}: use \textbf{Spearman} (not Pearson)
+          for correlations; \textbf{median} (not mean) for central
+          tendency; consider \textbf{non-parametric} tests
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Finding 2: Massive Free/Paid Imbalance (93/7\%)}
+  \begin{itemize}
+    \item 93\% of apps are Free; only 7\% Paid
+    \item Any comparison between Free and Paid must account for this
+          imbalance: confidence intervals for Paid are much wider
+    \item \textbf{Implication}: stratify by Type before comparing
+          categories; use \textbf{bootstrap} or \textbf{weighted}
+          methods to avoid sample-size artefacts
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Finding 3: Reviews $\leftrightarrow$ Rating Is Weak ($\rho = 0.18$)}
+  \begin{itemize}
+    \item Spearman $\rho = 0.18$: statistically significant (large $n$)
+          but practically negligible
+    \item The scatter is a cloud, not a line: high-review apps span the
+          full 1--5 rating range
+    \item Log transform of Reviews is essential (range: 0 to 78M)
+    \item \textbf{Implication}: popularity (reviews/installs) does not
+          predict quality (rating). Don't use one as a proxy for the
+          other.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Finding 4: Category Differences Are Small}
+  \begin{itemize}
+    \item SOCIAL (4.30) has the highest mean; MEDICAL (3.95) the lowest
+    \item But 95\% CIs overlap for most categories $\Rightarrow$
+          differences are likely not significant after multiple testing
+    \item \textbf{Implication}: category is a weak predictor of rating;
+          within-category variance dominates between-category variance
+  \end{itemize}
+\end{frame}
+
+\section{Phase 4: Outlier Deep-Dive}
+
+\begin{frame}{Outlier Deep-Dive by Category}
+  \begin{center}
+    \includegraphics[width=0.82\textwidth]{figures_w04m07/outlier_dive}
+  \end{center}
+  \begin{exampleblock}{Data Insight}
+    All categories show left-tail outliers (low-rated apps). GAME and
+    FAMILY have the most outliers by count (largest $n$). The outliers
+    are not data errors --- they represent genuinely poorly-rated apps.
+    Decision: keep them, as they represent the real distribution.
+  \end{exampleblock}
+\end{frame}
+
+\section{Synthesis}
+
+\begin{frame}{The EDA Report Structure}
+  Every EDA case study follows this structure:
+  \centering
+  \begin{tabular}{rl}
+    \toprule
+    \textbf{Section} & \textbf{Content} \\
+    \midrule
+    1. Data Description & Source, $n$, variables, types \\
+    2. Cleaning Audit & Steps, row counts, justifications \\
+    3. Missingness Audit & Matrix, \%, mechanism hypothesis \\
+    4. Univariate EDA & Distributions, outliers, normality \\
+    5. Bivariate EDA & Scatter, correlation, grouped comparisons \\
+    6. Key Findings & 3--5 numbered insights with evidence \\
+    7. Limitations & What you can't conclude, next steps \\
+    \bottomrule
+  \end{tabular}
+  \vspace{6pt}
+  {\small This structure applies to \textbf{every} dataset you will
+  encounter in this course (Netflix, e-Car, CRM, Real Estate) and
+  in professional practice.}
+\end{frame}
+
+\begin{frame}{Key Takeaways}
+  \begin{enumerate}
+    \item \textbf{Audit trail}: document every cleaning step with row
+          counts (10,841 $\rightarrow$ 9,360).
+    \item \textbf{Dashboard first}: a 6--9 panel figure gives a
+          helicopter view before diving into individual charts.
+    \item \textbf{Findings $\neq$ plots}. Extract numbered insights
+          with three columns: finding, evidence, implication.
+    \item Google Play Store: ratings are ceiling-skewed, Free dominates
+          93\%, Reviews $\not\rightarrow$ Rating, category differences
+          are small.
+    \item The \textbf{EDA report structure} (7 sections) applies to
+          every dataset.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Essential Readings}
+  \begin{itemize}
+    \item Wickham, H. \& Grolemund, G. (2023). \emph{R for Data Science},
+          2nd ed., Chapter 10 (Exploratory Data Analysis).
+    \item Peng, R. (2016). \emph{Exploratory Data Analysis with R}.
+          Leanpub. (Free online.)
+    \item Google Play Store Dataset: Kaggle.
+          \texttt{https://www.kaggle.com/lava18/google-play-store-apps}
+  \end{itemize}
+  \vspace{6pt}
+  \textbf{Next Module}: EDA Case Study --- e-Car Loan Pricing (W04-M08)
+\end{frame}
+
+\end{document}
